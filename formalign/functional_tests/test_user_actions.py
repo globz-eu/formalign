@@ -16,7 +16,7 @@ class BasicUserTestCase(LiveServerTestCase):
         self.browser.implicitly_wait(2)
 
     def tearDown(self):
-        time.sleep(2)
+        # time.sleep(2)
         self.browser.quit()
 
     def test_basic_user_experience(self):
@@ -33,14 +33,15 @@ class BasicUserTestCase(LiveServerTestCase):
         self.assertEqual('Formalign.eu', brand_element.text)
 
         # She sees a form that says 'Paste in your alignment in FASTA format:'
-        alignment_input = self.browser.find_element_by_css_selector('input#alignment')
+        alignment_input = self.browser.find_element_by_css_selector('textarea#alignment')
         self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="alignment"]'))
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
         # She decides to give it a try. She pastes in her alignment of favorite proteins and submits it.
         with open(os.path.join(BASE_DIR, 'test_data/spa_align_clustal_omega.fasta'), 'r') as alignment_file:
-            alignment_string = ''.join(line for line in alignment_file)
-            alignment_input.send_keys(alignment_string)
+            # alignment_string = ''.join(line for line in alignment_file)
+            for line in alignment_file:
+                alignment_input.send_keys(line)
         self.browser.find_element_by_css_selector('form button').click()
         self.fail('Incomplete Test')
 
