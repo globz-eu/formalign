@@ -29,6 +29,7 @@ class BasicUserTestCase(LiveServerTestCase):
         home_page = self.browser.get(self.live_server_url + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         brand_element = self.browser.find_element_by_css_selector('.navbar-brand')
         self.assertEqual('Formalign.eu', brand_element.text)
 
@@ -43,6 +44,17 @@ class BasicUserTestCase(LiveServerTestCase):
             for line in alignment_file:
                 alignment_input.send_keys(line)
         self.browser.find_element_by_css_selector('form button').click()
+
+        # She is redirected to a page showing the submitted sequences from her alignment
+        self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
+        first_seq_info = self.browser.find_elements_by_css_selector('.seq-info')[0]
+        self.assertEqual(
+            first_seq_info.text,
+            '>AT1G53090.1 | Symbols: SPA4 | SPA1-related 4 | chr1:19783748-19786690 FORWARD LENGTH=794'
+        )
+        first_seq_content = self.browser.find_elements_by_css_selector('.seq-data')
+        self.assertIsNotNone(first_seq_content)
+        self.assertEqual()
         self.fail('Incomplete Test')
 
         # She is redirected to a display page where she sees her alignment rendered in the default way.

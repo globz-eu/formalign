@@ -5,6 +5,7 @@ from base.views import index
 
 __author__ = 'Stefan Dieterle'
 
+
 class BaseURLsTestCase(TestCase):
 
     def test_root_url_uses_index_view(self):
