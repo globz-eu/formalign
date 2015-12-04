@@ -1,4 +1,4 @@
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from formalign.settings import BASE_DIR
 from selenium import webdriver
 import time
@@ -7,7 +7,7 @@ import os
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCase(LiveServerTestCase):
+class BasicUserTestCase(StaticLiveServerTestCase):
     def setUp(self):
         # self.browser = webdriver.Chrome(
         #     '/home/golgotux/Dropbox/Documents/Backups/Python Scripts/pycharm_helpers/chromedriver'
@@ -34,23 +34,23 @@ class BasicUserTestCase(LiveServerTestCase):
         self.assertEqual('Formalign.eu', brand_element.text)
 
         # She sees a form that says 'Paste in your alignment in FASTA format:'
-        alignment_input = self.browser.find_element_by_css_selector('textarea#alignment')
-        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="alignment"]'))
+        alignment_input = self.browser.find_element_by_css_selector('textarea#align-input')
+        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="align-input"]'))
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
         # She decides to give it a try. She pastes in her alignment of favorite proteins and submits it.
-        with open(os.path.join(BASE_DIR, 'test_data/spa_align_clustal_omega.fasta'), 'r') as alignment_file:
+        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             # alignment_string = ''.join(line for line in alignment_file)
             for line in alignment_file:
                 alignment_input.send_keys(line)
-        self.browser.find_element_by_css_selector('form button').click()
+        self.browser.find_element_by_id('submit-fasta').click()
 
         # She is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.seq-info')[0]
         self.assertEqual(
             first_seq_info.text,
-            '>AT1G53090.1 | Symbols: SPA4 | SPA1-related 4 | chr1:19783748-19786690 FORWARD LENGTH=794'
+            '>Short sequence1'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.seq-data')
         self.assertIsNotNone(first_seq_content)

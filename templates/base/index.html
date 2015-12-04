@@ -7,20 +7,21 @@
 
 {% block content %}
     <div class="jumbotron">
-        <form class="form-horizontal" role="form">
+        <form class="form-horizontal" role="form" method="post" action="/query-sequences/">
         <div class="form-group">
 
-            <label for="alignment" class="col-sm-2 control-label">
+            <label for="align-input" class="col-sm-2 control-label">
                 Paste in your alignment in FASTA format:
             </label>
             <div class="col-sm-9">
-                <textarea class="form-control" id="alignment" rows="10" placeholder="FASTA alignment"></textarea>
+                <textarea class="form-control" name="align-query" id="align-input" rows="10" placeholder="FASTA alignment"></textarea>
             </div>
+            {% csrf_token %}
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
 
-                <button type="submit" class="btn btn-primary btn-large">
+                <button type="submit" id="submit-fasta" class="btn btn-primary btn-large">
                     Submit
                 </button>
             </div>

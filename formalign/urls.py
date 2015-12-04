@@ -19,9 +19,10 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from formalign import settings
 
-from base.views import index
+from base.views import index, seq_display
 
 urlpatterns = [
     url(r'^$', index),
+    url(r'^query-sequences/', seq_display),
     url(r'^admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL)
