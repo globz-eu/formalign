@@ -56,7 +56,7 @@ class QueryFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            ['Illegal character in sequence: Short sequence3']
+            ['Invalid character in sequence: Short sequence3']
         )
 
     def test_form_validation_for_invalid_alignment(self):

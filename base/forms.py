@@ -5,7 +5,10 @@ from Bio import SeqIO
 __author__ = 'Stefan Dieterle'
 
 
-EMPTY_ALIGNMENT_SUBMISSION_ERROR = 'Please submit an alignment'
+EMPTY_ERROR = 'Please submit an alignment'
+FASTA_ERROR = 'Sequence is not FASTA compliant, no ">" as first character'
+CHARACTER_ERROR = 'Invalid character in sequence: '
+ALIGNMENT_ERROR = 'Alignment invalid, sequences have different lengths'
 
 
 class QueryForm(forms.Form):
@@ -32,19 +35,19 @@ class QueryForm(forms.Form):
         :return: parsed_data = [{'meta': 'sequence meta', 'seq': 'SEQUENCE'} ... ]
         """
         if self.cleaned_data['align_input'][0] != '>':
-            raise forms.ValidationError('Sequence is not FASTA compliant, no ">" as first character')
+            raise forms.ValidationError(FASTA_ERROR)
         data = io.StringIO(self.cleaned_data['align_input'])
         parsed_data = parse_fasta(data)
         alphabet = set('ABCDEFGHIKLMNPQRSTUVWXY*-')
         lengths = []
         for p in parsed_data:
             if not alphabet.issuperset(p['seq']):
-                raise forms.ValidationError('Illegal character in sequence: %s' % p['meta'])
+                raise forms.ValidationError(CHARACTER_ERROR + '%s' % p['meta'])
             lengths.append(len(p['seq']))
 
         # check that lengths contains only identical values, count trick is supposed to be faster than using set
         if lengths.count(lengths[0]) != len(lengths):
-            raise forms.ValidationError('Alignment invalid, sequences have different lengths')
+            raise forms.ValidationError(ALIGNMENT_ERROR)
         return parsed_data
 
 
