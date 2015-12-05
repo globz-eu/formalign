@@ -60,19 +60,35 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              )
 
     def test_for_empty_input_renders_index_template(self):
+        """
+        Tests that submitting an empty alignment input renders the home page
+        :return:
+        """
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/index.html')
 
     def test_empty_input_errors_are_shown_on_home_page(self):
+        """
+        Tests that the correct error message is displayed on the home page on submission of an empty alignment
+        :return:
+        """
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertContains(response, escape(EMPTY_ALIGNMENT_SUBMISSION_ERROR))
 
     def test_for_invalid_input_passes_form_to_template(self):
+        """
+        Tests that the form context is passed in response to an empty alignment submission
+        :return:
+        """
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertIsInstance(response.context['form'], QueryForm)
 
     def test_parse_fasta(self):
+        """
+        Tests that the parse_fasta function returns expected values with a valid fasta alignment
+        :return:
+        """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
         parsed = parse_fasta(input_seqs)

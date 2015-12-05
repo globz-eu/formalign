@@ -47,14 +47,14 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         # She is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
-        first_seq_info = self.browser.find_elements_by_css_selector('.seq-info')[0]
+        first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
             first_seq_info.text,
             '>Short sequence1'
         )
-        first_seq_content = self.browser.find_elements_by_css_selector('.seq-data')
+        first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
-        self.assertEqual()
+        self.assertEqual(first_seq_content.text, 'KERBGWAQ--Q')
         self.fail('Incomplete Test')
 
         # She is redirected to a display page where she sees her alignment rendered in the default way.
