@@ -34,8 +34,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual('Formalign.eu', brand_element.text)
 
         # She sees a form that says 'Paste in your alignment in FASTA format:'
-        alignment_input = self.browser.find_element_by_css_selector('textarea#align-input')
-        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="align-input"]'))
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
         # She decides to give it a try. She pastes in her alignment of favorite proteins and submits it.

@@ -9,12 +9,12 @@
     <div class="jumbotron">
         <form class="form-horizontal" role="form" method="post" action="/query-sequences/">
         <div class="form-group">
-
-            <label for="align-input" class="col-sm-2 control-label">
-                Paste in your alignment in FASTA format:
-            </label>
+            <div class="col-sm-2 control-label">
+                {{ form.align_input.label_tag }}
+            </div>
             <div class="col-sm-9">
-                <textarea class="form-control" name="align-query" id="align-input" rows="10" placeholder="FASTA alignment"></textarea>
+                {{ form.align_input.errors }}
+                {{ form.align_input }}
             </div>
             {% csrf_token %}
         </div>

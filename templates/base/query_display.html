@@ -5,5 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    {{ query_seqs }}
+    <ol>
+        <li class="query_seq_meta">{{ query_seqs }}</li>
+        <p class="query_seq_display">{{ query_seqs }}</p>
+    </ol>
 {% endblock %}
