@@ -49,7 +49,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
             first_seq_info.text,
-            'Short sequence1'
+            'Short sequence1:'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)

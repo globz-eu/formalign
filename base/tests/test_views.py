@@ -2,9 +2,10 @@ from django.test import TestCase
 from django.utils.html import escape
 from with_asserts.mixin import AssertHTMLMixin
 import os
+import io
 from formalign.settings import BASE_DIR
 from base.forms import QueryForm, EMPTY_ALIGNMENT_SUBMISSION_ERROR
-from base.views import parse_fasta
+from base.forms import parse_fasta
 
 __author__ = 'Stefan Dieterle'
 
@@ -42,11 +43,11 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         response = self.client.post('/query-sequences/', {'align_input': input_seqs})
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
             self.assertEqual(elems[0].text,
-                             'Short sequence1',
+                             'Short sequence1:',
                              'meta1: ' + format(elems[0].text)
                              )
             self.assertEqual(elems[1].text,
-                             'Short sequence2',
+                             'Short sequence2:',
                              'meta2: ' + format(elems[1].text)
                              )
         with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
@@ -78,13 +79,22 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertContains(response, escape(EMPTY_ALIGNMENT_SUBMISSION_ERROR))
 
-    def test_for_invalid_input_passes_form_to_template(self):
+    def test_for_empty_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an empty alignment submission
         :return:
         """
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertIsInstance(response.context['form'], QueryForm)
+
+    def test_for_invalid_fasta_input_renders_index_template(self):
+        self.fail('Incomplete Test')
+
+    def test_invalid_fasta_input_errors_are_shown_on_home_page(self):
+        self.fail('Incomplete Test')
+
+    def test_for_invalid_fasta_input_passes_form_to_template(self):
+        self.fail('Incomplete Test')
 
     def test_parse_fasta(self):
         """
@@ -93,7 +103,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
-        parsed = parse_fasta(input_seqs)
+        parsed = parse_fasta(io.StringIO(input_seqs))
         self.assertEqual(parsed[0]['meta'], 'Short sequence1')
         self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')
         self.assertEqual(parsed[1]['meta'], 'Short sequence2')
