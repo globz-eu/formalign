@@ -6,7 +6,9 @@
 
 {% block content %}
     <ol>
-        <li class="query_seq_meta">{{ query_seqs }}</li>
-        <p class="query_seq_display">{{ query_seqs }}</p>
+    {% for q in query_seqs %}
+        <li class="query_seq_meta">{{ q.meta }}</li>
+        <p class="query_seq_display">{{ q.seq }}</p>
+    {% endfor %}
     </ol>
 {% endblock %}

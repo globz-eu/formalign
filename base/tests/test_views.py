@@ -4,6 +4,7 @@ from with_asserts.mixin import AssertHTMLMixin
 import os
 from formalign.settings import BASE_DIR
 from base.forms import QueryForm, EMPTY_ALIGNMENT_SUBMISSION_ERROR
+from base.views import parse_fasta
 
 __author__ = 'Stefan Dieterle'
 
@@ -48,7 +49,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              '>Short sequence2',
                              'meta2: ' + format(elems[1].text)
                              )
-        with self.assertHTML(response, 'li[class=query_seq_display]') as elems:
+        with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
             self.assertEqual(elems[0].text,
                              'KERBGWAQ--Q',
                              'seq1: ' + format(elems[0].text)
@@ -70,3 +71,12 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.client.post('/query-sequences/', {'align_input': ''})
         self.assertIsInstance(response.context['form'], QueryForm)
+
+    def test_parse_fasta(self):
+        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
+            input_seqs = alignment_file.read()
+        parsed = parse_fasta(input_seqs)
+        self.assertEqual(parsed[0]['meta'], '>Short sequence1')
+        self.assertEqual(parsed[0]['seq'], 'KERBGWAQ--Q')
+        self.assertEqual(parsed[1]['meta'], '>Short sequence2')
+        self.assertEqual(parsed[1]['seq'], 'KERBGWA-SYQ')
