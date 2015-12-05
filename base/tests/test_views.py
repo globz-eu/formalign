@@ -39,23 +39,25 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
-            response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
             self.assertEqual(elems[0].text,
-                             '>Short sequence1',
+                             'Short sequence1',
                              'meta1: ' + format(elems[0].text)
                              )
             self.assertEqual(elems[1].text,
-                             '>Short sequence2',
+                             'Short sequence2',
                              'meta2: ' + format(elems[1].text)
                              )
         with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
             self.assertEqual(elems[0].text,
-                             'KERBGWAQ--Q',
-                             'seq1: ' + format(elems[0].text)
+                             'MKERBGWAQ--QGKKPWRF--EEW',
+                             'seq1: ' + elems[0].text
                              )
+            self.assertNotIn(' ', elems[0].text)
+            self.assertNotIn('\n', elems[0].text)
             self.assertEqual(elems[1].text,
-                             'KERBGWA-SYQ',
+                             'MKERBGWA-SYQGKKPWRFAQ-EW',
                              'seq2: ' + format(elems[1].text)
                              )
 
@@ -92,7 +94,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
         parsed = parse_fasta(input_seqs)
-        self.assertEqual(parsed[0]['meta'], '>Short sequence1')
-        self.assertEqual(parsed[0]['seq'], 'KERBGWAQ--Q')
-        self.assertEqual(parsed[1]['meta'], '>Short sequence2')
-        self.assertEqual(parsed[1]['seq'], 'KERBGWA-SYQ')
+        self.assertEqual(parsed[0]['meta'], 'Short sequence1')
+        self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')
+        self.assertEqual(parsed[1]['meta'], 'Short sequence2')
+        self.assertEqual(parsed[1]['seq'], 'MKERBGWA-SYQGKKPWRFAQ-EW')

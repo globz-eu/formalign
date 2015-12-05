@@ -39,10 +39,9 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
         # She decides to give it a try. She pastes in her alignment of favorite proteins and submits it.
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
-            # alignment_string = ''.join(line for line in alignment_file)
-            for line in alignment_file:
-                alignment_input.send_keys(line)
+        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as input_seqs:
+            alignment_string = input_seqs.read()
+        alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()
 
         # She is redirected to a page showing the submitted sequences from her alignment
@@ -50,11 +49,11 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
             first_seq_info.text,
-            '>Short sequence1'
+            'Short sequence1'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
-        self.assertEqual(first_seq_content.text, 'KERBGWAQ--Q')
+        self.assertEqual(first_seq_content.text, 'MKERBGWAQ--QGKKPWRF--EEW')
         self.fail('Incomplete Test')
 
         # She is redirected to a display page where she sees her alignment rendered in the default way.

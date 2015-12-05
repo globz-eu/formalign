@@ -30,10 +30,10 @@ class QueryFormTest(TestCase):
         )
 
     def test_form_validation_for_invalid_fasta(self):
-        pass
+        self.fail('Incomplete Test')
 
-    def test_form_validdation_for_invalid_characters(self):
-        pass
+    def test_form_validation_for_invalid_characters(self):
+        self.fail('Incomplete Test')
 
     def test_form_validation_for_invalid_alignment(self):
-        pass
+        self.fail('Incomplete Test')
