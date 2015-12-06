@@ -38,16 +38,44 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
-        # She decides to give it a try. She pastes in her alignment of favorite proteins and submits it.
-        self.fail('Incomplete Test')
+        # She decides to give it a try. She types in her alignment of her favorite proteins and submits it.
+        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_fasta.fasta'), 'r') as input_seqs:
+            alignment_string = input_seqs.read()
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
 
-        # unfortunately her alignment is invalid so she gets redirected to the submission form,
+        # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
+        # error message telling her that her FASTA format is invalid
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Sequence is not FASTA compliant, no ">" as first character'
+        )
+
         # she corrects her alignment and resubmits
+        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_characters.fasta'), 'r') as input_seqs:
+            alignment_string = input_seqs.read()
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
+        # again where she sees an error message telling her that her sequences contain invalid characters
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Invalid character in sequence: Short sequence3'
+        )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
         # error message
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as input_seqs:
             alignment_string = input_seqs.read()
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
         alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()
 
@@ -61,5 +89,6 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
         self.assertEqual(first_seq_content.text, 'MKERBGWAQ--QGKKPWRF--EEW')
+        self.fail('Incomplete Test')
 
         # She is redirected to a display page where she sees her alignment rendered in the default way.
