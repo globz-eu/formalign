@@ -2,6 +2,8 @@ from django.test import TestCase
 import os
 from formalign.settings import BASE_DIR
 from base.forms import QueryForm
+from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
+
 
 __author__ = 'Stefan Dieterle'
 
@@ -28,7 +30,7 @@ class QueryFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            ['Please submit an alignment']
+            [EMPTY_ERROR]
         )
 
     def test_form_validation_for_invalid_fasta(self):
@@ -42,7 +44,7 @@ class QueryFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            ['Sequence is not FASTA compliant, no ">" as first character']
+            [FASTA_ERROR]
         )
 
     def test_form_validation_for_invalid_characters(self):
@@ -56,7 +58,7 @@ class QueryFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            ['Invalid character in sequence: Short sequence3']
+            [CHARACTER_ERROR + 'Short sequence3']
         )
 
     def test_form_validation_for_invalid_alignment(self):
@@ -70,5 +72,19 @@ class QueryFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            ['Alignment invalid, sequences have different lengths']
+            [ALIGNMENT_ERROR]
+        )
+
+    def test_form_validation_for_too_few_sequences_in_alignment(self):
+        """
+        Tests error on invalid alignment when sequences have differing lengths
+        :return:
+        """
+        with open(os.path.join(BASE_DIR, 'test_data/short_too_few_sequences.fasta'), 'r') as alignment_file:
+            input_seqs = alignment_file.read()
+        form = QueryForm(data={'align_input': input_seqs})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors['align_input'],
+            [LESS_THAN_TWO_SEQS_ERROR]
         )
