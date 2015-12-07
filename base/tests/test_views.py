@@ -8,11 +8,16 @@ from with_asserts.mixin import AssertHTMLMixin
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from formalign.settings import BASE_DIR
+from helper_funcs.helpers_bio import parse_fasta
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 
 
 class IndexViewTestCase(TestCase):
+    """
+    Tests for index view
+    """
     def test_index_view_basic(self):
         """
         Tests that index view returns a 200 response and uses the correct template
@@ -24,6 +29,10 @@ class IndexViewTestCase(TestCase):
 
 
 class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
+    """
+    Tests for sequence display
+    """
+
     def test_display_page_uses_display_seq_template(self):
         """
         Tests that seq_display view returns a 200 response on a POST request and uses the correct template
@@ -71,158 +80,161 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
-        q = QueryForm()
-        parsed = q.parse_fasta(io.StringIO(input_seqs))
+        parsed = parse_fasta(io.StringIO(input_seqs))
         self.assertEqual(parsed[0]['meta'], 'Short sequence1')
         self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')
         self.assertEqual(parsed[1]['meta'], 'Short sequence2')
         self.assertEqual(parsed[1]['seq'], 'MKERBGWA-SYQGKKPWRFAQ-EW')
+
+
+class SeqDisplayInvalidInput(TestCase):
+    """
+    Tests for invalid alignment submission
+    """
+
+    def response_for_invalid_post_request(self, input_file=''):
+        """
+        Creates a response from a POST request to /query-sequences/ with an invalid alignment
+        :param input_file: file containing invalid alignment
+        :return: response
+        """
+        if input_file:
+            input_seqs = file_to_string(input_file)
+        else:
+            input_seqs = ''
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+        return response
+
+    def invalid_input_renders_index_template(self, input_file=''):
+        """
+        Tests that submitting an invalid alignment input renders the home page
+        :param input_file: file containing invalid alignment
+        :return:
+        """
+        response = self.response_for_invalid_post_request(input_file)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('base/index.html')
+
+    def invalid_input_errors_are_shown_on_home_page(self, error_text, input_file=''):
+        """
+        Tests that the correct error message is displayed on the home page on submission of an invalid alignment
+        :param error_text: expected error message
+        :param input_file: file containing invalid alignment
+        :return:
+        """
+        response = self.response_for_invalid_post_request(input_file)
+        self.assertContains(response, escape(error_text))
+
+    def invalid_input_passes_form_to_template(self, input_file=''):
+        """
+        Tests that the form context is passed in response to an invalid alignment submission
+        :param input_file: file containing invalid alignment
+        :return:
+        """
+        response = self.response_for_invalid_post_request(input_file)
+        self.assertIsInstance(response.context['form'], QueryForm)
 
     def test_for_empty_input_renders_index_template(self):
         """
         Tests that submitting an empty alignment input renders the home page
         :return:
         """
-        response = self.client.post('/query-sequences/', {'align_input': ''})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.invalid_input_renders_index_template('')
 
     def test_empty_input_errors_are_shown_on_home_page(self):
         """
         Tests that the correct error message is displayed on the home page on submission of an empty alignment
         :return:
         """
-        response = self.client.post('/query-sequences/', {'align_input': ''})
-        self.assertContains(response, escape(EMPTY_ERROR))
+        self.invalid_input_errors_are_shown_on_home_page(EMPTY_ERROR)
 
     def test_for_empty_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an empty alignment submission
         :return:
         """
-        response = self.client.post('/query-sequences/', {'align_input': ''})
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.invalid_input_passes_form_to_template()
 
     def test_for_invalid_fasta_input_renders_index_template(self):
         """
         Tests that submitting an empty alignment input renders the home page
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_fasta.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.invalid_input_renders_index_template('short_invalid_fasta.fasta')
 
     def test_invalid_fasta_input_errors_are_shown_on_home_page(self):
         """
         Tests that the correct error message is displayed on the home page on submission of invalid FASTA
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_fasta.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertContains(response, escape(FASTA_ERROR))
+        self.invalid_input_errors_are_shown_on_home_page(FASTA_ERROR, 'short_invalid_fasta.fasta')
 
     def test_for_invalid_fasta_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an invalid FASTA submission
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_fasta.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.invalid_input_passes_form_to_template('short_invalid_fasta.fasta')
 
     def test_for_invalid_character_input_renders_index_template(self):
         """
         Tests that submitting an empty alignment input renders the home page
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_characters.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.invalid_input_renders_index_template('short_invalid_characters.fasta')
 
     def test_invalid_character_input_errors_are_shown_on_home_page(self):
         """
         Tests that the correct error message is displayed on the home page on submission of invalid FASTA
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_characters.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertContains(response, escape(CHARACTER_ERROR))
+        self.invalid_input_errors_are_shown_on_home_page(CHARACTER_ERROR, 'short_invalid_characters.fasta')
 
     def test_for_invalid_character_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an invalid FASTA submission
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_characters.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.invalid_input_passes_form_to_template('short_invalid_characters.fasta')
 
     def test_for_invalid_alignment_input_renders_index_template(self):
         """
         Tests that submitting an empty alignment input renders the home page
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_alignment.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.invalid_input_renders_index_template('short_invalid_alignment.fasta')
 
     def test_invalid_alignment_input_errors_are_shown_on_home_page(self):
         """
         Tests that the correct error message is displayed on the home page on submission of invalid FASTA
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_alignment.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertContains(response, escape(ALIGNMENT_ERROR))
+        self.invalid_input_errors_are_shown_on_home_page(ALIGNMENT_ERROR, 'short_invalid_alignment.fasta')
 
     def test_for_invalid_alignment_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an invalid FASTA submission
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_alignment.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.invalid_input_passes_form_to_template('short_invalid_alignment.fasta')
 
     def test_for_too_few_sequences_input_renders_index_template(self):
         """
         Tests that submitting an alignment with only one sequence input renders the home page
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_too_few_sequences.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.invalid_input_renders_index_template('short_too_few_sequences.fasta')
 
     def test_too_few_sequences_input_errors_are_shown_on_home_page(self):
         """
         Tests that the correct error message is displayed on the home page on submission of invalid FASTA
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_too_few_sequences.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertContains(response, escape(LESS_THAN_TWO_SEQS_ERROR))
+        self.invalid_input_errors_are_shown_on_home_page(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
 
     def test_for_too_few_sequences_input_passes_form_to_template(self):
         """
         Tests that the form context is passed in response to an invalid FASTA submission
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short_too_few_sequences.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.invalid_input_passes_form_to_template('short_too_few_sequences.fasta')

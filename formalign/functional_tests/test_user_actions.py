@@ -1,8 +1,7 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from formalign.settings import BASE_DIR
 from selenium import webdriver
 import time
-import os
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 
@@ -26,7 +25,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
-        home_page = self.browser.get(self.live_server_url + '/')
+        self.browser.get(self.live_server_url + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
@@ -39,8 +38,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
         # She decides to give it a try. She types in an alignment of her favorite proteins and submits it.
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_fasta.fasta'), 'r') as input_seqs:
-            alignment_string = input_seqs.read()
+        alignment_string = file_to_string('short_invalid_fasta.fasta')
         alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()
 
@@ -54,8 +52,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she corrects her alignment and resubmits
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_characters.fasta'), 'r') as input_seqs:
-            alignment_string = input_seqs.read()
+        alignment_string = file_to_string('short_invalid_characters.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -71,8 +68,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she corrects her alignment again and resubmits
-        with open(os.path.join(BASE_DIR, 'test_data/short_too_few_sequences.fasta'), 'r') as input_seqs:
-            alignment_string = input_seqs.read()
+        alignment_string = file_to_string('short_too_few_sequences.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -89,8 +85,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she adds the missing sequence and resubmits
-        with open(os.path.join(BASE_DIR, 'test_data/short_invalid_alignment.fasta'), 'r') as input_seqs:
-            alignment_string = input_seqs.read()
+        alignment_string = file_to_string('short_invalid_alignment.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -108,8 +103,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
         # error message
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as input_seqs:
-            alignment_string = input_seqs.read()
+        alignment_string = file_to_string('short.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)

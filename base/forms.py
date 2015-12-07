@@ -1,4 +1,5 @@
 from django import forms
+from helper_funcs.helpers_bio import parse_fasta
 import io
 from Bio import SeqIO
 
@@ -28,21 +29,6 @@ class QueryForm(forms.Form):
         error_messages={'required': 'Please submit an alignment'},
     )
 
-    def parse_fasta(self, fasta):
-        """
-        Parses fasta file into list of dicts of metadata and sequences using SeqIO.parse
-        :param fasta: fasta string
-        :return: fasta_list = [{'meta': 'sequence meta', 'seq': 'SEQUENCE'} ... ]
-        """
-        fasta_parse = SeqIO.parse(fasta, 'fasta')
-        fasta_dict_list = [
-            {
-               'meta': f.description,
-               'seq':  str(f.seq).upper()
-            } for f in fasta_parse
-            ]
-        return fasta_dict_list
-
     def clean_align_input(self):
         """
         Returns cleaned and validated alignment sequence data. Validates FASTA for standard FASTA alignment
@@ -54,7 +40,7 @@ class QueryForm(forms.Form):
             raise forms.ValidationError(FASTA_ERROR)
 
         data = io.StringIO(self.cleaned_data['align_input'])
-        parsed_data = self.parse_fasta(data)
+        parsed_data = parse_fasta(data)
 
         if len(parsed_data) <= 1:
             raise forms.ValidationError(LESS_THAN_TWO_SEQS_ERROR)
