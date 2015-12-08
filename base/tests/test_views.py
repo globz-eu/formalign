@@ -14,7 +14,7 @@ from helper_funcs.helpers_test import file_to_string
 __author__ = 'Stefan Dieterle'
 
 
-class IndexViewTestCase(TestCase):
+class IndexViewTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for index view
     """
@@ -32,7 +32,6 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for sequence display
     """
-
     def test_display_page_uses_display_seq_template(self):
         """
         Tests that seq_display view returns a 200 response on a POST request and uses the correct template
@@ -44,14 +43,37 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/query_display.html')
 
-    def test_display_page_displays_query_seq(self):
+    def test_display_page_displays_sequence_type(self):
+        """
+        Tests that seq_display displays the selected sequence type on a valid POST request
+        :return:
+        """
+        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
+            input_seqs = alignment_file.read()
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
+            self.assertEqual(elem[0].text,
+                             'Protein sequences:',
+                             format(elem[0].text)
+                             )
+
+        with open(os.path.join(BASE_DIR, 'test_data/DNA.fasta'), 'r') as alignment_file:
+            input_seqs = alignment_file.read()
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
+        with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
+            self.assertEqual(elem[0].text,
+                             'DNA sequences:',
+                             format(elem[0].text)
+                             )
+
+    def test_display_page_displays_protein_query_seq(self):
         """
         Tests that seq_display displays the query on a valid POST request
         :return:
         """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
             self.assertEqual(elems[0].text,
                              'Short sequence1:',
@@ -92,7 +114,7 @@ class SeqDisplayInvalidInput(TestCase):
     Tests for invalid alignment submission
     """
 
-    def response_for_invalid_post_request(self, input_file=''):
+    def response_for_invalid_post_request(self, input_file='', seq_type='Protein'):
         """
         Creates a response from a POST request to /query-sequences/ with an invalid alignment
         :param input_file: file containing invalid alignment
@@ -102,36 +124,36 @@ class SeqDisplayInvalidInput(TestCase):
             input_seqs = file_to_string(input_file)
         else:
             input_seqs = ''
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': seq_type})
         return response
 
-    def invalid_input_renders_index_template(self, input_file=''):
+    def invalid_input_renders_index_template(self, input_file='', seq_type='Protein'):
         """
         Tests that submitting an invalid alignment input renders the home page
         :param input_file: file containing invalid alignment
         :return:
         """
-        response = self.response_for_invalid_post_request(input_file)
+        response = self.response_for_invalid_post_request(input_file, seq_type)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/index.html')
 
-    def invalid_input_errors_are_shown_on_home_page(self, error_text, input_file=''):
+    def invalid_input_errors_are_shown_on_home_page(self, error_text, input_file='', seq_type='Protein'):
         """
         Tests that the correct error message is displayed on the home page on submission of an invalid alignment
         :param error_text: expected error message
         :param input_file: file containing invalid alignment
         :return:
         """
-        response = self.response_for_invalid_post_request(input_file)
+        response = self.response_for_invalid_post_request(input_file, seq_type)
         self.assertContains(response, escape(error_text))
 
-    def invalid_input_passes_form_to_template(self, input_file=''):
+    def invalid_input_passes_form_to_template(self, input_file='', seq_type='Protein'):
         """
         Tests that the form context is passed in response to an invalid alignment submission
         :param input_file: file containing invalid alignment
         :return:
         """
-        response = self.response_for_invalid_post_request(input_file)
+        response = self.response_for_invalid_post_request(input_file, seq_type)
         self.assertIsInstance(response.context['form'], QueryForm)
 
     def test_for_empty_input_renders_index_template(self):
@@ -140,6 +162,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_renders_index_template('')
+        self.invalid_input_renders_index_template('', 'DNA')
 
     def test_empty_input_errors_are_shown_on_home_page(self):
         """
@@ -147,6 +170,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_errors_are_shown_on_home_page(EMPTY_ERROR)
+        self.invalid_input_errors_are_shown_on_home_page(EMPTY_ERROR, '', 'DNA')
 
     def test_for_empty_input_passes_form_to_template(self):
         """
@@ -154,6 +178,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_passes_form_to_template()
+        self.invalid_input_passes_form_to_template(seq_type='DNA')
 
     def test_for_invalid_fasta_input_renders_index_template(self):
         """
@@ -161,6 +186,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_renders_index_template('short_invalid_fasta.fasta')
+        self.invalid_input_renders_index_template('DNA_invalid_fasta.fasta', 'DNA')
 
     def test_invalid_fasta_input_errors_are_shown_on_home_page(self):
         """
@@ -168,6 +194,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_errors_are_shown_on_home_page(FASTA_ERROR, 'short_invalid_fasta.fasta')
+        self.invalid_input_errors_are_shown_on_home_page(FASTA_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
 
     def test_for_invalid_fasta_input_passes_form_to_template(self):
         """
@@ -175,6 +202,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_passes_form_to_template('short_invalid_fasta.fasta')
+        self.invalid_input_passes_form_to_template('DNA_invalid_fasta.fasta', 'DNA')
 
     def test_for_invalid_character_input_renders_index_template(self):
         """
@@ -182,6 +210,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_renders_index_template('short_invalid_characters.fasta')
+        self.invalid_input_renders_index_template('DNA_invalid_fasta.fasta', 'DNA')
 
     def test_invalid_character_input_errors_are_shown_on_home_page(self):
         """
@@ -189,6 +218,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_errors_are_shown_on_home_page(CHARACTER_ERROR, 'short_invalid_characters.fasta')
+        self.invalid_input_errors_are_shown_on_home_page(CHARACTER_ERROR, 'DNA_invalid_characters.fasta', 'DNA')
 
     def test_for_invalid_character_input_passes_form_to_template(self):
         """
@@ -196,6 +226,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_passes_form_to_template('short_invalid_characters.fasta')
+        self.invalid_input_passes_form_to_template('DNA_invalid_characters.fasta', 'DNA')
 
     def test_for_invalid_alignment_input_renders_index_template(self):
         """
@@ -203,6 +234,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_renders_index_template('short_invalid_alignment.fasta')
+        self.invalid_input_renders_index_template('DNA_invalid_alignment.fasta', 'DNA')
 
     def test_invalid_alignment_input_errors_are_shown_on_home_page(self):
         """
@@ -210,6 +242,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_errors_are_shown_on_home_page(ALIGNMENT_ERROR, 'short_invalid_alignment.fasta')
+        self.invalid_input_errors_are_shown_on_home_page(ALIGNMENT_ERROR, 'DNA_invalid_alignment.fasta', 'DNA')
 
     def test_for_invalid_alignment_input_passes_form_to_template(self):
         """
@@ -217,6 +250,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_passes_form_to_template('short_invalid_alignment.fasta')
+        self.invalid_input_passes_form_to_template('DNA_invalid_alignment.fasta', 'DNA')
 
     def test_for_too_few_sequences_input_renders_index_template(self):
         """
@@ -224,6 +258,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_renders_index_template('short_too_few_sequences.fasta')
+        self.invalid_input_renders_index_template('DNA_too_few_sequences.fasta', 'DNA')
 
     def test_too_few_sequences_input_errors_are_shown_on_home_page(self):
         """
@@ -231,6 +266,7 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_errors_are_shown_on_home_page(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
+        self.invalid_input_errors_are_shown_on_home_page(LESS_THAN_TWO_SEQS_ERROR, 'DNA_too_few_sequences.fasta', 'DNA')
 
     def test_for_too_few_sequences_input_passes_form_to_template(self):
         """
@@ -238,3 +274,4 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         self.invalid_input_passes_form_to_template('short_too_few_sequences.fasta')
+        self.invalid_input_passes_form_to_template('DNA_too_few_sequences.fasta', 'DNA')

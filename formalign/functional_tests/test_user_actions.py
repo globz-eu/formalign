@@ -18,7 +18,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         # time.sleep(2)
         self.browser.quit()
 
-    def test_basic_user_experience(self):
+    def test_home_page_user_experience(self):
         """
         Tests basic user interaction with formalign.eu site
         :return:
@@ -37,7 +37,58 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
         self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
 
-        # She decides to give it a try. She types in an alignment of her favorite proteins and submits it.
+        # She sees two radio buttons for DNA and protein
+        dna_button = self.browser.find_element_by_css_selector('input[type="radio" name="DNA"]')
+        self.assertIsNotNone(dna_button)
+        protein_button = self.browser.find_element_by_css_selector('input[type="radio" name="Protein"]')
+        self.assertIsNotNone(protein_button)
+
+        # She sees that the DNA button is selected by default
+        self.assertEqual(dna_button.is_selected(), True)
+
+        # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
+        protein_button.click()
+        self.assertEqual(protein_button.is_selected(), True)
+        self.assertEqual(dna_button.is_selected(), False)
+
+    def test_DNA_alignment_user_experience(self):
+        # User visits the formalign.eu site.
+        self.browser.get(self.live_server_url + '/')
+
+        # She clicks the DNA button
+        dna_button = self.browser.find_element_by_css_selector('input[type="radio" name="DNA"]')
+        dna_button.click()
+
+        # She decides to try the default with a DNA alignment first so she pastes in a DNA alignment and submits
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_string = file_to_string('DNA.fasta')
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
+        self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
+        first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
+        self.assertEqual(
+            first_seq_info.text,
+            'Short sequence1:'
+        )
+        first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
+        self.assertIsNotNone(first_seq_content)
+        self.assertEqual(first_seq_content.text, 'MKERBGWAQ--QGKKPWRF--EEW')
+
+        # She is redirected to a display page where she sees her alignment rendered in the default way.
+        self.fail('Incomplete Test')
+
+    def test_protein_alignment_user_experience(self):
+        # User visits the formalign.eu site.
+        self.browser.get(self.live_server_url + '/')
+
+        # she clicks the protein radio button
+        protein_button = self.browser.find_element_by_css_selector('input[type="radio" name="Protein"]')
+        protein_button.click()
+
+        # She types in an alignment of her favorite proteins and submits it.
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_string = file_to_string('short_invalid_fasta.fasta')
         alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()

@@ -26,7 +26,7 @@ def seq_display(request):
             return render(
                 request,
                 'base/query_display.html',
-                {'query_seqs': form.cleaned_data['align_input']}
+                {'query_seqs': form.cleaned_data['align_input'], 'seq_type': form.cleaned_data['seq_type']}
             )
         else:
             return render(request, 'base/index.html', {'form': form})

@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+    <div class="well col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10">
+        <p class="query_seq_type">{{ seq_type }} sequences:</p>
+    </div>
     <ol>
     {% for q in query_seqs %}
         <div class="well col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10">

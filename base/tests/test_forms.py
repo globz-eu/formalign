@@ -28,9 +28,9 @@ class QueryFormTest(TestCase):
             [error_text]
         )
 
-    def test_form_renders_seq_text_input(self):
+    def test_form_renders_seq_text_input_widget(self):
         """
-        Tests correct rendering of form elements
+        Tests correct rendering of form input text area
         :return:
         """
         form = QueryForm()
@@ -38,6 +38,17 @@ class QueryFormTest(TestCase):
         self.assertIn('Paste in your alignment in FASTA format:', field.label_tag())
         self.assertIn('placeholder="FASTA alignment"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
+
+    def test_form_renders_sequence_type_radio_buttons(self):
+        """
+        Tests correct rendering of form radio buttons
+        :return:
+        """
+        form = QueryForm()
+        field = form['seq_type']
+        self.assertIn('Input sequence type:', field.label_tag())
+        self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="Protein"', form.as_p())
+        self.assertIn('<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p())
 
     def test_form_validation_for_blank_items(self):
         """

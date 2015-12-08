@@ -5,7 +5,6 @@ from Bio import SeqIO
 
 __author__ = 'Stefan Dieterle'
 
-
 EMPTY_ERROR = 'Please submit an alignment'
 FASTA_ERROR = 'Sequence is not FASTA compliant, no ">" as first character'
 CHARACTER_ERROR = 'Invalid character in sequence: '
@@ -27,6 +26,18 @@ class QueryForm(forms.Form):
         label='Paste in your alignment in FASTA format:',
         required=True,
         error_messages={'required': 'Please submit an alignment'},
+    )
+
+    seq_type_choices = [
+        ('Protein', 'Protein'),
+        ('DNA', 'DNA')
+    ]
+    seq_type = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=seq_type_choices,
+        label='Input sequence type:',
+        required=True,
+        initial='DNA',
     )
 
     def clean_align_input(self):

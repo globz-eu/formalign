@@ -10,6 +10,13 @@
         <form class="form-horizontal" role="form" method="post" action="/query-sequences/">
         <div class="form-group">
             <div class="col-sm-2 control-label">
+                {{ form.seq_type.label_tag }}
+            </div>
+            <div class="col-sm-9">
+                {{ form.seq_type.errors }}
+                {{ form.seq_type }}
+            </div>
+            <div class="col-sm-2 control-label">
                 {{ form.align_input.label_tag }}
             </div>
             <div class="col-sm-9">
