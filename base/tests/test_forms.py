@@ -56,6 +56,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(EMPTY_ERROR)
+        self.fail('Incomplete Test')
 
     def test_form_validation_for_invalid_fasta(self):
         """
@@ -63,6 +64,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(FASTA_ERROR, 'short_invalid_fasta.fasta')
+        self.fail('Incomplete Test')
 
     def test_form_validation_for_invalid_characters(self):
         """
@@ -70,6 +72,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(CHARACTER_ERROR + 'Short sequence3', 'short_invalid_characters.fasta')
+        self.fail('Incomplete Test')
 
     def test_form_validation_for_invalid_alignment(self):
         """
@@ -77,6 +80,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(ALIGNMENT_ERROR, 'short_invalid_alignment.fasta')
+        self.fail('Incomplete Test')
 
     def test_form_validation_for_too_few_sequences_in_alignment(self):
         """
@@ -84,3 +88,4 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
+        self.fail('Incomplete Test')
