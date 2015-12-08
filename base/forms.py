@@ -1,7 +1,6 @@
 from django import forms
 from helper_funcs.helpers_bio import parse_fasta
 import io
-from Bio import SeqIO
 
 __author__ = 'Stefan Dieterle'
 
@@ -47,22 +46,42 @@ class QueryForm(forms.Form):
         length)
         :return: parsed_data = [{'meta': 'sequence meta', 'seq': 'SEQUENCE'} ... ]
         """
+        align_input = self.cleaned_data['align_input']
+        data = io.StringIO(align_input)
+        align_input = parse_fasta(data)
+
         if self.cleaned_data['align_input'][0] != '>':
             raise forms.ValidationError(FASTA_ERROR)
 
-        data = io.StringIO(self.cleaned_data['align_input'])
-        parsed_data = parse_fasta(data)
-
-        if len(parsed_data) <= 1:
+        if len(align_input) <= 1:
             raise forms.ValidationError(LESS_THAN_TWO_SEQS_ERROR)
-        alphabet = set('ABCDEFGHIKLMNPQRSTUVWXY*-')
+
         lengths = []
-        for p in parsed_data:
-            if not alphabet.issuperset(p['seq']):
-                raise forms.ValidationError(CHARACTER_ERROR + '%s' % p['meta'])
+        for p in align_input:
             lengths.append(len(p['seq']))
 
         # check that lengths contains only identical values, count trick is supposed to be faster than using set
         if lengths.count(lengths[0]) != len(lengths):
             raise forms.ValidationError(ALIGNMENT_ERROR)
-        return parsed_data
+
+        return align_input
+
+    def clean(self):
+        """
+        Adds error to align_input field depending on seq_type field
+        :return:
+        """
+        cleaned_data = forms.Form.clean(self)
+        seq_type = cleaned_data.get('seq_type')
+        align_input = cleaned_data.get('align_input')
+
+        alphabets = {'DNA': set('ACGNT-'), 'Protein': set('ABCDEFGHIKLMNPQRSTUVWXY*-')}
+        alphabet = alphabets[seq_type]
+        if align_input:
+            try:
+                for p in align_input:
+                    if not alphabet.issuperset(p['seq']):
+                        self.add_error('align_input', CHARACTER_ERROR + '%s' % p['meta'])
+                        raise ValueError
+            except ValueError:
+                pass

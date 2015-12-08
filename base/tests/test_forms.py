@@ -10,7 +10,7 @@ __author__ = 'Stefan Dieterle'
 
 class QueryFormTest(TestCase):
 
-    def validation(self, error_text, input_file=''):
+    def validation(self, error_text, input_file='', seq_type='Protein'):
         """
         Performs validation test for invalid forms, takes a user alignment input, asserts form.is_valid as false and
         checks the error
@@ -21,11 +21,11 @@ class QueryFormTest(TestCase):
             input_seqs = file_to_string(input_file)
         else:
             input_seqs = ''
-        form = QueryForm(data={'align_input': input_seqs})
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': seq_type})
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['align_input'],
-            [error_text]
+            [error_text], format(form.errors['align_input'])
         )
 
     def test_form_renders_seq_text_input_widget(self):
@@ -56,7 +56,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(EMPTY_ERROR)
-        self.fail('Incomplete Test')
+        self.validation(EMPTY_ERROR, '', 'DNA')
 
     def test_form_validation_for_invalid_fasta(self):
         """
@@ -64,7 +64,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(FASTA_ERROR, 'short_invalid_fasta.fasta')
-        self.fail('Incomplete Test')
+        self.validation(FASTA_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
 
     def test_form_validation_for_invalid_characters(self):
         """
@@ -72,7 +72,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(CHARACTER_ERROR + 'Short sequence3', 'short_invalid_characters.fasta')
-        self.fail('Incomplete Test')
+        self.validation(CHARACTER_ERROR + 'sequence1', 'DNA_invalid_characters.fasta', 'DNA')
 
     def test_form_validation_for_invalid_alignment(self):
         """
@@ -80,7 +80,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(ALIGNMENT_ERROR, 'short_invalid_alignment.fasta')
-        self.fail('Incomplete Test')
+        self.validation(ALIGNMENT_ERROR, 'DNA_invalid_alignment.fasta', 'DNA')
 
     def test_form_validation_for_too_few_sequences_in_alignment(self):
         """
@@ -88,4 +88,4 @@ class QueryFormTest(TestCase):
         :return:
         """
         self.validation(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
-        self.fail('Incomplete Test')
+        self.validation(LESS_THAN_TWO_SEQS_ERROR, 'DNA_too_few_sequences.fasta', 'DNA')

@@ -39,7 +39,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
             input_seqs = alignment_file.read()
-            response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+            response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/query_display.html')
 
