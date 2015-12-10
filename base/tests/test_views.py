@@ -37,9 +37,8 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         Tests that seq_display view returns a 200 response on a POST request and uses the correct template
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
-            response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
+        input_seqs = file_to_string('short.fasta')
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/query_display.html')
 
@@ -48,8 +47,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         Tests that seq_display displays the selected sequence type on a valid POST request
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
+        input_seqs = file_to_string('short.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
         with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
@@ -57,8 +55,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              format(elem[0].text)
                              )
 
-        with open(os.path.join(BASE_DIR, 'test_data/DNA.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
+        input_seqs = file_to_string('DNA.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
@@ -71,8 +68,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         Tests that seq_display displays the query on a valid POST request
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
+        input_seqs = file_to_string('short.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
             self.assertEqual(elems[0].text,
@@ -95,13 +91,19 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              'seq2: ' + format(elems[1].text)
                              )
 
+    def test_display_page_displays_sequence_with_less_than_80_residues_per_line(self):
+        input_seqs = file_to_string('spa_align_clustal_omega.fasta')
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
+            for elem in elems:
+                self.assertTrue(len(elem.text) <= 80)
+
     def test_parse_fasta(self):
         """
         Tests that the parse_fasta function returns expected values with a valid fasta alignment
         :return:
         """
-        with open(os.path.join(BASE_DIR, 'test_data/short.fasta'), 'r') as alignment_file:
-            input_seqs = alignment_file.read()
+        input_seqs = file_to_string('short.fasta')
         parsed = parse_fasta(io.StringIO(input_seqs))
         self.assertEqual(parsed[0]['meta'], 'Short sequence1')
         self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')

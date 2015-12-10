@@ -1,0 +1,22 @@
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.query_seq {
+    overflow-x: auto;
+}
+
+.query_seq_display {
+    width: 80ch;
+    white-space: nowrap;
+    font-family: monospace;
+}
+
+.query_seq_meta {
+    margin-bottom: 15px;
+}
+
+.query_seq_type {
+    font-size: 24px;
+}

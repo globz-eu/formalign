@@ -20,7 +20,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         # time.sleep(5)
         self.browser.quit()
 
-    def test_home_page_user_experience(self):
+    def test_basic_user_experience(self):
         """
         Tests basic user interaction with formalign.eu site
         :return:
@@ -62,6 +62,10 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         # She is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
+        seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')
+        self.assertIsNotNone(seq_content)
+        for f in seq_content:
+            self.assertTrue(len(f.text) <= 80)
         self.fail('Incomplete Test')
 
     def test_DNA_alignment_user_experience(self):

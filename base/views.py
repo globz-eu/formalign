@@ -23,10 +23,20 @@ def seq_display(request):
     if request.method == 'POST':
         form = QueryForm(request.POST)
         if form.is_valid():
+            # split sequences in chunks of 80 characters
+            length = 80
+            query_seqs = [
+                {
+                    'meta': f['meta'],
+                    'seq': [
+                        f['seq'][i:i+length] for i in range(0, len(f['seq']), length)
+                        ]
+                } for f in form.cleaned_data['align_input']
+                ]
             return render(
                 request,
                 'base/query_display.html',
-                {'query_seqs': form.cleaned_data['align_input'], 'seq_type': form.cleaned_data['seq_type']}
+                {'query_seqs': query_seqs, 'seq_type': form.cleaned_data['seq_type']}
             )
         else:
             return render(request, 'base/index.html', {'form': form})
