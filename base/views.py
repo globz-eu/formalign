@@ -27,9 +27,9 @@ def seq_display(request):
             length = 80
             query_seqs = [
                 {
-                    'meta': f['meta'],
+                    'meta': f.description,
                     'seq': [
-                        f['seq'][i:i+length] for i in range(0, len(f['seq']), length)
+                        f.seq[i:i+length] for i in range(0, len(f.seq), length)
                         ]
                 } for f in form.cleaned_data['align_input']
                 ]

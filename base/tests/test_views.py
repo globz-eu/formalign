@@ -7,7 +7,6 @@ from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from formalign.settings import BASE_DIR
 from helper_funcs.helpers_bio import parse_fasta, parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
@@ -49,7 +48,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         input_seqs = file_to_string('short.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
+        with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
                              'Protein sequences:',
                              format(elem[0].text)
@@ -57,7 +56,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
 
         input_seqs = file_to_string('DNA.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
-        with self.assertHTML(response, 'p[class="query_seq_type"]') as elem:
+        with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
                              'DNA sequences:',
                              format(elem[0].text)

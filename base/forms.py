@@ -1,5 +1,5 @@
 from django import forms
-from helper_funcs.helpers_bio import parse_fasta
+from helper_funcs.helpers_bio import parse_fasta_alignment
 import io
 
 __author__ = 'Stefan Dieterle'
@@ -48,21 +48,17 @@ class QueryForm(forms.Form):
         """
         align_input = self.cleaned_data['align_input']
         data = io.StringIO(align_input)
-        align_input = parse_fasta(data)
+
+        try:
+            align_input = parse_fasta_alignment(data)
+        except ValueError:
+            raise forms.ValidationError(ALIGNMENT_ERROR)
 
         if self.cleaned_data['align_input'][0] != '>':
             raise forms.ValidationError(FASTA_ERROR)
 
         if len(align_input) <= 1:
             raise forms.ValidationError(LESS_THAN_TWO_SEQS_ERROR)
-
-        lengths = []
-        for p in align_input:
-            lengths.append(len(p['seq']))
-
-        # check that lengths contains only identical values, count trick is supposed to be faster than using set
-        if lengths.count(lengths[0]) != len(lengths):
-            raise forms.ValidationError(ALIGNMENT_ERROR)
 
         return align_input
 
@@ -80,8 +76,8 @@ class QueryForm(forms.Form):
         if align_input:
             try:
                 for p in align_input:
-                    if not alphabet.issuperset(p['seq']):
-                        self.add_error('align_input', CHARACTER_ERROR + '%s' % p['meta'])
+                    if not alphabet.issuperset(p.seq):
+                        self.add_error('align_input', CHARACTER_ERROR + '%s' % p.description)
                         raise ValueError
             except ValueError:
                 pass
