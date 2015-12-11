@@ -8,7 +8,7 @@ from with_asserts.mixin import AssertHTMLMixin
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from formalign.settings import BASE_DIR
-from helper_funcs.helpers_bio import parse_fasta
+from helper_funcs.helpers_bio import parse_fasta, parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
@@ -109,6 +109,18 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')
         self.assertEqual(parsed[1]['meta'], 'Short sequence2')
         self.assertEqual(parsed[1]['seq'], 'MKERBGWA-SYQGKKPWRFAQ-EW')
+
+    def test_parse_fasta_alignment(self):
+        """
+        Tests that the parse_fasta function returns expected values with a valid fasta alignment
+        :return:
+        """
+        input_seqs = file_to_string('short.fasta')
+        parsed = parse_fasta_alignment(io.StringIO(input_seqs))
+        self.assertEqual(parsed[0].description, 'Short sequence1')
+        self.assertEqual(parsed[0].seq, 'MKERBGWAQ--QGKKPWRF--EEW')
+        self.assertEqual(parsed[1].description, 'Short sequence2')
+        self.assertEqual(parsed[1].seq, 'MKERBGWA-SYQGKKPWRFAQ-EW')
 
 
 class SeqDisplayInvalidInput(TestCase):
