@@ -104,15 +104,15 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         input_seqs = file_to_string('spa_align_clustal_omega.fasta')
         response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
-            self.assertEqual(elems[-1].text,
+        with self.assertHTML(response, 'li[class="query_seq_meta no_style"]') as elems:
+            self.assertEqual(elems[0].text,
                              'Consensus:',
                              'consensus meta: ' + format(elems[0].text)
                              )
         cons_seq = file_to_string('consensus.txt')
-        with self.assertHTML(response, 'p[class=consensus_seq_display]') as elems:
+        with self.assertHTML(response, 'p[class="query_seq_display consensus_seq_display"]') as elems:
             self.assertEqual(elems[0].text,
-                             cons_seq[:79],
+                             cons_seq[:80],
                              'consensus seq: ' + elems[0].text
                              )
             self.assertNotIn(' ', elems[0].text)
