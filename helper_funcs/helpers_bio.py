@@ -7,7 +7,7 @@ def parse_fasta_alignment(fasta):
     """
     Parses fasta file or file-like object into list of dicts of metadata and sequences using AlignIO.read()
     :param fasta: fasta file or file-like object
-    :return: fasta_list = [{'meta': 'sequence meta', 'seq': 'SEQUENCE'} ... ]
+    :return: fasta_parse = AlignIO object
     """
     fasta_parse = AlignIO.read(fasta, 'fasta')
     for f in fasta_parse:

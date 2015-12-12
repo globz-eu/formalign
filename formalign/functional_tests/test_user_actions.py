@@ -60,15 +60,33 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         alignment_input.send_keys(Keys.CONTROL, 'v')
         self.browser.find_element_by_id('submit-fasta').click()
 
-        # She is redirected to a page showing the submitted sequences from her alignment
+        # She is redirected to a page showing the submitted sequences from her alignment and a simple consensus sequence
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')
         self.assertIsNotNone(seq_content)
         for f in seq_content:
             self.assertTrue(len(f.text) <= 80)
+
+        first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
+        self.assertEqual(
+            first_seq_info.text,
+            'AT1G53090.1 | Symbols: SPA4 | SPA1-related 4 | chr1:19783748-19786690 FORWARD LENGTH=794:'
+        )
+        first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
+        self.assertIsNotNone(first_seq_content)
+        self.assertEqual(first_seq_content.text, '-' * 80)
+
+        consensus_seq = self.browser.find_elements_by_css_selector('.consensus_seq_display')[0]
+        self.assertIsNotNone(consensus_seq)
+        cons_seq = file_to_string('consensus.txt')
+        self.assertEqual(consensus_seq.text, cons_seq[:79])
+        consensus_meta = self.browser.find_elements_by_css_selector('.consensus_seq_meta')[0]
+        self.assertEqual(consensus_meta.text, 'Consensus:')
+
+        # She sees a "Render" button, she clicks the "Render" button.
         self.fail('Incomplete Test')
 
-    def test_DNA_alignment_user_experience(self):
+    def test_DNA_alignment_validation(self):
         # User visits the formalign.eu site.
         self.browser.get(self.live_server_url + '/')
 
@@ -76,9 +94,76 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         dna_button = self.browser.find_element_by_css_selector('input#id_seq_type_1')
         dna_button.click()
 
-        # She decides to try the default with a DNA alignment first so she pastes in a DNA alignment and submits
+        # She decides to try the default with a DNA alignment so she pastes in a DNA alignment and submits
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_string = file_to_string('DNA_invalid_fasta.fasta')
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
+        # error message telling her that her FASTA format is invalid
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Sequence is not FASTA compliant, no ">" as first character'
+        )
+
+        # she corrects her alignment and resubmits
+        alignment_string = file_to_string('DNA_invalid_characters.fasta')
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
+        # again where she sees an error message telling her that her sequences contain invalid characters
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Invalid character in sequence: sequence1'
+        )
+
+        # she corrects her alignment again and resubmits
+        alignment_string = file_to_string('DNA_too_few_sequences.fasta')
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # unfortunately this time she accidentally erased one sequence and is left with only one sequence so she gets
+        # redirected to the submission form again where she sees an error message telling her that her alignment is not
+        # an alignment since it contains only one sequence
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Submitted data is not a valid alignment, it contains less than 2 sequences'
+        )
+
+        # she adds the missing sequence and resubmits
+        alignment_string = file_to_string('DNA_invalid_alignment.fasta')
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+        alignment_input.send_keys(alignment_string)
+        self.browser.find_element_by_id('submit-fasta').click()
+
+        # it must be starting to be a bit late since she added some residues to her first sequence so it is longer than
+        # the second now so she gets redirected to the submission form again where she sees an error message telling her
+        # that her alignment is not an alignment since the sequences do not all have the same length
+        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+            error.text,
+            'Alignment invalid, sequences have different lengths'
+        )
+
+        # She tries one final time and threatens to throw her laptop out of the window if she gets another
+        # error message
         alignment_string = file_to_string('DNA.fasta')
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
         alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()
 
@@ -96,7 +181,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         # She is redirected to a display page where she sees her alignment rendered in the default way.
         self.fail('Incomplete Test')
 
-    def test_protein_alignment_user_experience(self):
+    def test_protein_alignment_validation(self):
         # User visits the formalign.eu site.
         self.browser.get(self.live_server_url + '/')
 

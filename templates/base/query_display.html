@@ -19,5 +19,13 @@
             </div>
         </div>
     {% endfor %}
+        <div class="query_seq_block well col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10">
+            <li class="query_seq_meta no_style">{{ consensus.meta }}:</li>
+            <div class="query_seq">
+                {% for cs in consensus.seq %}
+                    <p class="query_seq_display consensus_seq_display">{{ cs }}</p>
+                {% endfor %}
+            </div>
+        </div>
     </ol>
 {% endblock %}

@@ -7,7 +7,7 @@ from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from helper_funcs.helpers_bio import parse_fasta, parse_fasta_alignment
+from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
@@ -97,17 +97,26 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
             for elem in elems:
                 self.assertTrue(len(elem.text) <= 80)
 
-    def test_parse_fasta(self):
+    def test_display_page_displays_consensus(self):
         """
-        Tests that the parse_fasta function returns expected values with a valid fasta alignment
+        Tests that seq_display displays the consensus sequence on a valid POST request
         :return:
         """
-        input_seqs = file_to_string('short.fasta')
-        parsed = parse_fasta(io.StringIO(input_seqs))
-        self.assertEqual(parsed[0]['meta'], 'Short sequence1')
-        self.assertEqual(parsed[0]['seq'], 'MKERBGWAQ--QGKKPWRF--EEW')
-        self.assertEqual(parsed[1]['meta'], 'Short sequence2')
-        self.assertEqual(parsed[1]['seq'], 'MKERBGWA-SYQGKKPWRFAQ-EW')
+        input_seqs = file_to_string('spa_align_clustal_omega.fasta')
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
+            self.assertEqual(elems[-1].text,
+                             'Consensus:',
+                             'consensus meta: ' + format(elems[0].text)
+                             )
+        cons_seq = file_to_string('consensus.txt')
+        with self.assertHTML(response, 'p[class=consensus_seq_display]') as elems:
+            self.assertEqual(elems[0].text,
+                             cons_seq[:79],
+                             'consensus seq: ' + elems[0].text
+                             )
+            self.assertNotIn(' ', elems[0].text)
+            self.assertNotIn('\n', elems[0].text)
 
     def test_parse_fasta_alignment(self):
         """

@@ -49,13 +49,13 @@ class QueryForm(forms.Form):
         align_input = self.cleaned_data['align_input']
         data = io.StringIO(align_input)
 
+        if self.cleaned_data['align_input'][0] != '>':
+            raise forms.ValidationError(FASTA_ERROR)
+
         try:
             align_input = parse_fasta_alignment(data)
         except ValueError:
             raise forms.ValidationError(ALIGNMENT_ERROR)
-
-        if self.cleaned_data['align_input'][0] != '>':
-            raise forms.ValidationError(FASTA_ERROR)
 
         if len(align_input) <= 1:
             raise forms.ValidationError(LESS_THAN_TWO_SEQS_ERROR)
@@ -77,7 +77,16 @@ class QueryForm(forms.Form):
             try:
                 for p in align_input:
                     if not alphabet.issuperset(p.seq):
-                        self.add_error('align_input', CHARACTER_ERROR + '%s' % p.description)
-                        raise ValueError
-            except ValueError:
-                pass
+
+                        raise CharacterError(p.description)
+            except CharacterError as v_err:
+                self.add_error('align_input', v_err.message + '%s' % v_err.seq)
+
+
+class CharacterError(Exception):
+    """
+    Custom error class for invalid character in sequence
+    """
+    def __init__(self, seq):
+        self.seq = seq
+        self.message = CHARACTER_ERROR
