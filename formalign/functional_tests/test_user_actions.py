@@ -79,8 +79,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         consensus_seq = self.browser.find_elements_by_css_selector('.consensus_seq_display')[0]
         self.assertIsNotNone(consensus_seq)
         cons_seq = file_to_string('consensus.txt')
-        self.assertEqual(consensus_seq.text, cons_seq[:79])
-        consensus_meta = self.browser.find_elements_by_css_selector('.consensus_seq_meta')[0]
+        self.assertEqual(consensus_seq.text, cons_seq[:80])
+        consensus_meta = self.browser.find_elements_by_xpath('//li[@class="query_seq_meta no_style"]')[0]
         self.assertEqual(consensus_meta.text, 'Consensus:')
 
         # She sees a "Render" button, she clicks the "Render" button.
