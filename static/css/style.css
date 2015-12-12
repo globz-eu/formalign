@@ -24,3 +24,7 @@
 li.no_style {
     list-style-type: none;
 }
+
+#render-align {
+    margin-top: 15px;
+}
