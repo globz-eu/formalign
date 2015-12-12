@@ -83,7 +83,26 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         consensus_meta = self.browser.find_elements_by_xpath('//li[@class="query_seq_meta no_style"]')[0]
         self.assertEqual(consensus_meta.text, 'Consensus:')
 
-        # She sees a "Render" button, she clicks the "Render" button.
+        # She is happy with the result, sees a "Render" button and clicks it.
+        render_button = self.browser.find_element_by_css_selector('button#render-align')
+        self.assertIsNotNone(render_button)
+        render_button.click()
+
+        # She is redirected to the alignment display page
+        self.assertEqual(self.browser.title, 'Formalign.eu Alignment Display', self.browser.title)
+
+        # She sees the alignment displayed with 80 characters per line in blocks of 10 with sequence ids
+        s0 = self.browser.find_elements_by_xpath(
+                '//div[@class="al_ln"]'
+        ).find_elements_by_xpath('//div[@class="al_el S0"]')
+        s1 = self.browser.find_elements_by_xpath(
+                '//div[@class="al_ln"]'
+        ).find_elements_by_xpath('//div[@class="al_el S1"]')
+        self.assertEqual(len(s0) + len(s1), 80)
+        sep = self.browser.find_elements_by_xpath(
+                '//div[@class="al_ln"]'
+        ).find_elements_by_xpath('//div[@class="sep"]')
+        self.assertEqual(len(sep), 7)
         self.fail('Incomplete Test')
 
     def test_DNA_alignment_validation(self):
