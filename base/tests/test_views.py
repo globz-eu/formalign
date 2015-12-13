@@ -31,6 +31,16 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for sequence display
     """
+    def response_builder(self, file):
+        """
+        Builds response for seq_display tests
+        :param file: file containing alignment
+        :return:
+        """
+        input_seqs = file_to_string('short.fasta')
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
+        return response
+
     def test_display_page_uses_display_seq_template(self):
         """
         Tests that seq_display view returns a 200 response on a POST request and uses the correct template
