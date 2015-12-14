@@ -1,9 +1,14 @@
 from django.test import TestCase
+
 import io
+
 from Bio import SeqIO
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
+from Bio.Alphabet import Gapped
+
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
+
 from base.models import Alignment, Seqrecord, save_alignment_to_db, get_multipleseqalignment_object_from_db
 
 __author__ = 'Stefan Dieterle'
@@ -15,7 +20,7 @@ class SeqrecordModelTestCase(TestCase):
     """
 
     def setUp(self):
-        seq_input = io.StringIO(file_to_string('spa_align_clustal_omega.fasta'))
+        seq_input = io.StringIO(file_to_string('spa_protein_alignment.fasta'))
         data = SeqIO.parse(seq_input, 'fasta')
         self.seqs = [d.upper() for d in data]
         for s in self.seqs:
@@ -44,8 +49,12 @@ class AlignmentModelTestCase(TestCase):
 
     def setUp(self):
         self.name = 'A. tha. SPA family alignment'
-        align_input = io.StringIO(file_to_string('spa_align_clustal_omega.fasta'))
+        align_input = io.StringIO(file_to_string('spa_protein_alignment.fasta'))
         self.data = parse_fasta_alignment(align_input)
+        alphabet = Gapped(ExtendedIUPACProtein())
+        for a in self.data:
+            a.seq.alphabet = alphabet
+        self.data._alphabet = alphabet
         # self.alignment = Alignment().save_alignment_to_db(name, data)
 
     def test_alignment_basic(self):
@@ -66,7 +75,11 @@ class AlignmentModelTestCase(TestCase):
         self.assertEqual(alignment.name, 'A. tha. SPA family alignment')
         self.assertEqual(
                 [seq.seq_id for seq in alignment.seqs.all()],
-                ['AT1G53090.1', 'AT3G15354.1', 'AT2G46340.1', 'AT4G11110.1'])
+                ['gi|15219179|ref|NP_175717.1|',
+                 'gi|22331100|ref|NP_683567.1|',
+                 'gi|30690337|ref|NP_182157.2|',
+                 'gi|145340093|ref|NP_192849.4|']
+        )
 
     def test_save_alignment_to_db(self):
         save = save_alignment_to_db(self.name, self.data)
@@ -74,7 +87,11 @@ class AlignmentModelTestCase(TestCase):
         self.assertEqual(alignment[0].name, 'A. tha. SPA family alignment', alignment[0].name)
         self.assertEqual(
                 [seq.seq_id for seq in alignment[0].seqs.all()],
-                ['AT1G53090.1', 'AT3G15354.1', 'AT2G46340.1', 'AT4G11110.1'])
+                ['gi|15219179|ref|NP_175717.1|',
+                 'gi|22331100|ref|NP_683567.1|',
+                 'gi|30690337|ref|NP_182157.2|',
+                 'gi|145340093|ref|NP_192849.4|']
+        )
         self.assertEqual(save, alignment[0].pk, save)
 
     def test_get_multipleseqalignment_object_from_db(self):
@@ -89,4 +106,22 @@ class AlignmentModelTestCase(TestCase):
             )
             alignment.seqs.add(seqrec)
         mulseqal = get_multipleseqalignment_object_from_db(alignment.pk)
-        self.assertEqual([seq.id for seq in mulseqal], ['AT1G53090.1', 'AT3G15354.1', 'AT2G46340.1', 'AT4G11110.1'])
+        self.assertEqual(
+                [seq.id for seq in mulseqal],
+                ['gi|15219179|ref|NP_175717.1|',
+                 'gi|22331100|ref|NP_683567.1|',
+                 'gi|30690337|ref|NP_182157.2|',
+                 'gi|145340093|ref|NP_192849.4|']
+        )
+
+    def test_save_and_get_sanity_check(self):
+        align_pk = save_alignment_to_db(self.name, self.data)
+        mulseqal = get_multipleseqalignment_object_from_db(align_pk)
+        self.assertEqual(
+                [seq.id for seq in mulseqal],
+                ['gi|15219179|ref|NP_175717.1|',
+                 'gi|22331100|ref|NP_683567.1|',
+                 'gi|30690337|ref|NP_182157.2|',
+                 'gi|145340093|ref|NP_192849.4|']
+        )
+        self.assertEqual(str(mulseqal), str(self.data), str(mulseqal))

@@ -67,7 +67,7 @@ class QueryForm(forms.Form):
 
     def clean(self):
         """
-        Adds error to align_input field depending on seq_type field
+        Adds error to align_input field depending on seq_type field, adds alphabets to sequences and alignment
         :return:
         """
         cleaned_data = forms.Form.clean(self)
@@ -78,6 +78,7 @@ class QueryForm(forms.Form):
         if align_input:
             for a in cleaned_data['align_input']:
                 a.seq.alphabet = alphabets[seq_type]
+            cleaned_data['align_input']._alphabet = alphabets[seq_type]
         alphabet = set(alphabets[seq_type].letters)
         if align_input:
             try:

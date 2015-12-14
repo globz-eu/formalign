@@ -65,7 +65,7 @@ class QueryFormTest(TestCase):
         Tests error on invalid FASTA (no '>' as first character)
         :return:
         """
-        self.validation(FASTA_ERROR, 'short_invalid_fasta.fasta')
+        self.validation(FASTA_ERROR, 'protein_invalid_fasta.fasta')
         self.validation(FASTA_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
 
     def test_form_validation_for_invalid_characters(self):
@@ -73,7 +73,7 @@ class QueryFormTest(TestCase):
         Tests error on invalid characters in FASTA sequence for protein sequences
         :return:
         """
-        self.validation(CHARACTER_ERROR + 'Short sequence3', 'short_invalid_characters.fasta')
+        self.validation(CHARACTER_ERROR + 'Short sequence3', 'protein_invalid_characters.fasta')
         self.validation(CHARACTER_ERROR + 'sequence1', 'DNA_invalid_characters.fasta', 'DNA')
 
     def test_form_validation_for_invalid_alignment(self):
@@ -81,7 +81,7 @@ class QueryFormTest(TestCase):
         Tests error on invalid alignment when sequences have differing lengths
         :return:
         """
-        self.validation(ALIGNMENT_ERROR, 'short_invalid_alignment.fasta')
+        self.validation(ALIGNMENT_ERROR, 'protein_invalid_alignment.fasta')
         self.validation(ALIGNMENT_ERROR, 'DNA_invalid_alignment.fasta', 'DNA')
 
     def test_form_validation_for_too_few_sequences_in_alignment(self):
@@ -89,7 +89,7 @@ class QueryFormTest(TestCase):
         Tests error on invalid alignment when sequences have differing lengths
         :return:
         """
-        self.validation(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
+        self.validation(LESS_THAN_TWO_SEQS_ERROR, 'protein_too_few_sequences.fasta')
         self.validation(LESS_THAN_TWO_SEQS_ERROR, 'DNA_too_few_sequences.fasta', 'DNA')
 
     def test_form_validation_returns_correct_seqrecord_alphabet(self):
@@ -97,7 +97,7 @@ class QueryFormTest(TestCase):
         Tests that seqrecords get correct alphabet according to user input of seq_type
         :return:
         """
-        input_seqs = file_to_string('short.fasta')
+        input_seqs = file_to_string('protein.fasta')
         form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'Protein'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:

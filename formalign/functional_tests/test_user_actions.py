@@ -54,7 +54,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(dna_button.is_selected(), False)
 
         # She pastes in a protein alignment to see what happens
-        alignment_string = file_to_string('spa_align_clustal_omega.fasta')
+        alignment_string = file_to_string('spa_protein_alignment.fasta')
         pyperclip.copy(alignment_string)
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.send_keys(Keys.CONTROL, 'v')
@@ -70,7 +70,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
             first_seq_info.text,
-            'AT1G53090.1 | Symbols: SPA4 | SPA1-related 4 | chr1:19783748-19786690 FORWARD LENGTH=794:'
+            'gi|15219179|ref|NP_175717.1| SPA1-related 4 protein [Arabidopsis thaliana]:'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
@@ -210,7 +210,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         # She types in an alignment of her favorite proteins and submits it.
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
-        alignment_string = file_to_string('short_invalid_fasta.fasta')
+        alignment_string = file_to_string('protein_invalid_fasta.fasta')
         alignment_input.send_keys(alignment_string)
         self.browser.find_element_by_id('submit-fasta').click()
 
@@ -224,7 +224,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she corrects her alignment and resubmits
-        alignment_string = file_to_string('short_invalid_characters.fasta')
+        alignment_string = file_to_string('protein_invalid_characters.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -240,7 +240,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she corrects her alignment again and resubmits
-        alignment_string = file_to_string('short_too_few_sequences.fasta')
+        alignment_string = file_to_string('protein_too_few_sequences.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -257,7 +257,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         )
 
         # she adds the missing sequence and resubmits
-        alignment_string = file_to_string('short_invalid_alignment.fasta')
+        alignment_string = file_to_string('protein_invalid_alignment.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
@@ -275,7 +275,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
         # error message
-        alignment_string = file_to_string('short.fasta')
+        alignment_string = file_to_string('protein.fasta')
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)

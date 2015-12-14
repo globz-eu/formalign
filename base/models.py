@@ -5,6 +5,7 @@ from Bio.Align import MultipleSeqAlignment
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
 
+
 # Create your models here.
 
 
@@ -34,9 +35,10 @@ def get_multipleseqalignment_object_from_db(pk):
                         a.seq, alphabets[a.alphabet]),
                         id=a.seq_id,
                         name=a.name,
-                        # description=a.description
+                        description=a.description
                 ) for a in alignment
-                ]
+                ],
+            alphabet=alphabets[alignment[0].alphabet]
     )
     return mul_seq_al
 

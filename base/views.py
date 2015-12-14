@@ -21,7 +21,7 @@ def index(request):
         if form.is_valid():
             align = form.cleaned_data['align_input']
             pk = save_alignment_to_db('name', align)
-            return redirect('/sequence-display/' + str(pk) + '/')
+            return redirect('/query-sequences/' + str(pk) + '/')
         else:
             return render(request, 'base/index.html', {'form': form})
     else:
