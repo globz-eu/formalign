@@ -1,4 +1,5 @@
 import io
+import re
 
 from django.test import TestCase
 from django.utils.html import escape
@@ -14,7 +15,7 @@ from helper_funcs.helpers_test import file_to_string
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
 
-from base.models import save_alignment_to_db
+from base.models import save_alignment_to_db, get_multipleseqalignment_object_from_db
 
 __author__ = 'Stefan Dieterle'
 
@@ -33,24 +34,40 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         self.assertTemplateUsed('base/index.html')
         self.assertEqual(response.status_code, 200)
 
-    def test_alignment_is_saved_on_post(self):
-        input_seqs = file_to_string('protein.fasta')
-        self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        alignments = Alignment.objects.all()
-        self.assertTrue(len(alignments) >= 1)
-        self.fail('Unspecific Test')
-
     def test_redirect_to_seqdisplay_on_post(self):
-        input_seqs = file_to_string('protein.fasta')
+        """
+        Tests that valid POST request on index page redirects to /query-sequences/
+        :return:
+        """
+        input_seqs = file_to_string('spa_protein_alignment.fasta')
         response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
         self.assertTrue('/query-sequences/' in response.url)
-        self.fail('Unspecific Test')
+
+    def test_alignment_is_saved_on_post(self):
+        """
+        Tests that alignment is saved on valid POST request to index
+        :return:
+        """
+        input_seqs = file_to_string('spa_protein_alignment.fasta')
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        print(response.url)
+        pk = re.match(r'^/query-sequences/(?P<align_id>\d+)/', response.url).group('align_id')
+        alignment = get_multipleseqalignment_object_from_db(pk)
+        # self.assertEqual('bla', alignment.seqs, alignment.seqs)
+        self.assertEqual(
+                [seq.id for seq in alignment],
+                ['gi|15219179|ref|NP_175717.1|',
+                 'gi|22331100|ref|NP_683567.1|',
+                 'gi|30690337|ref|NP_182157.2|',
+                 'gi|145340093|ref|NP_192849.4|']
+        )
 
 
 class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for sequence display
     """
+
     def setUp(self):
         name = 'A. tha. SPA family protein alignment'
         align_input = io.StringIO(file_to_string('spa_protein_alignment.fasta'))
