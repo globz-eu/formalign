@@ -1,4 +1,9 @@
 from django.db import models
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio.Align import MultipleSeqAlignment
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
+from Bio.Alphabet import Gapped
 
 # Create your models here.
 
@@ -15,6 +20,25 @@ def save_alignment_to_db(name, data):
         )
         alignment.seqs.add(seqrec)
     return alignment.pk
+
+
+def get_multipleseqalignment_object_from_db(pk):
+    alignment = Alignment.objects.get(pk=pk).seqs.all()
+    alphabets = {
+        "Gapped(ExtendedIUPACProtein(), '-')": Gapped(ExtendedIUPACProtein()),
+        "Gapped(ExtendedIUPACDNA(), '-')": Gapped(ExtendedIUPACDNA()),
+    }
+    mul_seq_al = MultipleSeqAlignment(
+            [
+                SeqRecord(Seq(
+                        a.seq, alphabets[a.alphabet]),
+                        id=a.seq_id,
+                        name=a.name,
+                        # description=a.description
+                ) for a in alignment
+                ]
+    )
+    return mul_seq_al
 
 
 class Seqrecord(models.Model):

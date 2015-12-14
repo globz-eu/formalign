@@ -23,6 +23,6 @@ from base.views import index, seq_display
 
 urlpatterns = [
     url(r'^$', index),
-    url(r'^query-sequences/', seq_display),
+    url(r'^query-sequences/(?P<align_id>\d+)', seq_display),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL)

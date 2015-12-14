@@ -4,7 +4,7 @@ from Bio import SeqIO
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
-from base.models import Alignment, Seqrecord, save_alignment_to_db
+from base.models import Alignment, Seqrecord, save_alignment_to_db, get_multipleseqalignment_object_from_db
 
 __author__ = 'Stefan Dieterle'
 
@@ -75,4 +75,18 @@ class AlignmentModelTestCase(TestCase):
         self.assertEqual(
                 [seq.seq_id for seq in alignment[0].seqs.all()],
                 ['AT1G53090.1', 'AT3G15354.1', 'AT2G46340.1', 'AT4G11110.1'])
-        self.assertEqual(save, 2, save)
+        self.assertEqual(save, alignment[0].pk, save)
+
+    def test_get_multipleseqalignment_object_from_db(self):
+        alignment = Alignment.objects.create(name=self.name)
+        for s in self.data:
+            seqrec = Seqrecord.objects.create(
+                    seq=str(s.seq),
+                    alphabet="Gapped(ExtendedIUPACProtein(), '-')",
+                    seq_id=s.id,
+                    name=s.name,
+                    description=s.description
+            )
+            alignment.seqs.add(seqrec)
+        mulseqal = get_multipleseqalignment_object_from_db(alignment.pk)
+        self.assertEqual([seq.id for seq in mulseqal], ['AT1G53090.1', 'AT3G15354.1', 'AT2G46340.1', 'AT4G11110.1'])

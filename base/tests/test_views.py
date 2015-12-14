@@ -10,6 +10,11 @@ from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERRO
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
+from Bio.Alphabet import Gapped
+
+from base.models import save_alignment_to_db
+
 __author__ = 'Stefan Dieterle'
 
 
@@ -17,6 +22,7 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for index view
     """
+
     def test_index_view_basic(self):
         """
         Tests that index view returns a 200 response and uses the correct template
@@ -31,15 +37,14 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for sequence display
     """
-    def response_builder(self, file):
-        """
-        Builds response for seq_display tests
-        :param file: file containing alignment
-        :return:
-        """
-        input_seqs = file_to_string('short.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs})
-        return response
+    def setUp(self):
+        name = 'A. tha. SPA family alignment'
+        align_input = io.StringIO(file_to_string('spa_align_clustal_omega.fasta'))
+        data = parse_fasta_alignment(align_input)
+        for d in data:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        save = save_alignment_to_db(name, data)
+        self.response = self.client.get('/query-sequences/' + str(save) + '/')
 
     def test_display_page_uses_display_seq_template(self):
         """
@@ -47,17 +52,19 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         input_seqs = file_to_string('short.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('base/query_display.html')
+
+    def test_alignment_is_saved_on_post(self):
+        self.fail('Incomplete Test')
 
     def test_display_page_displays_sequence_type(self):
         """
         Tests that seq_display displays the selected sequence type on a valid POST request
         :return:
         """
-        input_seqs = file_to_string('short.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.response
         with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
                              'Protein sequences:',
@@ -65,7 +72,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              )
 
         input_seqs = file_to_string('DNA.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'DNA'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
             self.assertEqual(elem[0].text,
                              'DNA sequences:',
@@ -77,8 +84,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         Tests that seq_display displays the query on a valid POST request
         :return:
         """
-        input_seqs = file_to_string('short.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.response
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
             self.assertEqual(elems[0].text,
                              'Short sequence1:',
@@ -101,8 +107,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              )
 
     def test_display_page_displays_sequence_with_less_than_80_residues_per_line(self):
-        input_seqs = file_to_string('spa_align_clustal_omega.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.response
         with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
             for elem in elems:
                 self.assertTrue(len(elem.text) <= 80)
@@ -112,8 +117,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         Tests that seq_display displays the consensus sequence on a valid POST request
         :return:
         """
-        input_seqs = file_to_string('spa_align_clustal_omega.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.response
         with self.assertHTML(response, 'li[class="query_seq_meta no_style"]') as elems:
             self.assertEqual(elems[0].text,
                              'Consensus:',
@@ -140,6 +144,21 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         self.assertEqual(parsed[1].description, 'Short sequence2')
         self.assertEqual(parsed[1].seq, 'MKERBGWA-SYQGKKPWRFAQ-EW')
 
+    def test_display_page_uses_display_seq_template_on_GET(self):
+        """
+        Tests that seq_display view returns a 200 response on a GET request and uses the correct template
+        :return:
+        """
+        name = 'A. tha. SPA family alignment'
+        align_input = io.StringIO(file_to_string('spa_align_clustal_omega.fasta'))
+        data = parse_fasta_alignment(align_input)
+        for d in data:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        save = save_alignment_to_db(name, data)
+        response = self.client.get('/query-sequences/' + str(save) + '/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('base/query_display.html')
+
 
 class SeqDisplayInvalidInput(TestCase):
     """
@@ -156,7 +175,7 @@ class SeqDisplayInvalidInput(TestCase):
             input_seqs = file_to_string(input_file)
         else:
             input_seqs = ''
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': seq_type})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': seq_type})
         return response
 
     def invalid_input_renders_index_template(self, input_file='', seq_type='Protein'):

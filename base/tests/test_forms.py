@@ -4,6 +4,8 @@ from formalign.settings import BASE_DIR
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from helper_funcs.helpers_test import file_to_string
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
+from Bio.Alphabet import Gapped
 
 __author__ = 'Stefan Dieterle'
 
@@ -89,3 +91,20 @@ class QueryFormTest(TestCase):
         """
         self.validation(LESS_THAN_TWO_SEQS_ERROR, 'short_too_few_sequences.fasta')
         self.validation(LESS_THAN_TWO_SEQS_ERROR, 'DNA_too_few_sequences.fasta', 'DNA')
+
+    def test_form_validation_returns_correct_seqrecord_alphabet(self):
+        """
+        Tests that seqrecords get correct alphabet according to user input of seq_type
+        :return:
+        """
+        input_seqs = file_to_string('short.fasta')
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'Protein'})
+        self.assertTrue(form.is_valid())
+        for f in form.cleaned_data['align_input']:
+            self.assertEqual(str(f.seq.alphabet), "Gapped(ExtendedIUPACProtein(), '-')", Gapped(ExtendedIUPACProtein()).letters)
+
+        input_seqs = file_to_string('DNA.fasta')
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'DNA'})
+        self.assertTrue(form.is_valid())
+        for f in form.cleaned_data['align_input']:
+            self.assertEqual(str(f.seq.alphabet), "Gapped(ExtendedIUPACDNA(), '-')", Gapped(ExtendedIUPACDNA()).letters)

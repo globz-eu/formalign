@@ -1,6 +1,9 @@
 from django import forms
 from helper_funcs.helpers_bio import parse_fasta_alignment
 import io
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
+from Bio.Alphabet import Gapped
+
 
 __author__ = 'Stefan Dieterle'
 
@@ -69,10 +72,13 @@ class QueryForm(forms.Form):
         """
         cleaned_data = forms.Form.clean(self)
         seq_type = cleaned_data.get('seq_type')
-        align_input = cleaned_data.get('align_input')
+        alphabets = {'DNA': Gapped(ExtendedIUPACDNA()), 'Protein': Gapped(ExtendedIUPACProtein())}
 
-        alphabets = {'DNA': set('ACGNT-'), 'Protein': set('ABCDEFGHIKLMNPQRSTUVWXY*-')}
-        alphabet = alphabets[seq_type]
+        align_input = cleaned_data.get('align_input')
+        if align_input:
+            for a in cleaned_data['align_input']:
+                a.seq.alphabet = alphabets[seq_type]
+        alphabet = set(alphabets[seq_type].letters)
         if align_input:
             try:
                 for p in align_input:

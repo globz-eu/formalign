@@ -21,5 +21,5 @@ class BaseURLsTestCase(TestCase):
         Test that the /query-sequences/ URL resolves to the correct view function
         :return:
         """
-        query_seq = resolve('/query-sequences/')
+        query_seq = resolve('/query-sequences/1')
         self.assertEqual(query_seq.func, seq_display)
