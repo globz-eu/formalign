@@ -360,3 +360,59 @@ class SeqDisplayInvalidInput(TestCase):
         """
         self.invalid_input_passes_form_to_template('protein_too_few_sequences.fasta')
         self.invalid_input_passes_form_to_template('DNA_too_few_sequences.fasta', 'DNA')
+
+
+class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
+    """
+    Tests for alignment display
+    """
+    def setUp(self):
+        """
+        Creates a response from a GET request to /align-display/ with an alignment pk
+        :param input_file: file containing alignment
+        :return: response
+        """
+        name = 'A. tha. SPA family protein alignment'
+        align_input = io.StringIO(file_to_string('spa_protein_alignment.fasta'))
+        data = parse_fasta_alignment(align_input)
+        for d in data:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        align_pk = save_alignment_to_db(name, data)
+        self.response = self.client.get('/align-display/' + str(align_pk) + '/')
+
+    def test_align_display_page_uses_align_display_seq_template(self):
+        """
+        Tests that align_display view returns a 200 response on a GET request and uses the correct template
+        :return:
+        """
+        self.assertEqual(self.response.status_code, 200)
+        self.assertTemplateUsed('base/align_display.html')
+
+    def test_align_display_page_displays_default_formatted_protein_alignment(self):
+        """
+        Tests that align_display displays an alignment in the default format on a valid GET request (line of 80
+        characters in blocks of 10 characters)
+        :return:
+        """
+        with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
+            self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] != 'sep']),
+                             80, elems[0].getchildren()[0].text
+                             )
+            self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] == 'sep']),
+                             7, elems[0].getchildren()[0].text
+                             )
+
+    def test_align_display_page_displays_correct_protein_alignment_sequence(self):
+        """
+        Tests that align_display displays an alignment with correct sequences
+        :return:
+        """
+        expected_seqs = file_to_string('spa_protein_alignment.fasta')
+        align_expected = io.StringIO(expected_seqs)
+        alignment = parse_fasta_alignment(align_expected)
+        seq = alignment[3].seq
+        with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
+            for i, e in enumerate([elem for elem in elems[3].findall('div') if elem.attrib['class'] != 'sep']):
+                self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
+
+        self.fail('Incomplete Test')
