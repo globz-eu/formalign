@@ -3,12 +3,10 @@ import re
 
 from django.test import TestCase
 from django.utils.html import escape
-from django.core.urlresolvers import resolve
 from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from base.models import Alignment
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
@@ -31,7 +29,7 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.client.get('/')
-        self.assertTemplateUsed('base/index.html')
+        self.assertTemplateUsed(response, 'base/index.html')
         self.assertEqual(response.status_code, 200)
 
     def test_redirect_to_seqdisplay_on_post(self):
@@ -92,7 +90,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         input_seqs = file_to_string('protein.fasta')
         response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/query_display.html')
+        self.assertTemplateUsed(response, 'base/index.html')
 
     def test_display_page_displays_sequence_type(self):
         """
@@ -191,7 +189,16 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         save = save_alignment_to_db(name, data)
         response = self.client.get('/query-sequences/' + str(save) + '/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/query_display.html')
+        self.assertTemplateUsed(response, 'base/query_display.html')
+
+    def test_redirect_to_aligndisplay_on_post(self):
+        """
+        Tests that valid POST request on index page redirects to /query-sequences/
+        :return:
+        """
+        input_seqs = file_to_string('spa_protein_alignment.fasta')
+        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        self.assertTrue('/align-display/' in response.url)
 
 
 class SeqDisplayInvalidInput(TestCase):
@@ -220,7 +227,7 @@ class SeqDisplayInvalidInput(TestCase):
         """
         response = self.response_for_invalid_post_request(input_file, seq_type)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('base/index.html')
+        self.assertTemplateUsed(response, 'base/index.html')
 
     def invalid_input_errors_are_shown_on_home_page(self, error_text, input_file='', seq_type='Protein'):
         """
@@ -386,7 +393,7 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         self.assertEqual(self.response.status_code, 200)
-        self.assertTemplateUsed('base/align_display.html')
+        self.assertTemplateUsed(self.response, 'base/align_display.html')
 
     def test_align_display_page_displays_default_formatted_protein_alignment(self):
         """
@@ -396,10 +403,10 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
             self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] != 'sep']),
-                             80, elems[0].getchildren()[0].text
+                             81, elems[0].getchildren()[0].text
                              )
             self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] == 'sep']),
-                             7, elems[0].getchildren()[0].text
+                             8, elems[0].getchildren()[0].text
                              )
 
     def test_align_display_page_displays_correct_protein_alignment_sequence(self):
@@ -412,7 +419,10 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         alignment = parse_fasta_alignment(align_expected)
         seq = alignment[3].seq
         with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
-            for i, e in enumerate([elem for elem in elems[3].findall('div') if elem.attrib['class'] != 'sep']):
+            for i, e in enumerate(
+                    [
+                        elem for elem in elems[3].findall('div')
+                        if elem.attrib['class'] not in ['sep', 'al_el seq_id']
+                        ]
+            ):
                 self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
-
-        self.fail('Incomplete Test')

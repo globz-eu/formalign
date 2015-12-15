@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from formalign import settings
 
-from base.views import index, seq_display
+from base.views import index, seq_display, align_display
 
 urlpatterns = [
     url(r'^$', index),
     url(r'^query-sequences/(?P<align_id>\d+)', seq_display),
+    url(r'^align-display/(?P<align_id>\d+)', align_display),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL)

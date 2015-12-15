@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+        <title id="head-title">Formalign.eu Sequence Display</title>
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="align_display">
+    {% for s in align_seqs %}
+
+        {% for id, ls in s %}
+        <div class="al_ln">
+        <div class="al_el seq_id">{{ id }}</div>
+        {% for b in ls %}
+            {% for eq, c in b %}
+                <div class="al_el S{{ eq }}">{{ c }}</div>
+            {% endfor %}
+            <div class="sep">&nbsp;</div>
+        {% endfor %}
+        </div>
+        {% endfor %}
+        <p>*******************************************************************************</p>
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
