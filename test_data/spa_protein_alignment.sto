@@ -1,0 +1,123 @@
+# STOCKHOLM 1.0
+
+#=GS NP_175717 DE    NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].
+#=GS NP_683567 DE    NP_683567.1 protein SPA1-related 3 [Arabidopsis thaliana].
+#=GS NP_182157 DE    NP_182157.2 protein SUPPRESSOR OF PHYA-105 [Arabidopsis thaliana].
+#=GS NP_192849 DE    NP_192849.4 protein SPA1-related 2 [Arabidopsis thaliana].
+
+NP_175717  --------------------------------------------------
+NP_683567  --------------------------------------------------
+NP_182157  ------mpvmervaeetvatnniqlkarvddvpcnkldar-hndmviqse
+NP_192849  mmdegsvgdvsrideadva--hlqfknseqsfkpenievrevkevqvqre
+
+NP_175717  --------------------------------------------------
+NP_683567  --------------------------------------------------
+NP_182157  tansdcpgssa---------hrnvdltkppppeea---agaklsveeltl
+NP_192849  agspdcsygviadfldgknggdhvelignepcssrqntndegdvveeltv
+
+NP_175717  --------------------------------------------------
+NP_683567  --------------------------------------------------
+NP_182157  gnyrivqgsnntnvdspr--------agkfehlyrlargsafragdgdld
+NP_192849  k---tcegssmaivgrpssrarlemnrsqflhrfpl---------dgdlp
+
+NP_175717  --------------------------------------------------
+NP_683567  --------------------------------------------------
+NP_182157  sqprdmdqmlsrirqqlagapserqnlkpfmsrrsdqnleaf------se
+NP_192849  gsssmskkvidrgtvsil-----rnagkmslpetsngqlaiiavngeane
+
+NP_175717  -------------------------mkgsse---sssrglnntsgvse--
+NP_683567  -------------------------megssn---snsrgfnts-gvsdrn
+NP_182157  rlraagensimnapalisegvqmktpvsssnfsqlllkramkgkgvvgkn
+NP_192849  hltnv-ernpvpvealshegikt-kmlsqsgfsqffvrktlkgkgvtfrg
+
+NP_175717  ---------------fctdgsk------------slshidy-vrsllgsh
+NP_683567  teflp-------verlttrskp------------sshvdey-vrslfgst
+NP_182157  qetppe---fvsdqdlgskekkldisks---------ptphdvlplkss-
+NP_192849  ppnnrskarnmdqqtvassgsalviantsakisssiplaaydglpclpsn
+
+NP_175717  kean---lggldddsivralecedvslrqwldnpdrsvdafecfhvfrqi
+NP_683567  sthksgeddslgidpfvrslewgdvslrqwldkpersvdvfeclhvfrqi
+NP_182157  -pk---gngmvshgdgnhskssigislreflrssyakrekrhglclfrql
+NP_192849  tsk---psscanpsdthrgcggeglslrewlkserqevnkaecmyifrqi
+
+NP_175717  veivnaahsqgivvhnvrpscfvmssfnnvsfiesascsdsgsde--dat
+NP_683567  veivnaahsqgivvhnvrpscfvmssfnhvsfiesascsdsgsdsledgp
+NP_182157  velvdsahskrlflldlrpslftlvpskklryignfgkn-dlesdvdedl
+NP_192849  vdhvdcshsqgvvlcdlrpssfkifkenavkyvvsgsqresfdsnmnket
+
+NP_175717  tksre-------i-gssr-qeeil--s-----------------------
+NP_683567  isqke-------i-gssr-reeav--s-------------------kaia
+NP_182157  -n-rrrpvveesssggrdskkrkmdlhlnspgnqlqatstgrpfkrkspv
+NP_192849  lsqlenplvrrrl-gdts--------slsipakkq---kssgpssrqwpm
+
+NP_175717  -----------err-----skqqeevkkqpfpm-------kqilamemsw
+NP_683567  ieekgvynkllerk-----iekleeektqpfpm-------khilametsw
+NP_182157  id----lnmvdarnpdscelqqqdyikn--lsvssvsrkqsmstwleeqw
+NP_192849  fqraggvniqtenn-d-gaiqefhfrssqphcstvacpftsvseqleekw
+
+NP_175717  ytsheedngslcncasdiyrlgvllfelfcpvssreeksrtmsslrhrvl
+NP_683567  ytspeedfgssstcasdvyrlgvllfelfcpvpsreeksrtmsslrhrvl
+NP_182157  ytcpeeingedigeksniyalgvllfellchcesgemhaammadlrhril
+NP_192849  yaspeelrgdmrsassniyslgillyellsqfqcerareaamsdirhril
+
+NP_175717  ppqillnwpkeasfclwllhpepscrpsmsellqsefineprenleerea
+NP_683567  ppqillkcpkeasfclwllhpeptcrpsmsdllqsefiteprdnleerea
+NP_182157  pptflskypkeagfclwllhpepssrpsardilkseliceddsvks----
+NP_192849  ppkflsenpkeagfclwllhpesscrpstrdilqsevvngipdlyae-gl
+
+NP_175717  amelrdrieeqellleflfliqqrkqeaadklqdtisllssdidqvvkrq
+NP_683567  aielrdrieeqesllefllliqqrkqesayrlqdtvsllssdieqvvkrq
+NP_182157  ---taaaeeiselllhflsslevqkkkkaskllqdiqtleddikeaerry
+NP_192849  slsieqedtesellqhflflsqekrqkhagnlmeeiasveadieeivkrr
+
+NP_175717  lvlqqkgrdvrsf-------------------------lasrkrirqgae
+NP_683567  lilkkrgsslsdfskddhqytsgqplmsfqaneepsaflasrkrvrqgil
+NP_182157  ssnvslvrshgai----------------------------ekr------
+NP_192849  cai-----------------------------------------------
+
+NP_175717  ttaaeeenddnsideesklddtlestllessrlmrnlkklesvyfatryr
+NP_683567  alengve-----v-----deesqgstllessrlmrnfkklesvyfltrrr
+NP_182157  -------vqsspldehcttssalfvptantdrlmsnirqledayffmrsq
+NP_192849  --------gppsleeasssspa---ssvpemrlirninqlesayfaarid
+
+NP_175717  qikaataaekplaryysalscngrss----ekssms---qpskdpindsr
+NP_683567  qmkaaasgk-sltrhsplssengrgsmivsekssvsnpvapkaffnndsr
+NP_182157  inlsssaata---rsdktlkdrdrcs----------enqnenqdmstkgk
+NP_192849  ahlpearyrl---rpdrdllrn---s----------dntvaevensetws
+
+NP_175717  qggwidpfleglckylsfsklrvkadlkqgdllnssnlvcaigfdrdgef
+NP_683567  qggwidpfleglcrylsfsqlrvkadlkqgdllnssnlvcalafdregel
+NP_182157  ssdqlevffeglckfaryskfetcgtirsgdllnsasvvcslsfdpdeeh
+NP_192849  sddrvgaffdglckyaryskfetrgvlrtselnntsnvicslgfdrdedy
+
+NP_175717  fatagvnkkikifecesiikdgrdihypvvelasrsklsgicwnsyiksq
+NP_683567  fatagvnkkikifecnsivndnrdihypvvelagrsklsslcwnsyiksq
+NP_182157  iaaagiskkikifdfnafmnesvgvhyplvemvnksklscvcwnsyikny
+NP_192849  fatagvskkikiyefnslfnesvdihypaiempnrsklsgvcwnnyirny
+
+NP_175717  vassnfegvvqvwdvarnqlvtemkehekrvwsidyssadptllasgsdd
+NP_683567  iassnfdgvvqiwdvarsqlvtemkehkkrvwsidissadptllasgsdd
+NP_182157  lastdydgvvqiwdagtgqgfsqytehqkrawsvdfspsdptkfvsgsdd
+NP_192849  lassdydgivklwdvttgqaishfiehekrawsvdfseacptklasgsdd
+
+NP_175717  gsvklwsinqgvsigtiktkaniccvqfpsetgrslafgsadhkvyyydl
+NP_683567  g--------tgvsigtiktkanvccvqfpsdsgrslafgsadhkvyyydl
+NP_182157  csvklwsinekrslgtiwspanvccvqfssysnhllafgsadykvycydl
+NP_192849  csvklwninernclgtirnianvccvqfspqsshllafgssdfrtycydl
+
+NP_175717  rnpklplctmighhktvsyvrfvdsstlvssstdntlklwdlsmsisgin
+NP_683567  rnpkiplctmighsktvsyvkfvdsstlvssstdntlklwdlsmsasgin
+NP_182157  ryvktpwctlaghekavsyvkfmdsetivsastdnslklwnlnktnssgl
+NP_192849  rnlrtpwcilsghnkavsyakfldnetlvtastdntlklwdlkktthggl
+
+NP_175717  et--plhsfmghtnvknfvglsvsdgyiatgsetnevfvyhkafpmpvls
+NP_683567  es--plhsftghtnlknfvglsvsdgyiatgsetnevfvyhkafpmpvms
+NP_182157  spgacsltykghtnqknfvglsvldgyiacgsetnevysyykslpmpmts
+NP_192849  stnacsltfgghtneknfvglstsdgyiacgsetnevyayhrslpmpits
+
+NP_175717  ykfktidpvselev-ddasqfissvcwrgqsstlvaanstgnikilemv-
+NP_683567  ymfnntdsmsglev-ddasqfissicwrgqsstlvaansngnikilemmt
+NP_182157  ykfgsvdpisgneyfddngqfvssvcwrkksnmlvaanstgnmkllklv-
+NP_192849  ykfgsidpisgkeieednnlfvssvcwrkrsnmvvsassngsikvlqlv-
+//
+

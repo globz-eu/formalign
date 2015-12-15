@@ -39,7 +39,7 @@ li.no_style {
 }
 
 .al_ln {
-    width: 130em;
+    width: 118em;
     font-size: 10px;
     font-family: monospace;
     line-height: 1;
@@ -79,5 +79,5 @@ li.no_style {
 }
 
 .seq_id {
-    width: 20em;
+    width: 8em;
 }
