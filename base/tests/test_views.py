@@ -54,10 +54,7 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         # self.assertEqual('bla', alignment.seqs, alignment.seqs)
         self.assertEqual(
                 [seq.id for seq in alignment],
-                ['gi|15219179|ref|NP_175717.1|',
-                 'gi|22331100|ref|NP_683567.1|',
-                 'gi|30690337|ref|NP_182157.2|',
-                 'gi|145340093|ref|NP_192849.4|']
+                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
 
@@ -118,12 +115,12 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         response = self.response_prot
         with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
-            self.assertEqual(elems[0].text,
-                             'gi|15219179|ref|NP_175717.1| SPA1-related 4 protein [Arabidopsis thaliana]:',
+            self.assertEqual('NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:',
+                             elems[0].text,
                              'meta1: ' + format(elems[0].text)
                              )
-            self.assertEqual(elems[1].text,
-                             'gi|22331100|ref|NP_683567.1| protein SPA1-related 3 [Arabidopsis thaliana]:',
+            self.assertEqual('NP_683567 NP_683567.1 protein SPA1-related 3 [Arabidopsis thaliana].:',
+                             elems[1].text,
                              'meta2: ' + format(elems[1].text)
                              )
         with self.assertHTML(response, 'p[class=query_seq_display]') as elems:

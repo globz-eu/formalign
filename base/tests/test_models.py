@@ -75,10 +75,7 @@ class AlignmentModelTestCase(TestCase):
         self.assertEqual(alignment.name, 'A. tha. SPA family alignment')
         self.assertEqual(
                 [seq.seq_id for seq in alignment.seqs.all()],
-                ['gi|15219179|ref|NP_175717.1|',
-                 'gi|22331100|ref|NP_683567.1|',
-                 'gi|30690337|ref|NP_182157.2|',
-                 'gi|145340093|ref|NP_192849.4|']
+                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
     def test_save_alignment_to_db(self):
@@ -87,10 +84,7 @@ class AlignmentModelTestCase(TestCase):
         self.assertEqual(alignment[0].name, 'A. tha. SPA family alignment', alignment[0].name)
         self.assertEqual(
                 [seq.seq_id for seq in alignment[0].seqs.all()],
-                ['gi|15219179|ref|NP_175717.1|',
-                 'gi|22331100|ref|NP_683567.1|',
-                 'gi|30690337|ref|NP_182157.2|',
-                 'gi|145340093|ref|NP_192849.4|']
+                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
         self.assertEqual(save, alignment[0].pk, save)
 
@@ -108,10 +102,7 @@ class AlignmentModelTestCase(TestCase):
         mulseqal = get_multipleseqalignment_object_from_db(alignment.pk)
         self.assertEqual(
                 [seq.id for seq in mulseqal],
-                ['gi|15219179|ref|NP_175717.1|',
-                 'gi|22331100|ref|NP_683567.1|',
-                 'gi|30690337|ref|NP_182157.2|',
-                 'gi|145340093|ref|NP_192849.4|']
+                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
     def test_save_and_get_sanity_check(self):
@@ -119,9 +110,6 @@ class AlignmentModelTestCase(TestCase):
         mulseqal = get_multipleseqalignment_object_from_db(align_pk)
         self.assertEqual(
                 [seq.id for seq in mulseqal],
-                ['gi|15219179|ref|NP_175717.1|',
-                 'gi|22331100|ref|NP_683567.1|',
-                 'gi|30690337|ref|NP_182157.2|',
-                 'gi|145340093|ref|NP_192849.4|']
+                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
         self.assertEqual(str(mulseqal), str(self.data), str(mulseqal))

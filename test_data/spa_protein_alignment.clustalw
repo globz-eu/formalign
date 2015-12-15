@@ -1,122 +1,122 @@
 CLUSTAL O(1.2.1) multiple sequence alignment
 
 
-NP_175717      ------------------------------------------------------------
-NP_683567      ------------------------------------------------------------
-NP_182157      ------mpvmervaeetvatnniqlkarvddvpcnkldar-hndmviqsetansdcpgss
-NP_192849      mmdegsvgdvsrideadva--hlqfknseqsfkpenievrevkevqvqreagspdcsygv
+NP_175717      ------------------------------------------------------------	0
+NP_683567      ------------------------------------------------------------	0
+NP_182157      ------mpvmervaeetvatnniqlkarvddvpcnkldar-hndmviqsetansdcpgss	53
+NP_192849      mmdegsvgdvsrideadva--hlqfknseqsfkpenievrevkevqvqreagspdcsygv	58
 
 
-NP_175717      ------------------------------------------------------------
-NP_683567      ------------------------------------------------------------
-NP_182157      a---------hrnvdltkppppeea---agaklsveeltlgnyrivqgsnntnvdspr--
-NP_192849      iadfldgknggdhvelignepcssrqntndegdvveeltvk---tcegssmaivgrpssr
+NP_175717      ------------------------------------------------------------	0
+NP_683567      ------------------------------------------------------------	0
+NP_182157      a---------hrnvdltkppppeea---agaklsveeltlgnyrivqgsnntnvdspr--	99
+NP_192849      iadfldgknggdhvelignepcssrqntndegdvveeltvk---tcegssmaivgrpssr	115
 
 
-NP_175717      ------------------------------------------------------------
-NP_683567      ------------------------------------------------------------
-NP_182157      ------agkfehlyrlargsafragdgdldsqprdmdqmlsrirqqlagapserqnlkpf
-NP_192849      arlemnrsqflhrfpl---------dgdlpgsssmskkvidrgtvsil-----rnagkms
+NP_175717      ------------------------------------------------------------	0
+NP_683567      ------------------------------------------------------------	0
+NP_182157      ------agkfehlyrlargsafragdgdldsqprdmdqmlsrirqqlagapserqnlkpf	153
+NP_192849      arlemnrsqflhrfpl---------dgdlpgsssmskkvidrgtvsil-----rnagkms	161
 
 
-NP_175717      ---------------------------------------------mkgsse---sssrgl
-NP_683567      ---------------------------------------------megssn---snsrgf
-NP_182157      msrrsdqnleaf------serlraagensimnapalisegvqmktpvsssnfsqlllkra
-NP_192849      lpetsngqlaiiavngeanehltnv-ernpvpvealshegikt-kmlsqsgfsqffvrkt
+NP_175717      ---------------------------------------------mkgsse---sssrgl	12
+NP_683567      ---------------------------------------------megssn---snsrgf	12
+NP_182157      msrrsdqnleaf------serlraagensimnapalisegvqmktpvsssnfsqlllkra	207
+NP_192849      lpetsngqlaiiavngeanehltnv-ernpvpvealshegikt-kmlsqsgfsqffvrkt	219
                                                               ..*       :
 
-NP_175717      nntsgvse-----------------fctdgsk------------slshidy-vrsllgsh
-NP_683567      nts-gvsdrnteflp-------verlttrskp------------sshvdey-vrslfgst
-NP_182157      mkgkgvvgknqetppe---fvsdqdlgskekkldisks---------ptphdvlplkss-
-NP_192849      lkgkgvtfrgppnnrskarnmdqqtvassgsalviantsakisssiplaaydglpclpsn
+NP_175717      nntsgvse-----------------fctdgsk------------slshidy-vrsllgsh	42
+NP_683567      nts-gvsdrnteflp-------verlttrskp------------sshvdey-vrslfgst	51
+NP_182157      mkgkgvvgknqetppe---fvsdqdlgskekkldisks---------ptphdvlplkss-	254
+NP_192849      lkgkgvtfrgppnnrskarnmdqqtvassgsalviantsakisssiplaaydglpclpsn	279
                 .  **                   . :  .                   :       *
 
-NP_175717      kean---lggldddsivralecedvslrqwldnpdrsvdafecfhvfrqiveivnaahsq
-NP_683567      sthksgeddslgidpfvrslewgdvslrqwldkpersvdvfeclhvfrqiveivnaahsq
-NP_182157      -pk---gngmvshgdgnhskssigislreflrssyakrekrhglclfrqlvelvdsahsk
-NP_192849      tsk---psscanpsdthrgcggeglslrewlkserqevnkaecmyifrqivdhvdcshsq
+NP_175717      kean---lggldddsivralecedvslrqwldnpdrsvdafecfhvfrqiveivnaahsq	99
+NP_683567      sthksgeddslgidpfvrslewgdvslrqwldkpersvdvfeclhvfrqiveivnaahsq	111
+NP_182157      -pk---gngmvshgdgnhskssigislreflrssyakrekrhglclfrqlvelvdsahsk	310
+NP_192849      tsk---psscanpsdthrgcggeglslrewlkserqevnkaecmyifrqivdhvdcshsq	336
                                 :.     :***::* .   . :  . : :***:*: *:.:**:
 
-NP_175717      givvhnvrpscfvmssfnnvsfiesascsdsgsde--dattksre-------i-gssr-q
-NP_683567      givvhnvrpscfvmssfnhvsfiesascsdsgsdsledgpisqke-------i-gssr-r
-NP_182157      rlflldlrpslftlvpskklryignfgkn-dlesdvdedl-n-rrrpvveesssggrdsk
-NP_192849      gvvlcdlrpssfkifkenavkyvvsgsqresfdsnmnketlsqlenplvrrrl-gdts--
+NP_175717      givvhnvrpscfvmssfnnvsfiesascsdsgsde--dattksre-------i-gssr-q	148
+NP_683567      givvhnvrpscfvmssfnhvsfiesascsdsgsdsledgpisqke-------i-gssr-r	162
+NP_182157      rlflldlrpslftlvpskklryignfgkn-dlesdvdedl-n-rrrpvveesssggrdsk	367
+NP_192849      gvvlcdlrpssfkifkenavkyvvsgsqresfdsnmnketlsqlenplvrrrl-gdts--	393
                 :.: ::*** * :   : : :: . .   . ...  .   .  .         *
 
-NP_175717      eeil--s----------------------------------err-----skqqeevkkqp
-NP_683567      eeav--s-------------------kaiaieekgvynkllerk-----iekleeektqp
-NP_182157      krkmdlhlnspgnqlqatstgrpfkrkspvid----lnmvdarnpdscelqqqdyikn--
-NP_192849      ------slsipakkq---kssgpssrqwpmfqraggvniqtenn-d-gaiqefhfrssqp
+NP_175717      eeil--s----------------------------------err-----skqqeevkkqp	167
+NP_683567      eeav--s-------------------kaiaieekgvynkllerk-----iekleeektqp	196
+NP_182157      krkmdlhlnspgnqlqatstgrpfkrkspvid----lnmvdarnpdscelqqqdyikn--	421
+NP_192849      ------slsipakkq---kssgpssrqwpmfqraggvniqtenn-d-gaiqefhfrssqp	442
                                                          ..      :: .  ..
 
-NP_175717      fpm-------kqilamemswytsheedngslcncasdiyrlgvllfelfcpvssreeksr
-NP_683567      fpm-------khilametswytspeedfgssstcasdvyrlgvllfelfcpvpsreeksr
-NP_182157      lsvssvsrkqsmstwleeqwytcpeeingedigeksniyalgvllfellchcesgemhaa
-NP_192849      hcstvacpftsvseqleekwyaspeelrgdmrsassniyslgillyellsqfqcerarea
+NP_175717      fpm-------kqilamemswytsheedngslcncasdiyrlgvllfelfcpvssreeksr	220
+NP_683567      fpm-------khilametswytspeedfgssstcasdvyrlgvllfelfcpvpsreeksr	249
+NP_182157      lsvssvsrkqsmstwleeqwytcpeeingedigeksniyalgvllfellchcesgemhaa	481
+NP_192849      hcstvacpftsvseqleekwyaspeelrgdmrsassniyslgillyellsqfqcerarea	502
                          .    :* .**:. **  *.     *::* **:**:**:.   . . :
 
-NP_175717      tmsslrhrvlppqillnwpkeasfclwllhpepscrpsmsellqsefineprenleerea
-NP_683567      tmsslrhrvlppqillkcpkeasfclwllhpeptcrpsmsdllqsefiteprdnleerea
-NP_182157      mmadlrhrilpptflskypkeagfclwllhpepssrpsardilkseliceddsvks----
-NP_192849      amsdirhrilppkflsenpkeagfclwllhpesscrpstrdilqsevvngipdlyae-gl
+NP_175717      tmsslrhrvlppqillnwpkeasfclwllhpepscrpsmsellqsefineprenleerea	280
+NP_683567      tmsslrhrvlppqillkcpkeasfclwllhpeptcrpsmsdllqsefiteprdnleerea	309
+NP_182157      mmadlrhrilpptflskypkeagfclwllhpepssrpsardilkseliceddsvks----	537
+NP_192849      amsdirhrilppkflsenpkeagfclwllhpesscrpstrdilqsevvngipdlyae-gl	561
                 *:.:***:*** :* : ****.********* :.***  ::*:**.:    .
 
-NP_175717      amelrdrieeqellleflfliqqrkqeaadklqdtisllssdidqvvkrqlvlqqkgrdv
-NP_683567      aielrdrieeqesllefllliqqrkqesayrlqdtvsllssdieqvvkrqlilkkrgssl
-NP_182157      ---taaaeeiselllhflsslevqkkkkaskllqdiqtleddikeaerryssnvslvrsh
-NP_192849      slsieqedtesellqhflflsqekrqkhagnlmeeiasveadieeivkrrcai-------
+NP_175717      amelrdrieeqellleflfliqqrkqeaadklqdtisllssdidqvvkrqlvlqqkgrdv	340
+NP_683567      aielrdrieeqesllefllliqqrkqesayrlqdtvsllssdieqvvkrqlilkkrgssl	369
+NP_182157      ---taaaeeiselllhflsslevqkkkkaskllqdiqtleddikeaerryssnvslvrsh	594
+NP_192849      slsieqedtesellqhflflsqekrqkhagnlmeeiasveadieeivkrrcai-------	614
                          .* * .**   : :::: * .* : :  :. **.:  :*
 
-NP_175717      rsf-------------------------lasrkrirqgaettaaeeenddnsideeskld
-NP_683567      sdfskddhqytsgqplmsfqaneepsaflasrkrvrqgilalengve-----v-----de
-NP_182157      gai----------------------------ekr-------------vqsspldehctts
-NP_192849      ------------------------------------------------gppsleeassss
+NP_175717      rsf-------------------------lasrkrirqgaettaaeeenddnsideeskld	375
+NP_683567      sdfskddhqytsgqplmsfqaneepsaflasrkrvrqgilalengve-----v-----de	419
+NP_182157      gai----------------------------ekr-------------vqsspldehctts	613
+NP_192849      ------------------------------------------------gppsleeassss	626
                                                                    :      .
 
-NP_175717      dtlestllessrlmrnlkklesvyfatryrqikaataaekplaryysalscngrss----
-NP_683567      esqgstllessrlmrnfkklesvyfltrrrqmkaaasgk-sltrhsplssengrgsmivs
-NP_182157      salfvptantdrlmsnirqledayffmrsqinlsssaata---rsdktlkdrdrcs----
-NP_192849      pa---ssvpemrlirninqlesayfaaridahlpearyrl---rpdrdllrn---s----
+NP_175717      dtlestllessrlmrnlkklesvyfatryrqikaataaekplaryysalscngrss----	431
+NP_683567      esqgstllessrlmrnfkklesvyfltrrrqmkaaasgk-sltrhsplssengrgsmivs	478
+NP_182157      salfvptantdrlmsnirqledayffmrsqinlsssaata---rsdktlkdrdrcs----	666
+NP_192849      pa---ssvpemrlirninqlesayfaaridahlpearyrl---rpdrdllrn---s----	673
                 :         **: *:.:**..**  *       :       *       .   *
 
-NP_175717      ekssms---qpskdpindsrqggwidpfleglckylsfsklrvkadlkqgdllnssnlvc
-NP_683567      ekssvsnpvapkaffnndsrqggwidpfleglcrylsfsqlrvkadlkqgdllnssnlvc
-NP_182157      ------enqnenqdmstkgkssdqlevffeglckfaryskfetcgtirsgdllnsasvvc
-NP_192849      ------dntvaevensetwssddrvgaffdglckyaryskfetrgvlrtselnntsnvic
+NP_175717      ekssms---qpskdpindsrqggwidpfleglckylsfsklrvkadlkqgdllnssnlvc	488
+NP_683567      ekssvsnpvapkaffnndsrqggwidpfleglcrylsfsqlrvkadlkqgdllnssnlvc	538
+NP_182157      ------enqnenqdmstkgkssdqlevffeglckfaryskfetcgtirsgdllnsasvvc	720
+NP_192849      ------dntvaevensetwssddrvgaffdglckyaryskfetrgvlrtselnntsnvic	727
                           .        .   :  *::***::  :*::.. . :: .:* *::.::*
 
-NP_175717      aigfdrdgeffatagvnkkikifecesiikdgrdihypvvelasrsklsgicwnsyiksq
-NP_683567      alafdregelfatagvnkkikifecnsivndnrdihypvvelagrsklsslcwnsyiksq
-NP_182157      slsfdpdeehiaaagiskkikifdfnafmnesvgvhyplvemvnksklscvcwnsyikny
-NP_192849      slgfdrdedyfatagvskkikiyefnslfnesvdihypaiempnrsklsgvcwnnyirny
+NP_175717      aigfdrdgeffatagvnkkikifecesiikdgrdihypvvelasrsklsgicwnsyiksq	548
+NP_683567      alafdregelfatagvnkkikifecnsivndnrdihypvvelagrsklsslcwnsyiksq	598
+NP_182157      slsfdpdeehiaaagiskkikifdfnafmnesvgvhyplvemvnksklscvcwnsyikny	780
+NP_192849      slgfdrdedyfatagvskkikiyefnslfnesvdihypaiempnrsklsgvcwnnyirny	787
                ::.** : : :*:**:.*****:: :::.::   :*** :*:  :**** :***.**:.
 
-NP_175717      vassnfegvvqvwdvarnqlvtemkehekrvwsidyssadptllasgsddgsvklwsinq
-NP_683567      iassnfdgvvqiwdvarsqlvtemkehkkrvwsidissadptllasgsddg--------t
-NP_182157      lastdydgvvqiwdagtgqgfsqytehqkrawsvdfspsdptkfvsgsddcsvklwsine
-NP_192849      lassdydgivklwdvttgqaishfiehekrawsvdfseacptklasgsddcsvklwnine
+NP_175717      vassnfegvvqvwdvarnqlvtemkehekrvwsidyssadptllasgsddgsvklwsinq	608
+NP_683567      iassnfdgvvqiwdvarsqlvtemkehkkrvwsidissadptllasgsddg--------t	650
+NP_182157      lastdydgvvqiwdagtgqgfsqytehqkrawsvdfspsdptkfvsgsddcsvklwsine	840
+NP_192849      lassdydgivklwdvttgqaishfiehekrawsvdfseacptklasgsddcsvklwnine	847
                :**::::*:*::**.   * .:.  **:**.**:* * : ** :.*****
 
-NP_175717      gvsigtiktkaniccvqfpsetgrslafgsadhkvyyydlrnpklplctmighhktvsyv
-NP_683567      gvsigtiktkanvccvqfpsdsgrslafgsadhkvyyydlrnpkiplctmighsktvsyv
-NP_182157      krslgtiwspanvccvqfssysnhllafgsadykvycydlryvktpwctlaghekavsyv
-NP_192849      rnclgtirnianvccvqfspqsshllafgssdfrtycydlrnlrtpwcilsghnkavsya
+NP_175717      gvsigtiktkaniccvqfpsetgrslafgsadhkvyyydlrnpklplctmighhktvsyv	668
+NP_683567      gvsigtiktkanvccvqfpsdsgrslafgsadhkvyyydlrnpkiplctmighsktvsyv	710
+NP_182157      krslgtiwspanvccvqfssysnhllafgsadykvycydlryvktpwctlaghekavsyv	900
+NP_192849      rnclgtirnianvccvqfspqsshllafgssdfrtycydlrnlrtpwcilsghnkavsya	907
                  .:*** . **:*****   : : *****:*.:.* ****  : * * : ** *:***.
 
-NP_175717      rfvdsstlvssstdntlklwdlsmsisginet--plhsfmghtnvknfvglsvsdgyiat
-NP_683567      kfvdsstlvssstdntlklwdlsmsasgines--plhsftghtnlknfvglsvsdgyiat
-NP_182157      kfmdsetivsastdnslklwnlnktnssglspgacsltykghtnqknfvglsvldgyiac
-NP_192849      kfldnetlvtastdntlklwdlkktthgglstnacsltfgghtneknfvglstsdgyiac
+NP_175717      rfvdsstlvssstdntlklwdlsmsisginet--plhsfmghtnvknfvglsvsdgyiat	726
+NP_683567      kfvdsstlvssstdntlklwdlsmsasgines--plhsftghtnlknfvglsvsdgyiat	768
+NP_182157      kfmdsetivsastdnslklwnlnktnssglspgacsltykghtnqknfvglsvldgyiac	960
+NP_192849      kfldnetlvtastdntlklwdlkktthgglstnacsltfgghtneknfvglstsdgyiac	967
                :*:*..*:*::****:****:*. :  .  .      :: **** *******. *****
 
-NP_175717      gsetnevfvyhkafpmpvlsykfktidpvselev-ddasqfissvcwrgqsstlvaanst
-NP_683567      gsetnevfvyhkafpmpvmsymfnntdsmsglev-ddasqfissicwrgqsstlvaansn
-NP_182157      gsetnevysyykslpmpmtsykfgsvdpisgneyfddngqfvssvcwrkksnmlvaanst
-NP_192849      gsetnevyayhrslpmpitsykfgsidpisgkeieednnlfvssvcwrkrsnmvvsassn
+NP_175717      gsetnevfvyhkafpmpvlsykfktidpvselev-ddasqfissvcwrgqsstlvaanst	785
+NP_683567      gsetnevfvyhkafpmpvmsymfnntdsmsglev-ddasqfissicwrgqsstlvaansn	827
+NP_182157      gsetnevysyykslpmpmtsykfgsvdpisgneyfddngqfvssvcwrkksnmlvaanst	1020
+NP_192849      gsetnevyayhrslpmpitsykfgsidpisgkeieednnlfvssvcwrkrsnmvvsassn	1027
                *******: *::::***: ** * . * :*  *  :*   *:**:*** :*. :*:*.*.
 
-NP_175717      gnikilemv-
-NP_683567      gnikilemmt
-NP_182157      gnmkllklv-
-NP_192849      gsikvlqlv-
+NP_175717      gnikilemv-	794
+NP_683567      gnikilemmt	837
+NP_182157      gnmkllklv-	1029
+NP_192849      gsikvlqlv-	1036
                *.:*:*:::

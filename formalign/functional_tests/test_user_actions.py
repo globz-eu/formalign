@@ -69,8 +69,9 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
+            'NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:',
             first_seq_info.text,
-            'gi|15219179|ref|NP_175717.1| SPA1-related 4 protein [Arabidopsis thaliana]:'
+            first_seq_info.text
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
