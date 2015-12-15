@@ -191,15 +191,6 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'base/query_display.html')
 
-    def test_redirect_to_aligndisplay_on_post(self):
-        """
-        Tests that valid POST request on index page redirects to /query-sequences/
-        :return:
-        """
-        input_seqs = file_to_string('spa_protein_alignment.fasta')
-        response = self.client.post('/query-sequences/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        self.assertTrue('/align-display/' in response.url)
-
 
 class SeqDisplayInvalidInput(TestCase):
     """

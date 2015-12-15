@@ -89,20 +89,20 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         render_button.click()
 
         # She is redirected to the alignment display page
-        self.assertEqual(self.browser.title, 'Formalign.eu Alignment Display', self.browser.title)
+        self.assertEqual('Formalign.eu Alignment Display', self.browser.title, self.browser.title)
 
         # She sees the alignment displayed with 80 characters per line in blocks of 10 with sequence ids
         s0 = self.browser.find_elements_by_xpath(
                 '//div[@class="al_ln"]'
-        ).find_elements_by_xpath('//div[@class="al_el S0"]')
+        )[10].find_elements_by_xpath('./div[@class="al_el S0"]')
         s1 = self.browser.find_elements_by_xpath(
                 '//div[@class="al_ln"]'
-        ).find_elements_by_xpath('//div[@class="al_el S1"]')
+        )[10].find_elements_by_xpath('./div[@class="al_el S1"]')
         self.assertEqual(len(s0) + len(s1), 80)
         sep = self.browser.find_elements_by_xpath(
                 '//div[@class="al_ln"]'
-        ).find_elements_by_xpath('//div[@class="sep"]')
-        self.assertEqual(len(sep), 7)
+        )[10].find_elements_by_xpath('./div[@class="sep"]')
+        self.assertEqual(len(sep), 8)
         self.fail('Incomplete Test')
 
     def test_DNA_alignment_validation(self):

@@ -60,7 +60,7 @@ def seq_display(request, align_id):
         return render(
                 request,
                 'base/query_display.html',
-                {'query_seqs': query_seqs, 'seq_type': alphabet, 'consensus': consensus}
+                {'query_seqs': query_seqs, 'seq_type': alphabet, 'consensus': consensus, 'align_id': align_id}
         )
 
     else:

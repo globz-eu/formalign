@@ -34,6 +34,7 @@ li.no_style {
     border: solid 2px #9d9d9d;
     margin-left: 10px;
     margin-right: 10px;
+    margin-bottom: 10px;
     padding: 10px;
 }
 
@@ -42,6 +43,10 @@ li.no_style {
     font-size: 10px;
     font-family: monospace;
     line-height: 1;
+}
+
+.consensus {
+    margin-top: 0.5em;
 }
 .al_el {
     display: inline-block;
@@ -53,6 +58,10 @@ li.no_style {
     display: inline-block;
     width: 1em;
     text-align: center;
+}
+
+.horizontal-sep{
+    height: 1.5em;
 }
 
 .ln_sep {
