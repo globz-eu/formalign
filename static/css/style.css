@@ -22,17 +22,10 @@
 .bg-color-body {
     background-color: #e4e4e4;
 }
-/*.navbar-default {*/
-    /*background-color: #07631B;*/
-/*}*/
 
 .navbar-default .navbar-brand {
     color: #77B395;  /* color-primary-1 */
 }
-
-/*.navbar-default .navbar-brand:hover {*/
-    /*color: #4A8691;*/
-/*}*/
 
 .navbar-default .navbar-nav li a {
     color: #77B395;  /* color-primary-1 */
@@ -50,8 +43,6 @@
     color: #5E5E5E;
     background-color: #4B956F;
 }
-
-
 
 #id_align_input {
     background-color: #e4e4e4;
@@ -138,7 +129,6 @@ li.no_style {
 }
 
 .al_ln {
-    /*width: 130em;*/
     font-size: 10px;
     font-family: monospace;
     line-height: 1;
@@ -174,10 +164,7 @@ li.no_style {
 }
 
 .S1 {
+    font-weight: bold;
     color: #ffffff;
     background-color: #3c3c3c;
 }
-
-/*.seq_id {*/
-    /*width: 20em;*/
-/*}*/

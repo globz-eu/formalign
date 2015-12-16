@@ -86,6 +86,12 @@ def align_display(request, align_id):
                 letter_annotations=cons_seq_annot
         )
         alignment.append(cons_seqrec)
+
+        # get longest id for id display width
+        id_lengths = [len(a.id) for a in alignment]
+        id_lengths.sort(reverse=True)
+        id_width = id_lengths[0] + 2
+
         for a in alignment[:-1]:
             a.letter_annotations = {
                 'eq': [1 if (a[i] == cons_seq[i] and cons_seq[i] not in ['-', 'X']) else 0 for i in range(0, len(a))]
@@ -117,4 +123,4 @@ def align_display(request, align_id):
         align = {
             'align_seqs': seqs_blocks,
         }
-        return render(request, 'base/align_display.html', align)
+        return render(request, 'base/align_display.html', {'align': align, 'id_width': id_width})

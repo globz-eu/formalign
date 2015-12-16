@@ -8,17 +8,17 @@
 
 
     <div class="align_display">
-    {% for s in align_seqs %}
+    {% for s in align.align_seqs %}
 
         {% for id, ls in s %}
         <div class="al_ln{% if id == "consensus" %} consensus{% endif %}">
-        <div class="al_el seq_id">{{ id }}</div>
-        {% for b in ls %}
-            {% for eq, c in b %}
-                <div class="al_el S{{ eq }}">{{ c }}</div>
+            <div class="al_el seq_id" style="width: {{ id_width }}ch">{{ id }}</div>
+            {% for b in ls %}
+                {% for eq, c in b %}
+                    <div class="al_el S{{ eq }}">{{ c }}</div>
+                {% endfor %}
+                <div class="sep">&nbsp;</div>
             {% endfor %}
-            <div class="sep">&nbsp;</div>
-        {% endfor %}
         </div>
         {% endfor %}
         <div class="horizontal-sep">&nbsp;</div>

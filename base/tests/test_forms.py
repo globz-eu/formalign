@@ -37,8 +37,8 @@ class QueryFormTest(TestCase):
         """
         form = QueryForm()
         field = form['align_input']
-        self.assertIn('Paste in your alignment in FASTA format:', field.label_tag())
-        self.assertIn('placeholder="FASTA alignment"', form.as_p())
+        self.assertIn('Paste in your alignment (FASTA, clustalw, stockholm or phylip):', field.label_tag())
+        self.assertIn('placeholder="Alignment (FASTA, clustalw, stockholm or phylip)"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
 
     def test_form_renders_sequence_type_radio_buttons(self):

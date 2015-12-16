@@ -5,8 +5,7 @@ from Bio.Align import MultipleSeqAlignment
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
 
-
-# Create your models here.
+__author__ = 'Stefan Dieterle'
 
 
 def save_alignment_to_db(name, data):
