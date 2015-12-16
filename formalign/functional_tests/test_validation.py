@@ -1,17 +1,17 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from private import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
-import time
 from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCase(StaticLiveServerTestCase):
+class InputValidationTestCase(StaticLiveServerTestCase):
     def setUp(self):
         # self.browser = webdriver.Chrome(
-        #     '/home/golgotux/Dropbox/Documents/Backups/Python Scripts/pycharm_helpers/chromedriver'
+        #     CHROME_DRIVER
         # )
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(2)
@@ -20,90 +20,109 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         # time.sleep(5)
         self.browser.quit()
 
-    def test_basic_user_experience(self):
-        """
-        Tests basic user interaction with formalign.eu site
-        :return:
-        """
-        # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
-        # She visits the formalign.eu site.
-        self.browser.get(self.live_server_url + '/')
+    def invalid_format_test_sequence(self, **kwargs):
+        seq_type_button = {'DNA': 'input#id_seq_type_1', 'protein': 'input#id_seq_type_0'}
 
-        # User sees she's on the right page because she can see the name of the site in the heading.
-        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
-        brand_element = self.browser.find_element_by_css_selector('.navbar-brand')
-        self.assertEqual('Formalign.eu', brand_element.text)
-
-        # She sees a form that says 'Paste in your alignment in FASTA format:'
-        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
-        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
-        self.assertEqual(alignment_input.get_attribute('placeholder'), 'FASTA alignment')
-
-        # She sees two radio buttons for DNA and protein
-        dna_button = self.browser.find_element_by_css_selector('input#id_seq_type_1')
-        self.assertIsNotNone(dna_button)
-        protein_button = self.browser.find_element_by_css_selector('input#id_seq_type_0')
-        self.assertIsNotNone(protein_button)
-
-        # She sees that the DNA button is selected by default
-        self.assertEqual(dna_button.is_selected(), True)
-
-        # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
+        # She clicks the appropriate button and clears the input field
+        protein_button = self.browser.find_element_by_css_selector(seq_type_button[kwargs['seq_type']])
         protein_button.click()
-        self.assertEqual(protein_button.is_selected(), True)
-        self.assertEqual(dna_button.is_selected(), False)
-
-        # She pastes in a protein alignment to see what happens
-        alignment_string = file_to_string('spa_protein_alignment.fasta')
-        pyperclip.copy(alignment_string)
+        self.assertEqual(
+                True,
+                protein_button.is_selected(),
+                'button is selected for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' +
+                str(protein_button.is_selected())
+        )
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+
+        # She pastes in an invalid fasta alignment
+        alignment_string = file_to_string(kwargs['invalid'])
+        pyperclip.copy(alignment_string)
+        alignment_input.send_keys(Keys.CONTROL, 'v')
+        self.browser.find_element_by_id('submit-align').click()
+
+        # Since her FASTA format is invalid she gets redirected to the submission form where she sees an
+        # error message telling her that her alignment format is invalid
+        self.assertEqual(
+                'Formalign.eu Home',
+                self.browser.title,
+                'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title
+        )
+        error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
+        self.assertEqual(
+                'The server could not figure out what format this is, '
+                'please double check your input or try a different format',
+                error.text,
+                'error.text for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + error.text,
+
+        )
+
+        # she corrects her alignment and submits an invalid clustal alignment
+        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        alignment_input.clear()
+        alignment_string = file_to_string(kwargs['valid'])
+        pyperclip.copy(alignment_string)
         alignment_input.send_keys(Keys.CONTROL, 'v')
         self.browser.find_element_by_id('submit-fasta').click()
 
-        # She is redirected to a page showing the submitted sequences from her alignment and a simple consensus sequence
-        self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
-        seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')
-        self.assertIsNotNone(seq_content)
-        for f in seq_content:
-            self.assertTrue(len(f.text) <= 80)
-
+        # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
+        self.assertEqual(
+                'Formalign.eu Sequence Display',
+                self.browser.title,
+                'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-            'NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:',
-            first_seq_info.text,
-            first_seq_info.text
+                'sequence1:',
+                first_seq_info.text,
+                'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_info.text
+
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
-        self.assertEqual(first_seq_content.text, '-' * 80)
+        self.assertEqual(
+                'MKERBGWAQ--QGKKPWRF--EEW',
+                first_seq_content.text,
+                'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_content.text
+        )
 
-        consensus_seq = self.browser.find_elements_by_css_selector('.consensus_seq_display')[0]
-        self.assertIsNotNone(consensus_seq)
-        cons_seq = file_to_string('consensus.txt')
-        self.assertEqual(consensus_seq.text, cons_seq[:80])
-        consensus_meta = self.browser.find_elements_by_xpath('//li[@class="query_seq_meta no_style"]')[0]
-        self.assertEqual(consensus_meta.text, 'Consensus:')
+        # She wonders whether she can use other formats and decides to navigate back to the home page
+        home_button = self.browser.find_element_by_css_selector('.navbar-brand')
+        home_button.click()
 
-        # She is happy with the result, sees a "Render" button and clicks it.
-        render_button = self.browser.find_element_by_css_selector('button#render-align')
-        self.assertIsNotNone(render_button)
-        render_button.click()
+    def test_alignment_format_validation(self):
+        # User visits the formalign.eu site.
+        self.browser.get(self.live_server_url + '/')
 
-        # She is redirected to the alignment display page
-        self.assertEqual('Formalign.eu Alignment Display', self.browser.title, self.browser.title)
+        # She tries a number of invalid and valid alignment formats
+        files = [
+            {'valid': 'protein.fasta', 'invalid': 'protein_invalid_fasta.fasta', 'seq_type': 'protein',
+             'align_format': 'fasta'},
+            {'valid': 'protein.clustal', 'invalid': 'protein_invalid_clustal.clustal', 'seq_type': 'protein',
+             'align_format': 'clustal'},
+            {'valid': 'protein.ig', 'invalid': 'protein_invalid_ig.ig', 'seq_type': 'protein',
+             'align_format': 'ig'},
+            {'valid': 'protein.nexus', 'invalid': 'protein_invalid_nexus.nexus', 'seq_type': 'protein',
+             'align_format': 'nexus'},
+            {'valid': 'protein.phylip', 'invalid': 'protein_invalid_phylip.phylip', 'seq_type': 'protein',
+             'align_format': 'phylip'},
+            {'valid': 'protein.stockholm', 'invalid': 'protein_invalid_stockholm.sto', 'seq_type': 'protein',
+             'align_format': 'stockholm'},
+            {'valid': 'DNA.fasta', 'invalid': 'DNA_invalid_fasta.fasta', 'seq_type': 'DNA',
+             'align_format': 'fasta'},
+            {'valid': 'DNA.clustal', 'invalid': 'DNA_invalid_clustal.clustal', 'seq_type': 'DNA',
+             'align_format': 'clustal'},
+            {'valid': 'DNA.ig', 'invalid': 'DNA_invalid_ig.ig', 'seq_type': 'DNA',
+             'align_format': 'ig'},
+            {'valid': 'DNA.nexus', 'invalid': 'DNA_invalid_nexus.nexus', 'seq_type': 'DNA',
+             'align_format': 'nexus'},
+            {'valid': 'DNA.phylip', 'invalid': 'DNA_invalid_phylip.phylip', 'seq_type': 'DNA',
+             'align_format': 'phylip'},
+            {'valid': 'DNA.stockholm', 'invalid': 'DNA_invalid_stockholm.sto', 'seq_type': 'DNA',
+             'align_format': 'stockholm'},
 
-        # She sees the alignment displayed with 80 characters per line in blocks of 10 with sequence ids
-        s0 = self.browser.find_elements_by_xpath(
-                '//div[@class="al_ln"]'
-        )[10].find_elements_by_xpath('./div[@class="al_el S0"]')
-        s1 = self.browser.find_elements_by_xpath(
-                '//div[@class="al_ln"]'
-        )[10].find_elements_by_xpath('./div[@class="al_el S1"]')
-        self.assertEqual(len(s0) + len(s1), 80)
-        sep = self.browser.find_elements_by_xpath(
-                '//div[@class="al_ln"]'
-        )[10].find_elements_by_xpath('./div[@class="sep"]')
-        self.assertEqual(len(sep), 8)
+        ]
+        for file in files:
+            self.invalid_format_test_sequence(**file)
         self.fail('Incomplete Test')
 
     def test_DNA_alignment_validation(self):
@@ -125,8 +144,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Sequence is not FASTA compliant, no ">" as first character'
+                error.text,
+                'Sequence is not FASTA compliant, no ">" as first character'
         )
 
         # she corrects her alignment and resubmits
@@ -141,8 +160,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Invalid character in sequence: sequence1'
+                error.text,
+                'Invalid character in sequence: sequence1'
         )
 
         # she corrects her alignment again and resubmits
@@ -158,8 +177,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Submitted data is not a valid alignment, it contains less than 2 sequences'
+                error.text,
+                'Submitted data is not a valid alignment, it contains less than 2 sequences'
         )
 
         # she adds the missing sequence and resubmits
@@ -175,8 +194,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Alignment invalid, sequences have different lengths'
+                error.text,
+                'Alignment invalid, sequences have different lengths'
         )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
@@ -191,8 +210,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-            first_seq_info.text,
-            'sequence1:'
+                first_seq_info.text,
+                'sequence1:'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
@@ -220,8 +239,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Sequence is not FASTA compliant, no ">" as first character'
+                error.text,
+                'Sequence is not FASTA compliant, no ">" as first character'
         )
 
         # she corrects her alignment and resubmits
@@ -236,8 +255,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Invalid character in sequence: Short sequence3'
+                error.text,
+                'Invalid character in sequence: Short sequence3'
         )
 
         # she corrects her alignment again and resubmits
@@ -253,8 +272,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Submitted data is not a valid alignment, it contains less than 2 sequences'
+                error.text,
+                'Submitted data is not a valid alignment, it contains less than 2 sequences'
         )
 
         # she adds the missing sequence and resubmits
@@ -270,8 +289,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-            error.text,
-            'Alignment invalid, sequences have different lengths'
+                error.text,
+                'Alignment invalid, sequences have different lengths'
         )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
@@ -286,8 +305,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-            first_seq_info.text,
-            'Short sequence1:'
+                first_seq_info.text,
+                'Short sequence1:'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
