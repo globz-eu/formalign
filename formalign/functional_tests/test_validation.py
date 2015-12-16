@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 
 __author__ = 'Stefan Dieterle'
 
@@ -22,6 +23,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
 
     def invalid_format_test_sequence(self, **kwargs):
         seq_type_button = {'DNA': 'input#id_seq_type_1', 'protein': 'input#id_seq_type_0'}
+        test_seq = {'DNA': 'AGTCC-TAAGGTCGCCAATGGGCA', 'protein': 'MKERBGWAQ--QGKKPWRF--EEW'}
 
         # She clicks the appropriate button and clears the input field
         protein_button = self.browser.find_element_by_css_selector(seq_type_button[kwargs['seq_type']])
@@ -50,8 +52,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         )
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                'The server could not figure out what format this is, '
-                'please double check your input or try a different format',
+                FORMAT_ERROR,
                 error.text,
                 'error.text for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + error.text,
 
@@ -63,7 +64,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_string = file_to_string(kwargs['valid'])
         pyperclip.copy(alignment_string)
         alignment_input.send_keys(Keys.CONTROL, 'v')
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(
@@ -80,7 +81,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
         self.assertEqual(
-                'MKERBGWAQ--QGKKPWRF--EEW',
+                test_seq[kwargs['seq_type']],
                 first_seq_content.text,
                 'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_content.text
         )
@@ -137,15 +138,15 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_string = file_to_string('DNA_invalid_fasta.fasta')
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
         # error message telling her that her FASTA format is invalid
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                error.text,
-                'Sequence is not FASTA compliant, no ">" as first character'
+                FORMAT_ERROR,
+                error.text
         )
 
         # she corrects her alignment and resubmits
@@ -153,15 +154,16 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
         # again where she sees an error message telling her that her sequences contain invalid characters
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                error.text,
-                'Invalid character in sequence: sequence1'
+                CHARACTER_ERROR + 'sequence1',
+                error.text
+
         )
 
         # she corrects her alignment again and resubmits
@@ -169,7 +171,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately this time she accidentally erased one sequence and is left with only one sequence so she gets
         # redirected to the submission form again where she sees an error message telling her that her alignment is not
@@ -177,8 +179,8 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                LESS_THAN_TWO_SEQS_ERROR,
                 error.text,
-                'Submitted data is not a valid alignment, it contains less than 2 sequences'
         )
 
         # she adds the missing sequence and resubmits
@@ -186,7 +188,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # it must be starting to be a bit late since she added some residues to her first sequence so it is longer than
         # the second now so she gets redirected to the submission form again where she sees an error message telling her
@@ -194,8 +196,8 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                ALIGNMENT_ERROR,
                 error.text,
-                'Alignment invalid, sequences have different lengths'
         )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
@@ -204,14 +206,14 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-                first_seq_info.text,
-                'sequence1:'
+                'sequence1:',
+                first_seq_info.text
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
@@ -232,15 +234,15 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_string = file_to_string('protein_invalid_fasta.fasta')
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
         # error message telling her that her FASTA format is invalid
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                FORMAT_ERROR,
                 error.text,
-                'Sequence is not FASTA compliant, no ">" as first character'
         )
 
         # she corrects her alignment and resubmits
@@ -248,15 +250,15 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
         # again where she sees an error message telling her that her sequences contain invalid characters
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                CHARACTER_ERROR + 'sequence1',
                 error.text,
-                'Invalid character in sequence: Short sequence3'
         )
 
         # she corrects her alignment again and resubmits
@@ -264,7 +266,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # unfortunately this time she accidentally erased one sequence and is left with only one sequence so she gets
         # redirected to the submission form again where she sees an error message telling her that her alignment is not
@@ -272,8 +274,8 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                LESS_THAN_TWO_SEQS_ERROR,
                 error.text,
-                'Submitted data is not a valid alignment, it contains less than 2 sequences'
         )
 
         # she adds the missing sequence and resubmits
@@ -281,7 +283,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # it must be starting to be a bit late since she added some residues to her first sequence so it is longer than
         # the second now so she gets redirected to the submission form again where she sees an error message telling her
@@ -289,8 +291,8 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
+                ALIGNMENT_ERROR,
                 error.text,
-                'Alignment invalid, sequences have different lengths'
         )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
@@ -299,14 +301,14 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
         alignment_input.send_keys(alignment_string)
-        self.browser.find_element_by_id('submit-fasta').click()
+        self.browser.find_element_by_id('submit-align').click()
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
+                'sequence1:',
                 first_seq_info.text,
-                'Short sequence1:'
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)

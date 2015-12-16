@@ -2,7 +2,7 @@ from django.test import TestCase
 import os
 from formalign.settings import BASE_DIR
 from base.forms import QueryForm
-from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from helper_funcs.helpers_test import file_to_string
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
@@ -65,15 +65,15 @@ class QueryFormTest(TestCase):
         Tests error on invalid FASTA (no '>' as first character)
         :return:
         """
-        self.validation(FASTA_ERROR, 'protein_invalid_fasta.fasta')
-        self.validation(FASTA_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
+        self.validation(FORMAT_ERROR, 'protein_invalid_fasta.fasta')
+        self.validation(FORMAT_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
 
     def test_form_validation_for_invalid_characters(self):
         """
         Tests error on invalid characters in FASTA sequence for protein sequences
         :return:
         """
-        self.validation(CHARACTER_ERROR + 'Short sequence3', 'protein_invalid_characters.fasta')
+        self.validation(CHARACTER_ERROR + 'sequence1', 'protein_invalid_characters.fasta')
         self.validation(CHARACTER_ERROR + 'sequence1', 'DNA_invalid_characters.fasta', 'DNA')
 
     def test_form_validation_for_invalid_alignment(self):

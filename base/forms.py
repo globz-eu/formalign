@@ -8,7 +8,8 @@ from Bio.Alphabet import Gapped
 __author__ = 'Stefan Dieterle'
 
 EMPTY_ERROR = 'Please submit an alignment'
-FASTA_ERROR = 'Sequence is not FASTA compliant, no ">" as first character'
+FORMAT_ERROR = """The server could not figure out what format this is,
+please double check your input or try a different format"""
 CHARACTER_ERROR = 'Invalid character in sequence: '
 ALIGNMENT_ERROR = 'Alignment invalid, sequences have different lengths'
 LESS_THAN_TWO_SEQS_ERROR = 'Submitted data is not a valid alignment, it contains less than 2 sequences'
@@ -21,11 +22,11 @@ class QueryForm(forms.Form):
     align_input = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                'placeholder': 'FASTA alignment',
+                'placeholder': 'Alignment (FASTA, clustalw, stockholm or phylip)',
                 'class': 'form-control',
             }
         ),
-        label='Paste in your alignment in FASTA format:',
+        label='Paste in your alignment (FASTA, clustalw, stockholm or phylip):',
         required=True,
         error_messages={'required': 'Please submit an alignment'},
     )
@@ -53,7 +54,7 @@ class QueryForm(forms.Form):
         data = io.StringIO(align_input)
 
         if self.cleaned_data['align_input'][0] != '>':
-            raise forms.ValidationError(FASTA_ERROR)
+            raise forms.ValidationError(FORMAT_ERROR)
 
         try:
             align_input = parse_fasta_alignment(data)

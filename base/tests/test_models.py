@@ -55,7 +55,6 @@ class AlignmentModelTestCase(TestCase):
         for a in self.data:
             a.seq.alphabet = alphabet
         self.data._alphabet = alphabet
-        # self.alignment = Alignment().save_alignment_to_db(name, data)
 
     def test_alignment_basic(self):
         """

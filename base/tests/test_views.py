@@ -6,7 +6,7 @@ from django.utils.html import escape
 from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
-from base.forms import EMPTY_ERROR, FASTA_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
@@ -114,7 +114,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.response_prot
-        with self.assertHTML(response, 'li[class=query_seq_meta]') as elems:
+        with self.assertHTML(response, 'h3[class=query_seq_meta]') as elems:
             self.assertEqual('NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:',
                              elems[0].text,
                              'meta1: ' + format(elems[0].text)
@@ -147,8 +147,8 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.response_prot
-        with self.assertHTML(response, 'li[class="query_seq_meta no_style"]') as elems:
-            self.assertEqual(elems[0].text,
+        with self.assertHTML(response, 'h3[class="query_seq_meta"]') as elems:
+            self.assertEqual(elems[-1].text,
                              'Consensus:',
                              'consensus meta: ' + format(elems[0].text)
                              )
@@ -168,9 +168,9 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         """
         input_seqs = file_to_string('protein.fasta')
         parsed = parse_fasta_alignment(io.StringIO(input_seqs))
-        self.assertEqual(parsed[0].description, 'Short sequence1')
+        self.assertEqual(parsed[0].description, 'sequence1')
         self.assertEqual(parsed[0].seq, 'MKERBGWAQ--QGKKPWRF--EEW')
-        self.assertEqual(parsed[1].description, 'Short sequence2')
+        self.assertEqual(parsed[1].description, 'sequence2')
         self.assertEqual(parsed[1].seq, 'MKERBGWA-SYQGKKPWRFAQ-EW')
 
     def test_display_page_uses_display_seq_template_on_GET(self):
@@ -273,8 +273,8 @@ class SeqDisplayInvalidInput(TestCase):
         Tests that the correct error message is displayed on the home page on submission of invalid FASTA
         :return:
         """
-        self.invalid_input_errors_are_shown_on_home_page(FASTA_ERROR, 'protein_invalid_fasta.fasta')
-        self.invalid_input_errors_are_shown_on_home_page(FASTA_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
+        self.invalid_input_errors_are_shown_on_home_page(FORMAT_ERROR, 'protein_invalid_fasta.fasta')
+        self.invalid_input_errors_are_shown_on_home_page(FORMAT_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
 
     def test_for_invalid_fasta_input_passes_form_to_template(self):
         """
