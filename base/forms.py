@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from helper_funcs.helpers_bio import parse_fasta_alignment
 import io
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
@@ -26,7 +27,8 @@ class QueryForm(forms.Form):
                 'class': 'form-control',
             }
         ),
-        label='Paste in your alignment (FASTA, clustalw, stockholm or phylip):',
+        label=mark_safe('Paste in your alignment:<br>(FASTA, clustalw, stockholm or phylip)'),
+        label_suffix='',
         required=True,
         error_messages={'required': 'Please submit an alignment'},
     )

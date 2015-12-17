@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="jumbotron bg-color-primary-1 color-primary-4">
+    <div class="jumbotron bg-color-primary-1 color-complement-4">
         <form class="form-horizontal" role="form" method="post" action="/">
         <div class="form-group">
             <div class="col-sm-2 control-label">
@@ -21,7 +21,7 @@
             </div>
             <div class="col-sm-9">
                 {{ form.align_input }}
-                <div class="errors bg-color-complement-2">
+                <div class="errors">
                     {% if form.align_input.errors %}
                         <pre class="errors">{{ form.align_input.errors }}</pre>
                     {% endif %}

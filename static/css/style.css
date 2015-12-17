@@ -20,42 +20,72 @@
     margin-left: 0;
 }
 .bg-color-body {
-    background-color: #e4e4e4;
+    background-color: #E4E4E4;
+}
+
+.navbar {
+    margin-bottom: 50px;
 }
 
 .navbar-default .navbar-brand {
+    font-size: 20px;
+    color: #D4846A;  /* color-complement-0 */
+}
+
+.navbar-default .navbar-brand:hover {
     color: #77B395;  /* color-primary-1 */
 }
 
 .navbar-default .navbar-nav li a {
-    color: #77B395;  /* color-primary-1 */
+    color: #D4846A;  /* color-complement-0 */
 }
 
 .navbar-default .navbar-nav li a:hover {
-    color: #5E5E5E;
+    color: #77B395;  /* color-primary-1 */
 }
+
 .navbar-default .navbar-nav .active a {
-    color: #4B956F;  /* color-primary-2 */
+    color: #D4846A;
     background-color: #003C1D;  /* color-primary-4 */
+
 }
 
 .navbar-default .navbar-nav .active a:hover {
-    color: #5E5E5E;
+    color: #003C1D;  /* color-primary-2 */
     background-color: #4B956F;
+}
+
+input {
+    vertical-align: -15%;
+}
+
+.form-horizontal .control-label {
+    padding-top: 0;
+    vertical-align: middle;
 }
 
 #id_align_input {
     background-color: #e4e4e4;
+    border: 2px solid #802F15;
 }
+
 .btn-primary {
+    font-weight: bold;
     color: #77B395;
-    background-color: #0F5934;
+    background-color: #551400;
     border-color: #003C1D;
 }
 
-.btn-primary:hover {
-    color: #FFBEAA;
-    background-color: #551400;
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:active:focus,
+.btn-primary:hover:active,
+.btn-primary:focus:hover,
+.btn-primary:focus:hover:active {
+    font-weight: bold;
+    color: #802F15;
+    background-color: #28774F;
     border-color: #802F15;
 }
 
@@ -66,8 +96,14 @@
     list-style-type: none;
 }
 
+#id_seq_type {
+    margin-bottom: 40px;
+    margin-left: -20px;
+}
 #id_seq_type li {
     display: inline;
+    /*margin-bottom: 40px;*/
+    /*margin-left: -20px;*/
 }
 
 #id_seq_type_1 {
@@ -79,7 +115,7 @@
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     font-weight: bold;
-    color: #FFBEAA;
+    color: #77B395;
 }
 
 .errors{
@@ -92,13 +128,22 @@ pre {
 
 .query_seq {
     overflow: auto;
-    height: 15em;
+    height: 8em;
+    border: 2px solid #802F15;
+    padding-top: 0.5ch;
+}
+
+.query_seq {
+    border: 2px solid #802F15;
+    padding-top: 0.5ch;
 }
 
 .query_seq_display {
     width: 80ch;
     white-space: nowrap;
     font-family: monospace;
+    margin-left: 1ch;
+    color: #0f0f0f;
 }
 
 .query_seq_meta {
@@ -159,7 +204,7 @@ li.no_style {
 }
 
 .S0 {
-    color: #000000;
+    color: #0f0f0f;
     background-color: #ffffff;
 }
 
