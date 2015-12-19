@@ -84,7 +84,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertIsNotNone(consensus_seq)
         cons_seq = file_to_string('consensus.txt')
         self.assertEqual(consensus_seq.text, cons_seq[:80])
-        consensus_meta = self.browser.find_elements_by_xpath('//h3[@class="query_seq_meta"]')[-1]
+        consensus_meta = self.browser.find_elements_by_xpath('//h3[@class="query_seq_meta bg-color-body"]')[-1]
         self.assertEqual(consensus_meta.text, 'Consensus:')
 
         # She is happy with the result, sees a "Render" button and clicks it.

@@ -15,6 +15,9 @@
 .bg-color-primary-3 { background-color: #0F5934 }
 .bg-color-complement-2 { background-color: #D4846A }
 
+body {
+    margin-top: 70px;
+}
 .row {
     margin-right: 0;
     margin-left: 0;
@@ -25,6 +28,11 @@
 
 .navbar {
     margin-bottom: 50px;
+    margin-left: 5px;
+    margin-right: 5px;
+    box-shadow: 1px 1px 5px #4f4f4f;
+    border-style: none;
+    background-color: rgba(15,89,52,0.9);
 }
 
 .navbar-default .navbar-brand {
@@ -55,6 +63,9 @@
     background-color: #4B956F;
 }
 
+.dropdown {
+    margin-right: 15px;
+}
 input {
     vertical-align: -15%;
 }
@@ -74,6 +85,7 @@ input {
     color: #77B395;
     background-color: #551400;
     border-color: #003C1D;
+    box-shadow: 0px 2px 5px -1px #4f4f4f;
 }
 
 .btn-primary:hover,
@@ -90,7 +102,6 @@ input {
 }
 
 #render-align {
-    margin-left: 50%;
 }
 #id_seq_type {
     list-style-type: none;
@@ -126,19 +137,26 @@ pre {
     border: none;
 }
 
+.jumbotron {
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px #4f4f4f;
+}
+.well {
+    /*border: 1px solid #802F15;*/
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px #4f4f4f;
+    border-style: none;
+}
 .query_seq {
     overflow: auto;
     height: 8em;
-    border: 2px solid #802F15;
-    padding-top: 0.5ch;
-}
-
-.query_seq {
-    border: 2px solid #802F15;
+    border: 1px solid #802F15;
+    border-radius: 4px;
     padding-top: 0.5ch;
 }
 
 .query_seq_display {
+    font-size: 12px;
     width: 80ch;
     white-space: nowrap;
     font-family: monospace;
@@ -147,8 +165,14 @@ pre {
 }
 
 .query_seq_meta {
-    font-size: 18px;
-    margin-bottom: 15px;
+    font-size: 14px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 1ch;
+    margin-top: 0;
+    margin-bottom: 3px;
+    border: 1px solid #802F15;
+    border-radius: 4px;
 }
 
 .query_seq_type {

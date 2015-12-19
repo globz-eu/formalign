@@ -95,14 +95,14 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.response_prot
-        with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
+        with self.assertHTML(response, 'h2[class="query_seq_type color-complement-4"]') as elem:
             self.assertEqual(elem[0].text,
                              'Protein sequences:',
                              format(elem[0].text)
                              )
 
         response = self.response_dna
-        with self.assertHTML(response, 'h2[class="query_seq_type"]') as elem:
+        with self.assertHTML(response, 'h2[class="query_seq_type color-complement-4"]') as elem:
             self.assertEqual(elem[0].text,
                              'DNA sequences:',
                              format(elem[0].text)
@@ -114,7 +114,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.response_prot
-        with self.assertHTML(response, 'h3[class=query_seq_meta]') as elems:
+        with self.assertHTML(response, 'h3[class="query_seq_meta bg-color-body"]') as elems:
             self.assertEqual('NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:',
                              elems[0].text,
                              'meta1: ' + format(elems[0].text)
@@ -147,7 +147,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.response_prot
-        with self.assertHTML(response, 'h3[class="query_seq_meta"]') as elems:
+        with self.assertHTML(response, 'h3[class="query_seq_meta bg-color-body"]') as elems:
             self.assertEqual(elems[-1].text,
                              'Consensus:',
                              'consensus meta: ' + format(elems[0].text)
