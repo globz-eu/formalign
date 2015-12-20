@@ -13,7 +13,7 @@ from helper_funcs.helpers_test import file_to_string
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
 
-from base.models import save_alignment_to_db, get_multipleseqalignment_object_from_db
+from base.models import Alignment
 
 __author__ = 'Stefan Dieterle'
 
@@ -48,10 +48,8 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
         response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        print(response.url)
         pk = re.match(r'^/query-sequences/(?P<align_id>\d+)/', response.url).group('align_id')
-        alignment = get_multipleseqalignment_object_from_db(pk)
-        # self.assertEqual('bla', alignment.seqs, alignment.seqs)
+        alignment = Alignment.objects.get_alignment(pk)
         self.assertEqual(
                 [seq.id for seq in alignment],
                 ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
@@ -69,15 +67,15 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
-        align_pk = save_alignment_to_db(name, data)
-        self.response_prot = self.client.get('/query-sequences/' + str(align_pk) + '/')
+        align = Alignment.objects.create_alignment(name, data)
+        self.response_prot = self.client.get('/query-sequences/' + str(align.id) + '/')
         name = 'A. tha. SPA family DNA alignment'
         align_input = io.StringIO(file_to_string('spa_cds_alignment.fasta'))
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACDNA())
-        align_pk = save_alignment_to_db(name, data)
-        self.response_dna = self.client.get('/query-sequences/' + str(align_pk) + '/')
+        align = Alignment.objects.create_alignment(name, data)
+        self.response_dna = self.client.get('/query-sequences/' + str(align.id) + '/')
 
     def test_display_page_uses_display_seq_template(self):
         """
@@ -183,8 +181,8 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
-        save = save_alignment_to_db(name, data)
-        response = self.client.get('/query-sequences/' + str(save) + '/')
+        save = Alignment.objects.create_alignment(name, data)
+        response = self.client.get('/query-sequences/' + str(save.id) + '/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'base/query_display.html')
 
@@ -372,8 +370,8 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
-        align_pk = save_alignment_to_db(name, data)
-        self.response = self.client.get('/align-display/' + str(align_pk) + '/')
+        align = Alignment.objects.create_alignment(name, data)
+        self.response = self.client.get('/align-display/' + str(align.id) + '/')
 
     def test_align_display_page_uses_align_display_seq_template(self):
         """

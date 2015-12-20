@@ -8,43 +8,58 @@ from Bio.Alphabet import Gapped
 __author__ = 'Stefan Dieterle'
 
 
-def save_alignment_to_db(name, data):
-    alignment = Alignment.objects.create(name=name)
-    for s in data:
-        seqrec = Seqrecord.objects.create(
-                seq=str(s.seq),
-                alphabet=str(s.seq.alphabet),
-                seq_id=s.id,
-                name=s.name,
-                description=s.description
+class AlignmentManager(models.Manager):
+    """
+    Manages saving alignments to Alignment model and retrieving data from Alignment model
+    """
+    def create_alignment(self, name, data):
+        """
+        Method for saving name to Alignment and saving sequences to Seqrecord model while associating sequences to that
+        alignment
+        :param name: alignment name
+        :param data: list of seqrecords for alignment
+        :return: created alignment object
+        """
+        alignment = self.create(name=name)
+        for s in data:
+            seqrec = Seqrecord.objects.create(
+                    seq=str(s.seq),
+                    alphabet=str(s.seq.alphabet),
+                    seq_id=s.id,
+                    name=s.name,
+                    description=s.description
+            )
+            alignment.seqs.add(seqrec)
+        return alignment
+
+    def get_alignment(self, pk):
+        """
+        Method for managing fetching alignment from db and converting to MultipleSeqAlignment object
+        :param pk: alignment pk
+        :return: MultipleSeqAlignment object
+        """
+        alignment = self.get(pk=pk).seqs.all()
+        alphabets = {
+            "Gapped(ExtendedIUPACProtein(), '-')": Gapped(ExtendedIUPACProtein()),
+            "Gapped(ExtendedIUPACDNA(), '-')": Gapped(ExtendedIUPACDNA()),
+        }
+        mul_seq_al = MultipleSeqAlignment(
+                [
+                    SeqRecord(Seq(
+                            a.seq, alphabets[a.alphabet]),
+                            id=a.seq_id,
+                            name=a.name,
+                            description=a.description
+                    ) for a in alignment
+                    ],
+                alphabet=alphabets[alignment[0].alphabet]
         )
-        alignment.seqs.add(seqrec)
-    return alignment.pk
-
-
-def get_multipleseqalignment_object_from_db(pk):
-    alignment = Alignment.objects.get(pk=pk).seqs.all()
-    alphabets = {
-        "Gapped(ExtendedIUPACProtein(), '-')": Gapped(ExtendedIUPACProtein()),
-        "Gapped(ExtendedIUPACDNA(), '-')": Gapped(ExtendedIUPACDNA()),
-    }
-    mul_seq_al = MultipleSeqAlignment(
-            [
-                SeqRecord(Seq(
-                        a.seq, alphabets[a.alphabet]),
-                        id=a.seq_id,
-                        name=a.name,
-                        description=a.description
-                ) for a in alignment
-                ],
-            alphabet=alphabets[alignment[0].alphabet]
-    )
-    return mul_seq_al
+        return mul_seq_al
 
 
 class Seqrecord(models.Model):
     """
-    Sequrecords model
+    Seqrecords model
     """
     seq = models.TextField()
     alphabet = models.CharField(max_length=50)
@@ -59,3 +74,6 @@ class Alignment(models.Model):
     """
     name = models.CharField(max_length=50)
     seqs = models.ManyToManyField(Seqrecord)
+
+    objects = AlignmentManager()
+

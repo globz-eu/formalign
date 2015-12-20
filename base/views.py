@@ -3,7 +3,7 @@ from django.http import HttpResponseNotAllowed
 from base.forms import QueryForm
 from Bio.Align import AlignInfo
 from Bio.SeqRecord import SeqRecord
-from base.models import save_alignment_to_db, get_multipleseqalignment_object_from_db
+from base.models import Alignment
 
 __author__ = 'Stefan Dieterle'
 
@@ -21,7 +21,8 @@ def index(request):
         form = QueryForm(request.POST)
         if form.is_valid():
             align = form.cleaned_data['align_input']
-            pk = save_alignment_to_db('name', align)
+            save_align = Alignment.objects.create_alignment('name', align)
+            pk = save_align.id
             return redirect('/query-sequences/' + str(pk) + '/')
         else:
             return render(request, 'base/index.html', {'form': form})
@@ -39,7 +40,7 @@ def seq_display(request, align_id):
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
         length = 80
-        align = get_multipleseqalignment_object_from_db(align_id)
+        align = Alignment.objects.get_alignment(align_id)
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
             "Gapped(ExtendedIUPACDNA(), '-')": 'DNA',
@@ -75,7 +76,7 @@ def align_display(request, align_id):
     :return:
     """
     if request.method == 'GET':
-        alignment = get_multipleseqalignment_object_from_db(align_id)
+        alignment = Alignment.objects.get_alignment(align_id)
         cons_seq = AlignInfo.SummaryInfo(alignment).gap_consensus()
         cons_seq_annot = {'eq': [0 if c in ['-', 'X'] else 1 for c in cons_seq]}
         cons_seqrec = SeqRecord(

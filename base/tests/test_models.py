@@ -9,7 +9,7 @@ from Bio.Alphabet import Gapped
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
-from base.models import Alignment, Seqrecord, save_alignment_to_db, get_multipleseqalignment_object_from_db
+from base.models import Alignment, Seqrecord  #, save_alignment_to_db, get_multipleseqalignment_object_from_db
 
 __author__ = 'Stefan Dieterle'
 
@@ -78,14 +78,14 @@ class AlignmentModelTestCase(TestCase):
         )
 
     def test_save_alignment_to_db(self):
-        save = save_alignment_to_db(self.name, self.data)
+        save = Alignment.objects.create_alignment(self.name, self.data)
         alignment = Alignment.objects.all()
         self.assertEqual(alignment[0].name, 'A. tha. SPA family alignment', alignment[0].name)
         self.assertEqual(
                 [seq.seq_id for seq in alignment[0].seqs.all()],
                 ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
-        self.assertEqual(save, alignment[0].pk, save)
+        self.assertEqual(save.id, alignment[0].pk, save.id)
 
     def test_get_multipleseqalignment_object_from_db(self):
         alignment = Alignment.objects.create(name=self.name)
@@ -98,15 +98,15 @@ class AlignmentModelTestCase(TestCase):
                     description=s.description
             )
             alignment.seqs.add(seqrec)
-        mulseqal = get_multipleseqalignment_object_from_db(alignment.pk)
+        mulseqal = Alignment.objects.get_alignment(alignment.pk)
         self.assertEqual(
                 [seq.id for seq in mulseqal],
                 ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
     def test_save_and_get_sanity_check(self):
-        align_pk = save_alignment_to_db(self.name, self.data)
-        mulseqal = get_multipleseqalignment_object_from_db(align_pk)
+        align_pk = Alignment.objects.create_alignment(self.name, self.data).id
+        mulseqal = Alignment.objects.get_alignment(align_pk)
         self.assertEqual(
                 [seq.id for seq in mulseqal],
                 ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
