@@ -133,7 +133,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              'seq2: ' + format(elems[1].text)
                              )
 
-    def test_display_page_displays_sequence_with_less_than_80_residues_per_line(self):
+    def test_display_page_displays_protein_sequence_with_less_than_80_residues_per_line(self):
         response = self.response_prot
         with self.assertHTML(response, 'p[class=query_seq_display]') as elems:
             for elem in elems:
@@ -192,6 +192,19 @@ class SeqDisplayInvalidInput(TestCase):
     Tests for invalid alignment submission
     """
 
+    files = [
+        {'file': '', 'seq_type': 'DNA', 'error_text': EMPTY_ERROR},
+        {'file': '', 'seq_type': 'Protein', 'error_text': EMPTY_ERROR},
+        {'file': 'DNA_invalid_fasta.fasta', 'seq_type': 'DNA', 'error_text': FORMAT_ERROR},
+        {'file': 'protein_invalid_fasta.fasta', 'seq_type': 'Protein', 'error_text': FORMAT_ERROR},
+        {'file': 'DNA_invalid_characters.fasta', 'seq_type': 'DNA', 'error_text': CHARACTER_ERROR},
+        {'file': 'protein_invalid_characters.fasta', 'seq_type': 'Protein', 'error_text': CHARACTER_ERROR},
+        {'file': 'DNA_invalid_alignment.fasta', 'seq_type': 'DNA', 'error_text': ALIGNMENT_ERROR},
+        {'file': 'protein_invalid_alignment.fasta', 'seq_type': 'Protein', 'error_text': ALIGNMENT_ERROR},
+        {'file': 'DNA_too_few_sequences.fasta', 'seq_type': 'DNA', 'error_text': LESS_THAN_TWO_SEQS_ERROR},
+        {'file': 'protein_too_few_sequences.fasta', 'seq_type': 'Protein', 'error_text': LESS_THAN_TWO_SEQS_ERROR},
+    ]
+
     def response_for_invalid_post_request(self, input_file='', seq_type='Protein'):
         """
         Creates a response from a POST request to /query-sequences/ with an invalid alignment
@@ -213,7 +226,8 @@ class SeqDisplayInvalidInput(TestCase):
         """
         response = self.response_for_invalid_post_request(input_file, seq_type)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'base/index.html')
+        self.assertTemplateUsed(response, 'base/index.html',
+                                msg_prefix='Seq type: {}, file used: {}'.format(seq_type, input_file))
 
     def invalid_input_errors_are_shown_on_home_page(self, error_text, input_file='', seq_type='Protein'):
         """
@@ -223,7 +237,8 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         response = self.response_for_invalid_post_request(input_file, seq_type)
-        self.assertContains(response, escape(error_text))
+        self.assertContains(response, escape(error_text),
+                            msg_prefix='Seq type: {}, file used: {}'.format(seq_type, input_file))
 
     def invalid_input_passes_form_to_template(self, input_file='', seq_type='Protein'):
         """
@@ -232,127 +247,19 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         response = self.response_for_invalid_post_request(input_file, seq_type)
-        self.assertIsInstance(response.context['form'], QueryForm)
+        self.assertIsInstance(response.context['form'], QueryForm,
+                              'Seq type: {}, file used: {}'.format(seq_type, input_file))
 
-    def test_for_empty_input_renders_index_template(self):
+    def test_invalid_input(self):
         """
-        Tests that submitting an empty alignment input renders the home page
+        Tests that submitting an invalid alignment input renders the home page, that the correct error message is
+        displayed on the home page and that the form context is passed in response to an invalid alignment submission
         :return:
         """
-        self.invalid_input_renders_index_template('')
-        self.invalid_input_renders_index_template('', 'DNA')
-
-    def test_empty_input_errors_are_shown_on_home_page(self):
-        """
-        Tests that the correct error message is displayed on the home page on submission of an empty alignment
-        :return:
-        """
-        self.invalid_input_errors_are_shown_on_home_page(EMPTY_ERROR)
-        self.invalid_input_errors_are_shown_on_home_page(EMPTY_ERROR, '', 'DNA')
-
-    def test_for_empty_input_passes_form_to_template(self):
-        """
-        Tests that the form context is passed in response to an empty alignment submission
-        :return:
-        """
-        self.invalid_input_passes_form_to_template()
-        self.invalid_input_passes_form_to_template(seq_type='DNA')
-
-    def test_for_invalid_fasta_input_renders_index_template(self):
-        """
-        Tests that submitting an empty alignment input renders the home page
-        :return:
-        """
-        self.invalid_input_renders_index_template('protein_invalid_fasta.fasta')
-        self.invalid_input_renders_index_template('DNA_invalid_fasta.fasta', 'DNA')
-
-    def test_invalid_fasta_input_errors_are_shown_on_home_page(self):
-        """
-        Tests that the correct error message is displayed on the home page on submission of invalid FASTA
-        :return:
-        """
-        self.invalid_input_errors_are_shown_on_home_page(FORMAT_ERROR, 'protein_invalid_fasta.fasta')
-        self.invalid_input_errors_are_shown_on_home_page(FORMAT_ERROR, 'DNA_invalid_fasta.fasta', 'DNA')
-
-    def test_for_invalid_fasta_input_passes_form_to_template(self):
-        """
-        Tests that the form context is passed in response to an invalid FASTA submission
-        :return:
-        """
-        self.invalid_input_passes_form_to_template('protein_invalid_fasta.fasta')
-        self.invalid_input_passes_form_to_template('DNA_invalid_fasta.fasta', 'DNA')
-
-    def test_for_invalid_character_input_renders_index_template(self):
-        """
-        Tests that submitting an empty alignment input renders the home page
-        :return:
-        """
-        self.invalid_input_renders_index_template('protein_invalid_characters.fasta')
-        self.invalid_input_renders_index_template('DNA_invalid_fasta.fasta', 'DNA')
-
-    def test_invalid_character_input_errors_are_shown_on_home_page(self):
-        """
-        Tests that the correct error message is displayed on the home page on submission of invalid FASTA
-        :return:
-        """
-        self.invalid_input_errors_are_shown_on_home_page(CHARACTER_ERROR, 'protein_invalid_characters.fasta')
-        self.invalid_input_errors_are_shown_on_home_page(CHARACTER_ERROR, 'DNA_invalid_characters.fasta', 'DNA')
-
-    def test_for_invalid_character_input_passes_form_to_template(self):
-        """
-        Tests that the form context is passed in response to an invalid FASTA submission
-        :return:
-        """
-        self.invalid_input_passes_form_to_template('protein_invalid_characters.fasta')
-        self.invalid_input_passes_form_to_template('DNA_invalid_characters.fasta', 'DNA')
-
-    def test_for_invalid_alignment_input_renders_index_template(self):
-        """
-        Tests that submitting an empty alignment input renders the home page
-        :return:
-        """
-        self.invalid_input_renders_index_template('protein_invalid_alignment.fasta')
-        self.invalid_input_renders_index_template('DNA_invalid_alignment.fasta', 'DNA')
-
-    def test_invalid_alignment_input_errors_are_shown_on_home_page(self):
-        """
-        Tests that the correct error message is displayed on the home page on submission of invalid FASTA
-        :return:
-        """
-        self.invalid_input_errors_are_shown_on_home_page(ALIGNMENT_ERROR, 'protein_invalid_alignment.fasta')
-        self.invalid_input_errors_are_shown_on_home_page(ALIGNMENT_ERROR, 'DNA_invalid_alignment.fasta', 'DNA')
-
-    def test_for_invalid_alignment_input_passes_form_to_template(self):
-        """
-        Tests that the form context is passed in response to an invalid FASTA submission
-        :return:
-        """
-        self.invalid_input_passes_form_to_template('protein_invalid_alignment.fasta')
-        self.invalid_input_passes_form_to_template('DNA_invalid_alignment.fasta', 'DNA')
-
-    def test_for_too_few_sequences_input_renders_index_template(self):
-        """
-        Tests that submitting an alignment with only one sequence input renders the home page
-        :return:
-        """
-        self.invalid_input_renders_index_template('protein_too_few_sequences.fasta')
-        self.invalid_input_renders_index_template('DNA_too_few_sequences.fasta', 'DNA')
-
-    def test_too_few_sequences_input_errors_are_shown_on_home_page(self):
-        """
-        Tests that the correct error message is displayed on the home page on submission of invalid FASTA
-        :return:
-        """
-        self.invalid_input_errors_are_shown_on_home_page(LESS_THAN_TWO_SEQS_ERROR, 'protein_too_few_sequences.fasta')
-        self.invalid_input_errors_are_shown_on_home_page(LESS_THAN_TWO_SEQS_ERROR, 'DNA_too_few_sequences.fasta', 'DNA')
-
-    def test_for_too_few_sequences_input_passes_form_to_template(self):
-        """
-        Tests that the form context is passed in response to an invalid FASTA submission
-        :return:
-        """
-        self.invalid_input_passes_form_to_template('protein_too_few_sequences.fasta')
-        self.invalid_input_passes_form_to_template('DNA_too_few_sequences.fasta', 'DNA')
+        for file in self.files:
+            self.invalid_input_renders_index_template(file['file'], file['seq_type'])
+            self.invalid_input_errors_are_shown_on_home_page(file['error_text'], file['file'], file['seq_type'])
+            self.invalid_input_passes_form_to_template(file['file'], file['seq_type'])
 
 
 class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
