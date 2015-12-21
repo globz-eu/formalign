@@ -7,11 +7,13 @@ from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from helper_funcs.helpers_bio import parse_fasta_alignment
+from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_get
 from helper_funcs.helpers_test import file_to_string
+from helper_funcs.helpers_format import split_lines
 
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
+from Bio.Align import AlignInfo
 
 from base.models import Alignment
 
@@ -319,3 +321,46 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
                         ]
             ):
                 self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
+
+
+class SeqAndAlignDisplayHelpersTestCase(TestCase):
+    """
+    Tests for seq-display and align_display views helper functions
+    """
+    def setUp(self):
+        """
+        Creates an alignment from ser_thr_kin_short in the db
+        """
+        name = 'Serine/Threonine protein kinase family alignment'
+        align_input = io.StringIO(file_to_string('ser_thr_kin_short.fasta'))
+        data = parse_fasta_alignment(align_input)
+        for d in data:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        self.align = Alignment.objects.create_alignment(name, data)
+
+    def test_consensus_get_returns_consensus_to_alignment(self):
+        """
+        Tests that consensus_get function returns correct default consensus
+        :return:
+        """
+        alignment = Alignment.objects.get_alignment(self.align.id)
+        cons_seq = AlignInfo.SummaryInfo(alignment).gap_consensus()
+        cons_got = consensus_get(alignment)
+        self.assertEqual(cons_seq, cons_got)
+
+    def test_split_lines_splits_lines_of_80_chars(self):
+        """
+        Tests that split_lines function splits lines of alignment sequences in lines of 80 characters by default
+        :return:
+        """
+        alignment = Alignment.objects.get_alignment(self.align.id)
+        split_alignment = split_lines(alignment)
+        for seq in split_alignment:
+            self.assertEqual([len(s) for s in seq], [80 for i in range(len(seq) - 1)])
+            self.assertTrue(len(split_alignment[-1]) <= 80)
+
+    def test_consensus_annotate_returns_correct_default_consensus_annotation(self):
+        self.fail('Test Incomplete')
+
+    def test_split_lines_in_blocks_returns_correct_object(self):
+        self.fail('Test Incomplete')

@@ -13,3 +13,7 @@ def parse_fasta_alignment(fasta):
     fasta_parsed = AlignIO.read(fasta, 'fasta')
     fasta_parsed = MultipleSeqAlignment([f.upper() for f in fasta_parsed], annotations=fasta_parsed.annotations)
     return fasta_parsed
+
+
+def consensus_get():
+    pass
