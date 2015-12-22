@@ -1,5 +1,6 @@
 from Bio import AlignIO
-from Bio.Align import MultipleSeqAlignment
+from Bio.Align import MultipleSeqAlignment, AlignInfo
+from Bio.SeqRecord import SeqRecord
 
 __author__ = 'Stefan Dieterle'
 
@@ -15,5 +16,17 @@ def parse_fasta_alignment(fasta):
     return fasta_parsed
 
 
-def consensus_get():
-    pass
+def consensus_add(alignment):
+    """
+    Calculates the appropriate consensus sequence for the given alignment
+    :param alignment: MultipleSeqAlignment object
+    :return: alignment with appended consensus as a SeqRecord object
+    """
+    cons_seqrec = SeqRecord(
+                AlignInfo.SummaryInfo(alignment).gap_consensus(),
+                id='consensus 70%',
+                name='consensus 70%',
+                description='consensus 70%',
+        )
+    alignment.append(cons_seqrec)
+    return alignment

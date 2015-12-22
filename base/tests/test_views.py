@@ -7,7 +7,7 @@ from with_asserts.mixin import AssertHTMLMixin
 
 from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_get
+from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_add
 from helper_funcs.helpers_test import file_to_string
 from helper_funcs.helpers_format import split_lines
 
@@ -149,17 +149,17 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         response = self.response_prot
         with self.assertHTML(response, 'h3[class="query_seq_meta bg-color-body"]') as elems:
             self.assertEqual(elems[-1].text,
-                             'Consensus:',
+                             'consensus 70%:',
                              'consensus meta: ' + format(elems[0].text)
                              )
         cons_seq = file_to_string('consensus.txt')
-        with self.assertHTML(response, 'p[class="query_seq_display consensus_seq_display"]') as elems:
-            self.assertEqual(elems[0].text,
+        with self.assertHTML(response, 'div[class="query_seq bg-color-body"]') as elems:
+            self.assertEqual(elems[-1].findall('p')[0].text,
                              cons_seq[:80],
-                             'consensus seq: ' + elems[0].text
+                             'consensus seq: ' + elems[-1].findall('p')[0].text
                              )
-            self.assertNotIn(' ', elems[0].text)
-            self.assertNotIn('\n', elems[0].text)
+            self.assertNotIn(' ', elems[-1].findall('p')[0].text)
+            self.assertNotIn('\n', elems[-1].findall('p')[0].text)
 
     def test_parse_fasta_alignment(self):
         """
@@ -340,13 +340,14 @@ class SeqAndAlignDisplayHelpersTestCase(TestCase):
 
     def test_consensus_get_returns_consensus_to_alignment(self):
         """
-        Tests that consensus_get function returns correct default consensus
+        Tests that consensus_add function returns correct default consensus
         :return:
         """
         alignment = Alignment.objects.get_alignment(self.align.id)
         cons_seq = AlignInfo.SummaryInfo(alignment).gap_consensus()
-        cons_got = consensus_get(alignment)
-        self.assertEqual(cons_seq, cons_got)
+        cons_got = consensus_add(alignment)[-1]
+        self.assertEqual(cons_seq, cons_got.seq)
+        self.assertEqual('consensus 70%', cons_got.id)
 
     def test_split_lines_splits_lines_of_80_chars(self):
         """

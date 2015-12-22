@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotAllowed
-from base.forms import QueryForm
-from Bio.Align import AlignInfo
-from Bio.SeqRecord import SeqRecord
+
 from base.models import Alignment
+from base.forms import QueryForm
+
+from helper_funcs.helpers_bio import consensus_add
 
 __author__ = 'Stefan Dieterle'
 
@@ -40,7 +41,7 @@ def seq_display(request, align_id):
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
         length = 80
-        align = Alignment.objects.get_alignment(align_id)
+        align = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
             "Gapped(ExtendedIUPACDNA(), '-')": 'DNA',
@@ -54,14 +55,11 @@ def seq_display(request, align_id):
                     ]
             } for f in align
             ]
-        cons_seq = AlignInfo.SummaryInfo(align).gap_consensus()
-        consensus = {'meta': 'Consensus', 'seq': [
-            cons_seq[i:i + length] for i in range(0, len(cons_seq), length)
-            ]}
+
         return render(
                 request,
                 'base/query_display.html',
-                {'query_seqs': query_seqs, 'seq_type': alphabet, 'consensus': consensus, 'align_id': align_id}
+                {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_id}
         )
 
     else:
@@ -76,17 +74,10 @@ def align_display(request, align_id):
     :return:
     """
     if request.method == 'GET':
-        alignment = Alignment.objects.get_alignment(align_id)
-        cons_seq = AlignInfo.SummaryInfo(alignment).gap_consensus()
-        cons_seq_annot = {'eq': [0 if c in ['-', 'X'] else 1 for c in cons_seq]}
-        cons_seqrec = SeqRecord(
-                AlignInfo.SummaryInfo(alignment).gap_consensus(),
-                id='consensus',
-                name='consensus',
-                description='consensus',
-                letter_annotations=cons_seq_annot
-        )
-        alignment.append(cons_seqrec)
+
+        alignment = consensus_add(Alignment.objects.get_alignment(align_id))
+        cons_seq_annot = {'eq': [0 if c in ['-', 'X'] else 1 for c in alignment[-1].seq]}
+        alignment[-1].letter_annotations = cons_seq_annot
 
         # get longest id for id display width
         id_lengths = [len(a.id) for a in alignment]
@@ -95,7 +86,9 @@ def align_display(request, align_id):
 
         for a in alignment[:-1]:
             a.letter_annotations = {
-                'eq': [1 if (a[i] == cons_seq[i] and cons_seq[i] not in ['-', 'X']) else 0 for i in range(0, len(a))]
+                'eq': [1 if (a[i] == alignment[-1][i] and alignment[-1][i] not in ['-', 'X'])
+                       else 0
+                       for i in range(0, len(a))]
             }
         # split sequences in lines of 80 characters
         line_length = 80

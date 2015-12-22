@@ -11,7 +11,7 @@
     {% for s in align.align_seqs %}
 
         {% for id, ls in s %}
-        <div class="al_ln{% if id == "consensus" %} consensus{% endif %}">
+        <div class="al_ln{% if 'consensus' in id %} consensus{% endif %}">
             <div class="al_el seq_id" style="width: {{ id_width }}ch">{{ id }}</div>
             {% for b in ls %}
                 {% for eq, c in b %}

@@ -80,12 +80,14 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertIsNotNone(first_seq_content)
         self.assertEqual(first_seq_content.text, '-' * 80)
 
-        consensus_seq = self.browser.find_elements_by_css_selector('.consensus_seq_display')[0]
+        consensus_seq = self.browser.find_elements_by_xpath(
+                '//div[@class="query_seq bg-color-body"]'
+        )[-1].find_elements_by_xpath('./p[@class="query_seq_display"]')[0]
         self.assertIsNotNone(consensus_seq)
         cons_seq = file_to_string('consensus.txt')
         self.assertEqual(consensus_seq.text, cons_seq[:80])
         consensus_meta = self.browser.find_elements_by_xpath('//h3[@class="query_seq_meta bg-color-body"]')[-1]
-        self.assertEqual(consensus_meta.text, 'Consensus:')
+        self.assertEqual(consensus_meta.text, 'consensus 70%:')
 
         # She is happy with the result, sees a "Render" button and clicks it.
         render_button = self.browser.find_element_by_css_selector('button#render-align')
