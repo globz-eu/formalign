@@ -21,7 +21,7 @@
     </div>
     {% for q in query_seqs %}
         <div class="query_seq_block well col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10 bg-color-primary-1">
-        <h3 class="query_seq_meta bg-color-body">{{ q.meta }}:</h3>
+        <h3 class="query_seq_meta bg-color-body">{{ q.description }}:</h3>
             <div class="query_seq bg-color-body">
 
                 {% for qs in q.seq %}

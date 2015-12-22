@@ -5,6 +5,7 @@ from base.models import Alignment
 from base.forms import QueryForm
 
 from helper_funcs.helpers_bio import consensus_add
+from helper_funcs.helpers_format import split_lines
 
 __author__ = 'Stefan Dieterle'
 
@@ -40,21 +41,14 @@ def seq_display(request, align_id):
     """
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
-        length = 80
-        align = consensus_add(Alignment.objects.get_alignment(align_id))
+        alignment = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
             "Gapped(ExtendedIUPACDNA(), '-')": 'DNA',
         }
-        alphabet = alphabets[str(align[0].seq.alphabet)]
-        query_seqs = [
-            {
-                'meta': f.description,
-                'seq': [
-                    f.seq[i:i + length] for i in range(0, len(f.seq), length)
-                    ]
-            } for f in align
-            ]
+        alphabet = alphabets[str(alignment[0].seq.alphabet)]
+
+        query_seqs = split_lines(alignment, line_length=80, split_type='sequence')
 
         return render(
                 request,
@@ -91,13 +85,7 @@ def align_display(request, align_id):
                        for i in range(0, len(a))]
             }
         # split sequences in lines of 80 characters
-        line_length = 80
-
-        seq_lines = [
-            [
-                f[i:i + line_length] for f in alignment
-                ] for i in range(0, len(alignment[0].seq), line_length)
-            ]
+        seq_lines = split_lines(alignment, line_length=80, split_type='alignment')
 
         # split lines in blocks of 10 characters
         block_length = 10

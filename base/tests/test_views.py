@@ -349,19 +349,46 @@ class SeqAndAlignDisplayHelpersTestCase(TestCase):
         self.assertEqual(cons_seq, cons_got.seq)
         self.assertEqual('consensus 70%', cons_got.id)
 
-    def test_split_lines_splits_lines_of_80_chars(self):
+    def test_split_lines_alignment_splits_blocks_of_80_chars(self):
         """
-        Tests that split_lines function splits lines of alignment sequences in lines of 80 characters by default
+        Tests that split_lines function splits blocks of alignment sequences in lines of 80 characters by default
         :return:
         """
         alignment = Alignment.objects.get_alignment(self.align.id)
-        split_alignment = split_lines(alignment)
-        for seq in split_alignment:
-            self.assertEqual([len(s) for s in seq], [80 for i in range(len(seq) - 1)])
-            self.assertTrue(len(split_alignment[-1]) <= 80)
+        split_alignment = split_lines(alignment, split_type='alignment')
+        for seq in split_alignment[:-1]:
+            self.assertEqual([80 for i in range(len(seq))], [len(s) for s in seq])
+        for seq in split_alignment[-1]:
+            self.assertTrue(len(seq) <= 80)
+
+    def test_split_lines_sequence_splits_lines_of_80_chars(self):
+        """
+        Tests that split_lines function splits sequences in lines of 80 characters by default
+        :return:
+        """
+        alignment = Alignment.objects.get_alignment(self.align.id)
+        split_sequence = split_lines(alignment, split_type='sequence')
+        for seq in split_sequence:
+            self.assertEqual([80 for i in range(len(seq['seq']) - 1)], [len(s) for s in seq['seq'][:-1]])
+            self.assertTrue(len(seq['seq'][-1]) <= 80)
 
     def test_consensus_annotate_returns_correct_default_consensus_annotation(self):
+        """
+        Tests that consensus is correctly annotated for display
+        :return:
+        """
+        self.fail('Test Incomplete')
+
+    def test_alignment_annotate_returns_correct_sequence_annotations(self):
+        """
+        Tests that sequences are correctly annotated for display
+        :return:
+        """
         self.fail('Test Incomplete')
 
     def test_split_lines_in_blocks_returns_correct_object(self):
+        """
+        Tests that lines are split in blocks of 10 characters
+        :return:
+        """
         self.fail('Test Incomplete')
