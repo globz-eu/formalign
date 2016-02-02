@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'formalign',
     'base',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE_CLASSES = [
