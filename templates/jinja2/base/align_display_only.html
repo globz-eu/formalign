@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>HTML only</title>
+        <style type="text/css">
+            body {
+                margin-top: 30px;
+            }
+
+            .align_display {
+                margin-left: 12px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                padding: 10px;
+            }
+
+            .align_table {
+                border-spacing: 0;
+            }
+
+            .al_ln {
+                font-size: 10px;
+                font-family: monospace;
+                padding: 0;
+                line-height: 12px;
+            }
+
+            .seq_id {
+                padding: 0;
+            }
+            .residue {
+                width: 0.8em;
+                text-align: center;
+                padding: 0;
+            }
+
+            .block_sep {
+                width: 0.8em;
+                padding: 0;
+            }
+            .S0 {
+                color: #0f0f0f;
+                background-color: #ffffff;
+            }
+
+            .S1 {
+                font-weight: bold;
+                color: #ffffff;
+                background-color: #3c3c3c;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="align_display">
+            {% for s in align.align_seqs %}
+                <table class="align_table" style="table-layout: fixed; width: {{ total_width }}em">
+                {% for id, len, ls in s %}
+                    <tr class="al_ln">
+                    <td class="seq_id" style="width: {{ id_width }}em">{{ id }}</td>
+                    {% for b in ls %}
+                        {% for eq, c in b %}
+                                <td class="residue S{{ eq }}">{{ c }}</td>
+                            {% endfor %}
+                                <td class="block_sep">&nbsp;</td>
+                    {% endfor %}
+                    <td class="display_artifact">&nbsp;</td>
+                    </tr>
+                {% endfor %}
+                <tr><td>&nbsp;</td></tr>
+                </table>
+            {% endfor %}
+        </div>
+    </body>
+</html>

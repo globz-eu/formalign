@@ -9,7 +9,7 @@
 
     <div class="align_display">
     {% for s in align.align_seqs %}
-        <table style="table-layout: fixed; width: {{ total_width }}em">
+        <table class="align_table" style="table-layout: fixed; width: {{ total_width }}em">
         {% for id, len, ls in s %}
             <tr class="al_ln">
             <td class="seq_id" style="width: {{ id_width }}em">{{ id }}</td>
