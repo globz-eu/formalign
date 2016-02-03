@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from unittest import TestCase
 from private import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -30,7 +31,7 @@ from helper_funcs.helpers_test import file_to_string
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCase(StaticLiveServerTestCase):
+class BasicUserTestCaseChrome(TestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
@@ -49,7 +50,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get('localhost:8000' + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
@@ -149,7 +150,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
     def test_file_upload(self):
         # User visits the formalign.eu site
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get('localhost:8000' + '/')
 
         # She wants to upload a protein stockholm alignment this time from a file
         # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
@@ -166,3 +167,13 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         # She submits her file
         self.browser.find_element_by_id('submit-align').click()
         self.fail('Incomplete Test')
+
+
+class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(2)
+
+    def tearDown(self):
+        # time.sleep(5)
+        self.browser.quit()

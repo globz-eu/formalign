@@ -9,19 +9,21 @@
 
     <div class="align_display">
     {% for s in align.align_seqs %}
-
-        {% for id, ls in s %}
-        <div class="al_ln{% if 'consensus' in id %} consensus{% endif %}">
-            <div class="al_el seq_id" style="width: {{ id_width }}ch">{{ id }}</div>
+        <table style="table-layout: fixed; width: {{ total_width }}em">
+        {% for id, len, ls in s %}
+            <tr class="al_ln">
+            <td class="seq_id" style="width: {{ id_width }}em">{{ id }}</td>
             {% for b in ls %}
                 {% for eq, c in b %}
-                    <div class="al_el S{{ eq }}">{{ c }}</div>
-                {% endfor %}
-                <div class="sep">&nbsp;</div>
+                        <td class="residue S{{ eq }}">{{ c }}</td>
+                    {% endfor %}
+                        <td class="block_sep">&nbsp;</td>
             {% endfor %}
-        </div>
+            <td class="display_artifact">&nbsp;</td>
+            </tr>
         {% endfor %}
-        <div class="horizontal-sep">&nbsp;</div>
+        <tr><td>&nbsp;</td></tr>
+        </table>
     {% endfor %}
     </div>
 

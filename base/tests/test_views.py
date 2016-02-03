@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import io
 import re
+import time
 
 from django.test import TestCase
 from django.utils.html import escape
@@ -317,11 +318,13 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         characters in blocks of 10 characters)
         :return:
         """
-        with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
-            self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] != 'sep']),
+        with self.assertHTML(self.response, 'tr[class="al_ln"]') as elems:
+            self.assertEqual(len(
+                [e for e in elems[0].findall('td') if e.attrib['class'] not in ['block_sep', 'display_artifact']]
+            ),
                              81, elems[0].getchildren()[0].text
                              )
-            self.assertEqual(len([e for e in elems[0].findall('div') if e.attrib['class'] == 'sep']),
+            self.assertEqual(len([e for e in elems[0].findall('td') if e.attrib['class'] == 'block_sep']),
                              8, elems[0].getchildren()[0].text
                              )
 
@@ -334,14 +337,42 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         align_expected = io.StringIO(expected_seqs)
         alignment = parse_fasta_alignment(align_expected)
         seq = alignment[3].seq
-        with self.assertHTML(self.response, 'div[class="al_ln"]') as elems:
+        with self.assertHTML(self.response, 'tr') as elems:
             for i, e in enumerate(
                     [
-                        elem for elem in elems[3].findall('div')
-                        if elem.attrib['class'] not in ['sep', 'al_el seq_id']
+                        elem for elem in elems[3].findall('td')
+                        if elem.attrib['class'] not in ['block_sep', 'seq_id', 'display_artifact']
                         ]
             ):
                 self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
+
+
+class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
+    """
+    Tests for alignment display
+    """
+    def setUp(self):
+        """
+        Creates a response from a GET request to /align-display/ with an alignment pk
+        :param input_file: file containing alignment
+        :return: response
+        """
+        name = 'SPA1 protein alignment'
+        align_input = io.StringIO(file_to_string('spa1_protein_alignment.fasta'))
+        data = parse_fasta_alignment(align_input)
+        for d in data:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        self.align = Alignment.objects.create_alignment(name, data)
+
+    def test_align_display_page_displays_protein_alignment_sequence_at_reasonable_speed(self):
+        """
+        Tests that align_display displays an alignment with correct sequences
+        :return:
+        """
+        t0 = time.time()
+        self.client.get('/align-display/' + str(self.align.id) + '/')
+        resp_time = time.time() - t0
+        self.assertTrue(resp_time < 1, 'response time: ' + format(resp_time))
 
 
 class SeqAndAlignDisplayHelpersTestCase(TestCase):

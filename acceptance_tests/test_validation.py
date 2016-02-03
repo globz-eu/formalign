@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from unittest import TestCase
 from private import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -30,8 +31,10 @@ from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERR
 
 __author__ = 'Stefan Dieterle'
 
+SERVER_URL = 'localhost:8000'
 
-class InputValidationTestCase(StaticLiveServerTestCase):
+
+class InputValidationTestCaseChrome(TestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
@@ -117,7 +120,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         test_seq = {'DNA': 'AGTCC-TAAGGTCGCCAATGGGCA', 'protein': 'MKERBGWAQ--QGKKPWRF--EEW'}
 
         # User visits the formalign.eu site.
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get(SERVER_URL + '/')
 
         # She clicks the DNA button
         seq_type_button = self.browser.find_element_by_css_selector(seq_type_button_dict[kwargs['seq_type']])
@@ -224,7 +227,7 @@ class InputValidationTestCase(StaticLiveServerTestCase):
 
     def test_alignment_format_validation(self):
         # User visits the formalign.eu site.
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get(SERVER_URL + '/')
 
         # She tries a number of invalid and valid alignment formats
         files = [
@@ -257,3 +260,13 @@ class InputValidationTestCase(StaticLiveServerTestCase):
         for file in files:
             self.invalid_format_test_sequence(**file)
         self.fail('Incomplete Test')
+
+
+class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(2)
+
+    def tearDown(self):
+        # time.sleep(5)
+        self.browser.quit()

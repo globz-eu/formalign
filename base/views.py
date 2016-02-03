@@ -28,6 +28,9 @@ from base.forms import QueryForm
 from helper_funcs.helpers_bio import consensus_add
 from helper_funcs.helpers_format import split_lines
 
+import time
+from pprint import pprint
+
 __author__ = 'Stefan Dieterle'
 
 
@@ -72,9 +75,9 @@ def seq_display(request, align_id):
         query_seqs = split_lines(alignment, line_length=80, split_type='sequence')
 
         return render(
-                request,
-                'base/query_display.html',
-                {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_id}
+            request,
+            'base/query_display.html',
+            {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_id}
         )
 
     else:
@@ -90,7 +93,10 @@ def align_display(request, align_id):
     """
     if request.method == 'GET':
 
-        alignment = consensus_add(Alignment.objects.get_alignment(align_id))
+        alignment_fetch = Alignment.objects.get_alignment(align_id)
+
+        alignment = consensus_add(alignment_fetch)
+
         cons_seq_annot = {'eq': [0 if c in ['-', 'X'] else 1 for c in alignment[-1].seq]}
         alignment[-1].letter_annotations = cons_seq_annot
 
@@ -105,6 +111,7 @@ def align_display(request, align_id):
                        else 0
                        for i in range(0, len(a))]
             }
+
         # split sequences in lines of 80 characters
         seq_lines = split_lines(alignment, line_length=80, split_type='alignment')
 
@@ -114,7 +121,7 @@ def align_display(request, align_id):
         seqs_blocks = [
             [
                 [
-                    ls.id, [
+                    ls.id, len(ls), [
                         zip(
                             ls.letter_annotations['eq'][j:j + block_length],
                             list(ls[j:j + block_length])
@@ -126,4 +133,9 @@ def align_display(request, align_id):
         align = {
             'align_seqs': seqs_blocks,
         }
-        return render(request, 'base/align_display.html', {'align': align, 'id_width': id_width})
+
+        r = render(
+            request, 'base/align_display.html',
+            {'align': align, 'id_width': id_width * .6, 'total_width': (id_width + 80) * .5}
+        )
+        return r

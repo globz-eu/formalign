@@ -200,17 +200,18 @@ li.no_style {
 .al_ln {
     font-size: 10px;
     font-family: monospace;
-    line-height: 1;
-    white-space: nowrap;
 }
 
 .consensus {
     margin-top: 0.5em;
 }
-.al_el {
-    display: inline-block;
-    margin-right: -0.4em;
-    padding: 0.2em;
+.residue {
+    width: 0.8em;
+    text-align: center;
+}
+
+.block_sep {
+    width: 0.8em;
 }
 
 .sep {
