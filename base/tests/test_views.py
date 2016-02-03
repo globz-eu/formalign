@@ -53,7 +53,10 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         response = self.client.get('/')
-        self.assertTemplateUsed(response, 'base/index.html')
+
+        # Does not work with Jinja2
+        # self.assertTemplateUsed(response, 'base/index.html')
+
         self.assertEqual(response.status_code, 200)
 
     def test_redirect_to_seqdisplay_on_post(self):
@@ -109,7 +112,9 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         input_seqs = file_to_string('protein.fasta')
         response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'base/index.html')
+
+        # Does not work with Jinja2
+        # self.assertTemplateUsed(response, 'base/index.html')
 
     def test_display_page_displays_sequence_type(self):
         """
@@ -208,7 +213,9 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         save = Alignment.objects.create_alignment(name, data)
         response = self.client.get('/query-sequences/' + str(save.id) + '/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'base/query_display.html')
+
+        # Does not work with Jinja2
+        # self.assertTemplateUsed(response, 'base/query_display.html')
 
 
 class SeqDisplayInvalidInput(TestCase):
@@ -281,9 +288,13 @@ class SeqDisplayInvalidInput(TestCase):
         :return:
         """
         for file in self.files:
-            self.invalid_input_renders_index_template(file['file'], file['seq_type'])
+            # Does not work with Jinja2
+            # self.invalid_input_renders_index_template(file['file'], file['seq_type'])
+
             self.invalid_input_errors_are_shown_on_home_page(file['error_text'], file['file'], file['seq_type'])
-            self.invalid_input_passes_form_to_template(file['file'], file['seq_type'])
+
+            # Does not work with Jinja2
+            # self.invalid_input_passes_form_to_template(file['file'], file['seq_type'])
 
 
 class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
@@ -310,7 +321,9 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         self.assertEqual(self.response.status_code, 200)
-        self.assertTemplateUsed(self.response, 'base/align_display.html')
+
+        # Does not work with Jinja2
+        # self.assertTemplateUsed(self.response, 'base/align_display.html')
 
     def test_align_display_page_displays_default_formatted_protein_alignment(self):
         """
@@ -372,7 +385,7 @@ class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
         t0 = time.time()
         self.client.get('/align-display/' + str(self.align.id) + '/')
         resp_time = time.time() - t0
-        self.assertTrue(resp_time < 1, 'response time: ' + format(resp_time))
+        self.assertTrue(resp_time < 0.8, 'response time: ' + format(resp_time))
 
 
 class SeqAndAlignDisplayHelpersTestCase(TestCase):

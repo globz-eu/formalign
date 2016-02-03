@@ -77,10 +77,16 @@ MIDDLEWARE_CLASSES = [
 ROOT_URLCONF = 'formalign.urls'
 
 TEMPLATES = [
+    {'BACKEND': 'django.template.backends.jinja2.Jinja2',
+     'DIRS': [os.path.join(BASE_DIR, 'templates/jinja2')],
+     'APP_DIRS': True,
+     'OPTIONS': {
+         'environment': 'formalign.jinja2.environment',
+     }
+     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates/base')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,6 +97,7 @@ TEMPLATES = [
             ],
         },
     },
+
 ]
 
 WSGI_APPLICATION = 'formalign.wsgi.application'

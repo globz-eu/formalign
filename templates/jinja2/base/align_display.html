@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+        <title id="head-title">Formalign.eu Alignment Display</title>
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="align_display">
+    {% for s in align.align_seqs %}
+        <table style="table-layout: fixed; width: {{ total_width }}em">
+        {% for id, len, ls in s %}
+            <tr class="al_ln">
+            <td class="seq_id" style="width: {{ id_width }}em">{{ id }}</td>
+            {% for b in ls %}
+                {% for eq, c in b %}
+                        <td class="residue S{{ eq }}">{{ c }}</td>
+                    {% endfor %}
+                        <td class="block_sep">&nbsp;</td>
+            {% endfor %}
+            <td class="display_artifact">&nbsp;</td>
+            </tr>
+        {% endfor %}
+        <tr><td>&nbsp;</td></tr>
+        </table>
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
