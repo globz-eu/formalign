@@ -31,7 +31,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
-from configuration import PG_PASSWORD, SECRET_KEY, DEBUG, ALLOWED_HOSTS
+from configuration import PG_PASSWORD, SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASES
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -100,20 +100,6 @@ WSGI_APPLICATION = 'formalign.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'formalign',
-        'USER': 'postgres',
-        'PASSWORD': PG_PASSWORD,
-        'HOST': 'localhost',
-        'TEST': {
-            'NAME': 'test_formalign',
-        }
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
