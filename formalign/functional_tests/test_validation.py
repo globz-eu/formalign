@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from private import CHROME_DRIVER
+from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip

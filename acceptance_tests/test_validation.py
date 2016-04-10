@@ -22,13 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from unittest import TestCase
-from private import CHROME_DRIVER
+from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from private import SERVER_URL
+from configuration import SERVER_URL
 
 __author__ = 'Stefan Dieterle'
 
