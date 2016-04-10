@@ -28,10 +28,9 @@ from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
+from private import SERVER_URL
 
 __author__ = 'Stefan Dieterle'
-
-SERVER_URL = 'localhost:8000'
 
 
 class InputValidationTestCaseChrome(TestCase):
