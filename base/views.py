@@ -28,9 +28,6 @@ from base.forms import QueryForm
 from helper_funcs.helpers_bio import consensus_add
 from helper_funcs.helpers_format import split_lines
 
-import time
-from pprint import pprint
-
 __author__ = 'Stefan Dieterle'
 
 
@@ -128,7 +125,7 @@ def align_display(request, align_id):
                         ) for j in range(0, len(ls), block_length)
                     ]
                 ] for ls in ln] for ln in seq_lines
-            ]
+        ]
 
         align = {
             'align_seqs': seqs_blocks,

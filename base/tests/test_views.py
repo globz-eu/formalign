@@ -78,8 +78,8 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         pk = re.match(r'^/query-sequences/(?P<align_id>\d+)/', response.url).group('align_id')
         alignment = Alignment.objects.get_alignment(pk)
         self.assertEqual(
-                [seq.id for seq in alignment],
-                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+            [seq.id for seq in alignment],
+            ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
 
@@ -301,6 +301,7 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
     """
     Tests for alignment display
     """
+
     def setUp(self):
         """
         Creates a response from a GET request to /align-display/ with an alignment pk
@@ -335,8 +336,8 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
             self.assertEqual(len(
                 [e for e in elems[0].findall('td') if e.attrib['class'] not in ['block_sep', 'display_artifact']]
             ),
-                             81, elems[0].getchildren()[0].text
-                             )
+                81, elems[0].getchildren()[0].text
+            )
             self.assertEqual(len([e for e in elems[0].findall('td') if e.attrib['class'] == 'block_sep']),
                              8, elems[0].getchildren()[0].text
                              )
@@ -353,9 +354,9 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         with self.assertHTML(self.response, 'tr') as elems:
             for i, e in enumerate(
                     [
-                        elem for elem in elems[3].findall('td')
-                        if elem.attrib['class'] not in ['block_sep', 'seq_id', 'display_artifact']
-                        ]
+                    elem for elem in elems[3].findall('td')
+                    if elem.attrib['class'] not in ['block_sep', 'seq_id', 'display_artifact']
+                    ]
             ):
                 self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
 
@@ -364,6 +365,7 @@ class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
     """
     Tests for alignment display
     """
+
     def setUp(self):
         """
         Creates a response from a GET request to /align-display/ with an alignment pk
@@ -392,6 +394,7 @@ class SeqAndAlignDisplayHelpersTestCase(TestCase):
     """
     Tests for seq-display and align_display views helper functions
     """
+
     def setUp(self):
         """
         Creates an alignment from ser_thr_kin_short in the db
