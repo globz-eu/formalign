@@ -44,10 +44,10 @@ def consensus_add(alignment):
     :return: alignment with appended consensus as a SeqRecord object
     """
     cons_seqrec = SeqRecord(
-                AlignInfo.SummaryInfo(alignment).gap_consensus(),
-                id='consensus 70%',
-                name='consensus 70%',
-                description='consensus 70%',
-        )
+                                AlignInfo.SummaryInfo(alignment).gap_consensus(),
+                                id='consensus 70%',
+                                name='consensus 70%',
+                                description='consensus 70%',
+                            )
     alignment.append(cons_seqrec)
     return alignment
