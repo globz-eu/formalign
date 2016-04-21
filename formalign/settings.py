@@ -58,7 +58,10 @@ INSTALLED_APPS = [
     'formalign',
     'base',
     'debug_toolbar',
+    'django_nose',
 ]
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
