@@ -8,11 +8,10 @@
         <meta name="description" content="Base Design">
         <meta name="author" content="Globz">
 
-        {% block title %}
-        {% endblock %}
+        <title id="head-title">Formalign.eu Site Down</title>
 
-        <link href="{{ static('bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ static('css/style.css') }}" rel="stylesheet">
+        <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="static/css/style.css" rel="stylesheet">
 
     </head>
 
@@ -65,14 +64,15 @@
 
                 </nav>
 
-                {% block content %}
-                {% endblock %}
-
+                <div class="jumbotron bg-color-primary-1 color-complement-4">
+                    <h1><strong>Error: 503</strong> Service unavailable.</h1>
+                <h2>Formalign.eu is down for maintenance.<br>We will be back soon.<br>Please come back later.</h2>
+                </div>
             </div>
         </div>
 
-        <script src="{{ static('js/jquery-2.1.4.min.js') }}"></script>
-        <script src="{{ static('bootstrap/js/bootstrap.min.js') }}"></script>
-        <script src="{{ static('js/scripts.js') }}"></script>
+        <script src="static/js/jquery-2.1.4.min.js"></script>
+        <script src="static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="static/js/scripts.js"></script>
     </body>
 </html>
