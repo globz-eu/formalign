@@ -1,6 +1,6 @@
 """
 =====================================================================
-Formalign.eu format and display multiple sequence alignments
+Django app deployment scripts
 Copyright (C) 2016 Stefan Dieterle
 e-mail: golgoths@yahoo.fr
 
@@ -19,27 +19,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+import time
+from unittest import TestCase
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
+from configuration import SERVER_URL
 
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCase(StaticLiveServerTestCase):
+class BasicUserTestCaseChrome(TestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
         )
-        # self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(2)
+        self.sleep = 0
 
     def tearDown(self):
-        # time.sleep(5)
         self.browser.quit()
 
     def test_basic_user_experience(self):
@@ -49,7 +49,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get(SERVER_URL + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
@@ -60,9 +60,9 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
         self.assertEqual(
-                'Alignment (FASTA, clustalw, stockholm or phylip)',
-                alignment_input.get_attribute('placeholder'),
-                         )
+            'Alignment (FASTA, clustalw, stockholm or phylip)',
+            alignment_input.get_attribute('placeholder'),
+        )
 
         # She sees two radio buttons for DNA and protein
         dna_button = self.browser.find_element_by_css_selector('input#id_seq_type_1')
@@ -84,6 +84,8 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.send_keys(Keys.CONTROL, 'v')
         self.browser.find_element_by_id('submit-align').click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
 
         # She is redirected to a page showing the submitted sequences from her alignment and a simple consensus sequence
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
@@ -103,7 +105,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         self.assertEqual(first_seq_content.text, '-' * 80)
 
         consensus_seq = self.browser.find_elements_by_xpath(
-                '//div[@class="query_seq bg-color-body"]'
+            '//div[@class="query_seq bg-color-body"]'
         )[-1].find_elements_by_xpath('./p[@class="query_seq_display"]')[0]
         self.assertIsNotNone(consensus_seq)
         cons_seq = file_to_string('consensus.txt')
@@ -115,20 +117,22 @@ class BasicUserTestCase(StaticLiveServerTestCase):
         render_button = self.browser.find_element_by_css_selector('button#render-align')
         self.assertIsNotNone(render_button)
         render_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
 
         # She is redirected to the alignment display page
         self.assertEqual('Formalign.eu Alignment Display', self.browser.title, self.browser.title)
 
         # She sees the alignment displayed with 80 characters per line in blocks of 10 with sequence ids
         s0 = self.browser.find_elements_by_xpath(
-                '//tr[@class="al_ln"]'
+            '//tr[@class="al_ln"]'
         )[10].find_elements_by_xpath('./td[@class="residue S0"]')
         s1 = self.browser.find_elements_by_xpath(
-                '//tr[@class="al_ln"]'
+            '//tr[@class="al_ln"]'
         )[10].find_elements_by_xpath('./td[@class="residue S1"]')
         self.assertEqual(len(s0) + len(s1), 80)
         sep = self.browser.find_elements_by_xpath(
-                '//tr[@class="al_ln"]'
+            '//tr[@class="al_ln"]'
         )[10].find_elements_by_xpath('./td[@class="block_sep"]')
         self.assertEqual(len(sep), 8)
 
@@ -149,7 +153,7 @@ class BasicUserTestCase(StaticLiveServerTestCase):
 
     def test_file_upload(self):
         # User visits the formalign.eu site
-        self.browser.get(self.live_server_url + '/')
+        self.browser.get(SERVER_URL + '/')
 
         # She wants to upload a protein stockholm alignment this time from a file
         # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected

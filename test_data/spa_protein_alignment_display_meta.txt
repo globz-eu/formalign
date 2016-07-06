@@ -1,0 +1,5 @@
+NP_175717 NP_175717.1 SPA1-related 4 protein [Arabidopsis thaliana].:
+NP_683567 NP_683567.1 protein SPA1-related 3 [Arabidopsis thaliana].:
+NP_182157 NP_182157.2 protein SUPPRESSOR OF PHYA-105 [Arabidopsis thaliana].:
+NP_192849 NP_192849.4 protein SPA1-related 2 [Arabidopsis thaliana].:
+consensus 70%:

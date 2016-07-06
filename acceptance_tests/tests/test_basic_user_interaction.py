@@ -20,11 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+import time
 from unittest import TestCase
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from configuration import SERVER_URL
@@ -37,11 +38,9 @@ class BasicUserTestCaseChrome(TestCase):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
         )
-        # self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(2)
+        self.sleep = 0
 
     def tearDown(self):
-        # time.sleep(5)
         self.browser.quit()
 
     def test_basic_user_experience(self):
@@ -86,6 +85,8 @@ class BasicUserTestCaseChrome(TestCase):
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.send_keys(Keys.CONTROL, 'v')
         self.browser.find_element_by_id('submit-align').click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
 
         # She is redirected to a page showing the submitted sequences from her alignment and a simple consensus sequence
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
@@ -117,6 +118,8 @@ class BasicUserTestCaseChrome(TestCase):
         render_button = self.browser.find_element_by_css_selector('button#render-align')
         self.assertIsNotNone(render_button)
         render_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
 
         # She is redirected to the alignment display page
         self.assertEqual('Formalign.eu Alignment Display', self.browser.title, self.browser.title)
@@ -146,34 +149,14 @@ class BasicUserTestCaseChrome(TestCase):
         protein_button.click()
         self.assertEqual(protein_button.is_selected(), True)
 
-        # She sees a file upload button
-        self.fail('Incomplete Test')
-
-    def test_file_upload(self):
-        # User visits the formalign.eu site
-        self.browser.get(SERVER_URL + '/')
-
-        # She wants to upload a protein stockholm alignment this time from a file
-        # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
-        protein_button = self.browser.find_element_by_css_selector('input#id_seq_type_0')
-        protein_button.click()
-        self.assertEqual(protein_button.is_selected(), True)
-
-        # She sees a file upload button
-        alignment_input = self.browser.find_element_by_css_selector('file_upload#id_align_input')
-        alignment_input.click()
-
-        # She browses to her file and selects it
-
-        # She submits her file
-        self.browser.find_element_by_id('submit-align').click()
-        self.fail('Incomplete Test')
-
 
 class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
     def setUp(self):
-        self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(2)
+        caps = DesiredCapabilities.FIREFOX
+        caps['marionette'] = True
+        caps['binary'] = '/usr/bin/firefox'
+        self.browser = webdriver.Firefox(capabilities=caps)
+        self.sleep = 2
 
     def tearDown(self):
         # time.sleep(5)
