@@ -26,7 +26,7 @@ from selenium import webdriver
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCase(StaticLiveServerTestCase):
+class BasicUserPendingTestCase(StaticLiveServerTestCase):
     """
     Tests basic user interaction with the app
     """
