@@ -24,6 +24,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import requests
 from lxml import html
 from io import StringIO
+import sys
 
 __author__ = 'Stefan Dieterle'
 

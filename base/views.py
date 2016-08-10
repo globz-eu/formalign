@@ -26,7 +26,7 @@ from base.models import Alignment
 from base.forms import QueryForm
 
 from helper_funcs.helpers_bio import consensus_add
-from helper_funcs.helpers_format import split_lines
+from helper_funcs.helpers_format import split_lines, annotate
 
 __author__ = 'Stefan Dieterle'
 
@@ -34,8 +34,8 @@ __author__ = 'Stefan Dieterle'
 def index(request):
     """
     Serves home page
-    :param request:
-    :return:
+    :param request: HTTP request
+    :return: HttpResponse object
     """
     if request.method == 'GET':
         form = QueryForm()
@@ -58,7 +58,7 @@ def seq_display(request, align_id):
     Serves query display page
     :param request: HTTP request
     :param align_id: alignment pk
-    :return:
+    :return:HttpResponse or HttpResponseNotAllowed object
     """
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
@@ -86,7 +86,7 @@ def align_display(request, align_id):
     serves alignment display page
     :param request: HTTP request
     :param align_id: alignment pk
-    :return:
+    :return: HttpResponse object
     """
     if request.method == 'GET':
 
@@ -94,20 +94,12 @@ def align_display(request, align_id):
 
         alignment = consensus_add(alignment_fetch)
 
-        cons_seq_annot = {'eq': [0 if c in ['-', 'X'] else 1 for c in alignment[-1].seq]}
-        alignment[-1].letter_annotations = cons_seq_annot
+        alignment = annotate(alignment)
 
         # get longest id for id display width
         id_lengths = [len(a.id) for a in alignment]
         id_lengths.sort(reverse=True)
         id_width = id_lengths[0] + 2
-
-        for a in alignment[:-1]:
-            a.letter_annotations = {
-                'eq': [1 if (a[i] == alignment[-1][i] and alignment[-1][i] not in ['-', 'X'])
-                       else 0
-                       for i in range(0, len(a))]
-            }
 
         # split sequences in lines of 80 characters
         seq_lines = split_lines(alignment, line_length=80, split_type='alignment')
@@ -118,7 +110,7 @@ def align_display(request, align_id):
         seqs_blocks = [
             [
                 [
-                    ls.id, len(ls), [
+                    ls.id, [
                         zip(
                             ls.letter_annotations['eq'][j:j + block_length],
                             list(ls[j:j + block_length])

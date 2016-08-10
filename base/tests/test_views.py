@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import io
 import re
 import time
+import pickle
+import os
 
 from django.test import TestCase
 from django.utils.html import escape
@@ -31,7 +33,7 @@ from base.forms import QueryForm
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_add
 from helper_funcs.helpers_test import file_to_string
-from helper_funcs.helpers_format import split_lines
+from helper_funcs.helpers_format import split_lines, split_lines_in_blocks, annotate
 
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from Bio.Alphabet import Gapped
@@ -319,18 +321,19 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
     def test_align_display_page_uses_align_display_seq_template(self):
         """
         Tests that align_display view returns a 200 response on a GET request and uses the correct template
-        :return:
         """
         self.assertEqual(self.response.status_code, 200)
 
         # Does not work with Jinja2
         # self.assertTemplateUsed(self.response, 'base/align_display.html')
 
+        with self.assertHTML(self.response, 'title[id="head-title"]') as elems:
+            self.assertEqual('Formalign.eu Alignment Display', elems[0].text)
+
     def test_align_display_page_displays_default_formatted_protein_alignment(self):
         """
         Tests that align_display displays an alignment in the default format on a valid GET request (line of 80
         characters in blocks of 10 characters)
-        :return:
         """
         with self.assertHTML(self.response, 'tr[class="al_ln"]') as elems:
             self.assertEqual(len(
@@ -345,20 +348,128 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
     def test_align_display_page_displays_correct_protein_alignment_sequence(self):
         """
         Tests that align_display displays an alignment with correct sequences
-        :return:
         """
         expected_seqs = file_to_string('spa_protein_alignment.fasta')
         align_expected = io.StringIO(expected_seqs)
         alignment = parse_fasta_alignment(align_expected)
-        seq = alignment[3].seq
+
+        # get displayed sequences
         with self.assertHTML(self.response, 'tr') as elems:
-            for i, e in enumerate(
-                    [
-                    elem for elem in elems[3].findall('td')
-                    if elem.attrib['class'] not in ['block_sep', 'seq_id', 'display_artifact']
-                    ]
-            ):
-                self.assertEqual(e.text, seq[i], 'e.text: ' + format(e.attrib))
+            seq_disp = []
+            for els in elems:
+                seq_disp_line = []
+                for e in els.findall('td')[:-1]:
+                    if e.attrib['class'] in ['residue S0', 'residue S1']:
+                        seq_disp_line.append(e.text)
+                if seq_disp_line:
+                    seq_disp.append(seq_disp_line)
+
+        # recompose sequences
+        re_seqs = []
+        cat_re_seq = []
+        for i in range(0, len(alignment) + 1):
+            for j in range(i, len(seq_disp), len(alignment) + 1):
+                re_seq = [seq_disp[j] for j in range(i, len(seq_disp), len(alignment) + 1)]
+                cat_re_seq = []
+                for r in re_seq:
+                    cat_re_seq.extend(r)
+            re_seqs.append(cat_re_seq)
+
+        # check sequences against original alignment
+        for i, al in enumerate(alignment):
+            al_li = list(al.seq)
+            self.assertEqual(al_li, re_seqs[i], re_seqs[i])
+
+    def test_align_display_page_displays_sequences_in_the_correct_order(self):
+        """
+        Tests that align_display displays the sequences in the correct order
+        """
+        expected_seqs = file_to_string('spa_protein_alignment.fasta')
+        align_expected = io.StringIO(expected_seqs)
+        alignment = parse_fasta_alignment(align_expected)
+        ids = [al.id for al in alignment]
+        ids.append('consensus 70%')
+        with self.assertHTML(self.response, 'tr') as elems:
+            ids_disp = []
+            for els in elems:
+                for e in els.findall('td')[:-1]:
+                    if e.attrib['class'] == 'seq_id':
+                        ids_disp.append(e.text)
+
+        # blocks of sequence IDs
+        bl = [ids_disp[i:i + len(ids)] for i in range(0, len(ids_disp), len(ids))]
+        for b in bl:
+            for i in range(len(ids)):
+                self.assertEqual(ids[i], b[i], b[i])
+
+    def test_align_display_page_displays_correct_consensus(self):
+        """
+        Tests that align_display displays the correct consensus sequence
+        """
+        expected_seqs = file_to_string('spa_protein_alignment.fasta')
+        align_expected = io.StringIO(expected_seqs)
+        alignment = parse_fasta_alignment(align_expected)
+        alignment = consensus_add(alignment)
+
+        # get displayed sequences
+        with self.assertHTML(self.response, 'tr') as elems:
+            seq_disp = []
+            for els in elems:
+                seq_disp_line = []
+                for e in els.findall('td')[:-1]:
+                    if e.attrib['class'] in ['residue S0', 'residue S1']:
+                        seq_disp_line.append(e.text)
+                if seq_disp_line:
+                    seq_disp.append(seq_disp_line)
+
+        # recompose sequences
+        cat_re_seq = []
+        for j in range(len(alignment) - 1, len(seq_disp), len(alignment)):
+            re_seq = [seq_disp[j] for j in range(len(alignment) - 1, len(seq_disp), len(alignment))]
+            cat_re_seq = []
+            for r in re_seq:
+                cat_re_seq.extend(r)
+
+        # check consensus
+        cons_li = list(alignment[-1].seq)
+        self.assertEqual(cons_li, cat_re_seq, cat_re_seq)
+
+    def test_align_display_renders_correct_color_classes(self):
+        """
+        Tests that align_display assigns the correct color classes (residue S0 or residue S1) to the residues
+        """
+        expected_seqs = file_to_string('spa_protein_alignment.fasta')
+        align_expected = io.StringIO(expected_seqs)
+        alignment = parse_fasta_alignment(align_expected)
+        alignment = consensus_add(alignment)
+        alignment = annotate(alignment)
+
+        # get displayed sequences
+        with self.assertHTML(self.response, 'tr') as elems:
+            seq_disp = []
+            for els in elems:
+                seq_disp_line = []
+                for e in els.findall('td')[:-1]:
+                    if e.attrib['class'] in ['residue S0', 'residue S1']:
+                        seq_disp_line.append(e.attrib['class'])
+                if seq_disp_line:
+                    seq_disp.append(seq_disp_line)
+
+        # recompose sequences
+        re_seqs = []
+        cat_re_seq = []
+        for i in range(0, len(alignment)):
+            for j in range(i, len(seq_disp), len(alignment)):
+                re_seq = [seq_disp[j] for j in range(i, len(seq_disp), len(alignment))]
+                cat_re_seq = []
+                for r in re_seq:
+                    cat_re_seq.extend(r)
+            re_seqs.append(cat_re_seq)
+
+        # check color classes
+        for i, al in enumerate(alignment):
+            al_li = ['residue S%s' % a for a in al.letter_annotations['eq']]
+            self.assertEqual(al_li, re_seqs[i], re_seqs)
 
 
 class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
@@ -390,7 +501,7 @@ class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
         self.assertTrue(resp_time < 1.1, 'response time: ' + format(resp_time))
 
 
-class SeqAndAlignDisplayHelpersTestCase(TestCase):
+class FormatHelpersTestCase(TestCase):
     """
     Tests for seq-display and align_display views helper functions
     """
@@ -399,30 +510,32 @@ class SeqAndAlignDisplayHelpersTestCase(TestCase):
         """
         Creates an alignment from ser_thr_kin_short in the db
         """
-        name = 'Serine/Threonine protein kinase family alignment'
         align_input = io.StringIO(file_to_string('ser_thr_kin_short.fasta'))
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
-        self.align = Alignment.objects.create_alignment(name, data)
+        self.alignment = data
+        align_input_a = io.StringIO(file_to_string('protein_annotate_test.fasta'))
+        data_a = parse_fasta_alignment(align_input_a)
+        for d in data_a:
+            d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+        self.alignment_a = data_a
 
     def test_consensus_get_returns_consensus_to_alignment(self):
         """
         Tests that consensus_add function returns correct default consensus
-        :return:
         """
-        alignment = Alignment.objects.get_alignment(self.align.id)
+        alignment = self.alignment
         cons_seq = AlignInfo.SummaryInfo(alignment).gap_consensus()
         cons_got = consensus_add(alignment)[-1]
-        self.assertEqual(cons_seq, cons_got.seq)
-        self.assertEqual('consensus 70%', cons_got.id)
+        self.assertEqual(cons_seq, cons_got.seq, cons_got.seq)
+        self.assertEqual('consensus 70%', cons_got.id, cons_got.id)
 
     def test_split_lines_alignment_splits_blocks_of_80_chars(self):
         """
         Tests that split_lines function splits blocks of alignment sequences in lines of 80 characters by default
-        :return:
         """
-        alignment = Alignment.objects.get_alignment(self.align.id)
+        alignment = self.alignment
         split_alignment = split_lines(alignment, split_type='alignment')
         for seq in split_alignment[:-1]:
             self.assertEqual([80 for i in range(len(seq))], [len(s) for s in seq])
@@ -432,31 +545,82 @@ class SeqAndAlignDisplayHelpersTestCase(TestCase):
     def test_split_lines_sequence_splits_lines_of_80_chars(self):
         """
         Tests that split_lines function splits sequences in lines of 80 characters by default
-        :return:
         """
-        alignment = Alignment.objects.get_alignment(self.align.id)
+        alignment = self.alignment
         split_sequence = split_lines(alignment, split_type='sequence')
         for seq in split_sequence:
             self.assertEqual([80 for i in range(len(seq['seq']) - 1)], [len(s) for s in seq['seq'][:-1]])
             self.assertTrue(len(seq['seq'][-1]) <= 80)
 
-    def test_consensus_annotate_returns_correct_default_consensus_annotation(self):
-        """
-        Tests that consensus is correctly annotated for display
-        :return:
-        """
-        self.fail('Test Incomplete')
-
-    def test_alignment_annotate_returns_correct_sequence_annotations(self):
-        """
-        Tests that sequences are correctly annotated for display
-        :return:
-        """
-        self.fail('Test Incomplete')
-
     def test_split_lines_in_blocks_returns_correct_object(self):
         """
-        Tests that lines are split in blocks of 10 characters
-        :return:
+        Tests that lines are split in blocks of 3 characters, tests that split_lines_in_blocks returns the correct
+        object
         """
-        self.fail('Test Incomplete')
+        split_seq_file = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'test_data', 'split_seq.pckl'
+        )
+        split_sequence = pickle.load(open(split_seq_file, 'rb'))
+        split_blocks = split_lines_in_blocks(split_sequence, block_size=3)
+        split_blocks_li_exp = [
+            [
+                ['seq1', [[(0, 'C'), (1, 'N'), (0, 'G')], [(1, 'R'), (0, 'S'), (1, 'S')]]],
+                ['seq2', [[(0, 'E'), (1, 'N'), (0, 'G')], [(1, 'R'), (0, 'G'), (1, 'S')]]],
+                ['seq3', [[(0, 'D'), (0, 'R'), (0, 'D')], [(1, 'R'), (0, 'C'), (1, 'S')]]],
+                ['seq4', [[(0, 'R'), (1, 'N'), (0, '-')], [(0, '-'), (0, '-'), (1, 'S')]]],
+                ['consensus 70%', [[(0, 'X'), (1, 'N'), (0, 'X')], [(1, 'R'), (0, 'X'), (1, 'S')]]]
+            ],
+            [
+                ['seq1', [[(0, '-'), (0, '-'), (0, '-')], [(0, '-')]]],
+                ['seq2', [[(0, 'M'), (0, 'I'), (0, 'V')], [(0, 'S')]]],
+                ['seq3', [[(0, '-'), (0, '-'), (0, '-')], [(0, '-')]]],
+                ['seq4', [[(0, '-'), (0, '-'), (0, '-')], [(0, '-')]]],
+                ['consensus 70%', [[(0, '-'), (0, '-'), (0, '-')], [(0, '-')]]]
+            ]
+        ]
+        split_blocks_li = [
+            [
+                [line[0], [[(annot, res) for (annot, res) in res_block] for res_block in line[1]]
+                 ] for line in seq_block
+                ] for seq_block in split_blocks
+            ]
+        for seq_block in split_blocks_li:
+            for line in seq_block:
+                res_blocks = line[1]
+                for res_block in res_blocks:
+                    length = len([(annot, res) for (annot, res) in res_block])
+                    self.assertTrue(length <= 3, length)
+        self.assertEqual(split_blocks_li_exp, split_blocks_li, split_blocks_li)
+
+    def test_annotate_returns_correct_default_consensus_annotation(self):
+        """
+        Tests that consensus is correctly annotated for display
+        """
+        exp_annot = [0, 1, 0, 1, 0, 1, 0, 0, 0, 0]
+        alignment = consensus_add(self.alignment_a)
+        annot_alignment = annotate(alignment)
+        self.assertEqual(
+            exp_annot,
+            annot_alignment[-1].letter_annotations['eq'],
+            annot_alignment[-1].letter_annotations['eq']
+        )
+
+    def test_annotate_returns_correct_sequence_annotations(self):
+        """
+        Tests that sequences are correctly annotated for display
+        """
+        exp_annot = [
+            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0]
+        ]
+        alignment = consensus_add(self.alignment_a)
+        annot_alignment = annotate(alignment)
+        for i, e in enumerate(exp_annot):
+            self.assertEqual(
+                e,
+                annot_alignment[i].letter_annotations['eq'],
+                annot_alignment[i].letter_annotations['eq']
+            )
