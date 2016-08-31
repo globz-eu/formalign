@@ -19,6 +19,18 @@ body {
     margin-top: 70px;
     line-height: 1.4;
 }
+
+h2 {
+    font-size: 20px;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+#warning {
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
 .row {
     margin-right: 0;
     margin-left: 0;
