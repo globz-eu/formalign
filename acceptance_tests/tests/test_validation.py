@@ -24,7 +24,6 @@ from unittest import TestCase
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
@@ -308,12 +307,7 @@ class InputValidationTestCaseChrome(TestCase):
 
 class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
     def setUp(self):
-        caps = DesiredCapabilities.FIREFOX
-        caps['marionette'] = True
-        caps['binary'] = '/usr/bin/firefox'
-        self.browser = webdriver.Firefox(capabilities=caps)
-        self.wait = 10
-        self.browser.implicitly_wait(10)
+        self.browser = webdriver.Firefox()
 
     def tearDown(self):
         self.browser.quit()

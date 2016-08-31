@@ -25,7 +25,6 @@ from unittest import TestCase
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from configuration import SERVER_URL
@@ -46,7 +45,6 @@ class BasicUserTestCaseChrome(TestCase):
     def test_basic_user_experience(self):
         """
         Tests basic user interaction with formalign.eu site
-        :return:
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
@@ -152,12 +150,8 @@ class BasicUserTestCaseChrome(TestCase):
 
 class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
     def setUp(self):
-        caps = DesiredCapabilities.FIREFOX
-        caps['marionette'] = True
-        caps['binary'] = '/usr/bin/firefox'
-        self.browser = webdriver.Firefox(capabilities=caps)
+        self.browser = webdriver.Firefox()
         self.sleep = 2
 
     def tearDown(self):
-        # time.sleep(5)
         self.browser.quit()
