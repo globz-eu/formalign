@@ -22,13 +22,12 @@ body {
 
 h2 {
     font-size: 20px;
-    padding-left: 2em;
-    padding-right: 2em;
 }
 
 #warning {
-    padding-top: 2em;
-    padding-bottom: 2em;
+    padding: 1rem;
+    padding-left: 5rem;
+    text-align: left;
 }
 
 .row {
