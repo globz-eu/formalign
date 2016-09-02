@@ -35,12 +35,6 @@ class BasicUserSpeedLiveServerTestCase(StaticLiveServerTestCase):
     Tests basic user interaction with the app
     """
 
-    # def setUp(self):
-    #     self.client = requests.Session()
-    #
-    # def tearDown(self):
-    #     self.client.close()
-
     def test_alignment_display_speeds(self):
         """
         Tests alignment display page
@@ -73,5 +67,5 @@ class BasicUserSpeedLiveServerTestCase(StaticLiveServerTestCase):
                 a_display.append(roundtrip2)
 
                 self.client.close()
-            self.assertTrue(mean(q_display) <= 1.4, 'query sequences display of %s took: %s' % (f, mean(q_display)))
-            self.assertTrue(mean(a_display) <= 1, 'alignment display of %s took: %s' % (f, mean(a_display)))
+            self.assertTrue(mean(q_display) <= 1.5, 'query sequences display of %s took: %s' % (f, mean(q_display)))
+            self.assertTrue(mean(a_display) <= 1.5, 'alignment display of %s took: %s' % (f, mean(a_display)))
