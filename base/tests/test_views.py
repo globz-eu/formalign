@@ -498,7 +498,7 @@ class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):
         t0 = time.time()
         self.client.get('/align-display/' + str(self.align.id) + '/')
         resp_time = time.time() - t0
-        self.assertTrue(resp_time < 1.5, 'response time: ' + format(resp_time))
+        self.assertTrue(resp_time < 2, 'response time: ' + format(resp_time))
 
 
 class FormatHelpersTestCase(TestCase):
