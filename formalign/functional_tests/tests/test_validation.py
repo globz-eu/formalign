@@ -19,20 +19,80 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from acceptance_tests.requests_tests.test_validation import InputValidationTestCase
+from helper_funcs.helpers_test import file_to_string
 import requests
+from configuration import SERVER_URL, TEST_CASE
+from lxml import html
+from io import StringIO
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 
 __author__ = 'Stefan Dieterle'
 
 
-class InputValidationTestCaseLiveServer(InputValidationTestCase, StaticLiveServerTestCase):
+class InputValidationTestCase(TEST_CASE):
     """
     Tests input validation
     """
     def setUp(self):
         self.client = requests.Session()
-        self.url = self.live_server_url
+        if SERVER_URL:
+            self.url = SERVER_URL
+        else:
+            self.url = self.live_server_url
 
     def tearDown(self):
         self.client.close()
+
+    def alignment_validation(self, seqs):
+        # She visits the Formalign.eu site
+        r = self.client.get(self.url)
+        csrftoken = self.client.cookies['csrftoken']
+        index = html.parse(StringIO(r.text)).getroot()
+        title = index.cssselect('title[id="head-title"]')
+        brand = index.cssselect('a[class="navbar-brand"]')
+
+        # page displays no error message
+        self.assertEqual(r.status_code, 200, r.status_code)
+
+        # User sees she's on the right page because she can see the name of the site in the title and the brand.
+        self.assertEqual('Formalign.eu Home', title[0].text_content(), title[0].text_content())
+        self.assertEqual(self.url + '/', r.url, r.url)
+        self.assertEqual('Formalign.eu', brand[0].text_content(), brand[0].text_content())
+
+        for t in ['protein', 'DNA']:
+            for s in seqs:
+                # she submits the invalid alignment
+                alignment_string = file_to_string('%s%s.fasta' % (t, s['seq'])) if s['seq'] else None
+                r = self.client.post(self.url,
+                                     data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
+                                           'align_input': alignment_string})
+                index = html.parse(StringIO(r.text)).getroot()
+                title = index.cssselect('title[id="head-title"]')
+                brand = index.cssselect('a[class="navbar-brand"]')
+                error_text = index.cssselect('ul[class="errorlist"]')[0].cssselect('li')[0].text_content()
+
+                # response contains no error code
+                self.assertEqual(r.status_code, 200, r.status_code)
+
+                # user is redirected to the index page
+                self.assertEqual('Formalign.eu Home', title[0].text_content(), title[0].text_content())
+                self.assertEqual(self.url + '/', r.url, r.url)
+                self.assertEqual('Formalign.eu', brand[0].text_content(), brand[0].text_content())
+
+                # error text is displayed on index page
+                self.assertEqual(s['error'], error_text, error_text)
+
+    def test_alignment_validation(self):
+        seqs = [
+            {'seq': None, 'error': EMPTY_ERROR},
+            {'seq': '_invalid_characters', 'error': '%ssequence1' % CHARACTER_ERROR},
+            {'seq': '_too_few_sequences', 'error': LESS_THAN_TWO_SEQS_ERROR},
+            {'seq': '_invalid_alignment', 'error': ALIGNMENT_ERROR}
+        ]
+        self.alignment_validation(seqs)
+
+    def test_format_validation(self):
+        seqs = [
+            {'seq': '_invalid_fasta', 'error': FORMAT_ERROR},
+        ]
+        self.alignment_validation(seqs)
