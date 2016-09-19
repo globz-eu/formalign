@@ -1,6 +1,6 @@
 """
 =====================================================================
-Formalign.eu format and display multiple sequence alignments
+Django app deployment scripts
 Copyright (C) 2016 Stefan Dieterle
 e-mail: golgoths@yahoo.fr
 
@@ -19,20 +19,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from acceptance_tests.requests_tests.test_validation import InputValidationTestCase
-import requests
-
 __author__ = 'Stefan Dieterle'
-
-
-class InputValidationTestCaseLiveServer(InputValidationTestCase, StaticLiveServerTestCase):
-    """
-    Tests input validation
-    """
-    def setUp(self):
-        self.client = requests.Session()
-        self.url = self.live_server_url
-
-    def tearDown(self):
-        self.client.close()
