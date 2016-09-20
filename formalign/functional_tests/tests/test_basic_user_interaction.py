@@ -35,10 +35,10 @@ class BasicUserTestCase(TEST_CASE):
 
     def setUp(self):
         self.client = requests.Session()
-        if SERVER_URL:
-            self.url = SERVER_URL
-        else:
+        if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
+        else:
+            self.url = SERVER_URL
 
     def tearDown(self):
         self.client.close()

@@ -27,16 +27,20 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
-from configuration import SERVER_URL
+from configuration import SERVER_URL, TEST_CASE
 
 __author__ = 'Stefan Dieterle'
 
 
-class BasicUserTestCaseChrome(TestCase):
+class BasicUserTestCaseChrome(TEST_CASE):
     def setUp(self):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
         )
+        if SERVER_URL == 'liveserver':
+            self.url = self.live_server_url
+        else:
+            self.url = SERVER_URL
         self.sleep = 0
 
     def tearDown(self):
@@ -48,7 +52,7 @@ class BasicUserTestCaseChrome(TestCase):
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
-        self.browser.get(SERVER_URL + '/')
+        self.browser.get(self.url + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
@@ -139,7 +143,7 @@ class BasicUserTestCaseChrome(TestCase):
         # home page
         home_button = self.browser.find_element_by_css_selector('.navbar-brand')
         home_button.click()
-        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
 
         # She wants to upload a protein stockholm alignment this time from a file
         # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
@@ -151,6 +155,10 @@ class BasicUserTestCaseChrome(TestCase):
 class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
     def setUp(self):
         self.browser = webdriver.Firefox()
+        if SERVER_URL == 'liveserver':
+            self.url = self.live_server_url
+        else:
+            self.url = SERVER_URL
         self.sleep = 2
 
     def tearDown(self):

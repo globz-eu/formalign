@@ -21,34 +21,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
 from unittest import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from configuration import SERVER_URL
+from configuration import SERVER_URL, TEST_CASE
 
 __author__ = 'Stefan Dieterle'
 
 
-class InputValidationTestCaseChrome(TestCase):
+class InputValidationTestCaseChrome(TEST_CASE):
     def setUp(self):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
         )
+        if SERVER_URL == 'liveserver':
+            self.url = self.live_server_url
+        else:
+            self.url = SERVER_URL
         self.wait = 5
         self.browser.implicitly_wait(5)
 
     def tearDown(self):
         self.browser.quit()
 
-    def invalid_format_test_sequence(self, file):
+    def invalid_format_sequence(self, file):
         seq_type_button_dict = {'DNA': 'input#id_seq_type_1', 'protein': 'input#id_seq_type_0'}
         test_seq = {'DNA': 'AGTCC-TAAGGTCGCCAATGGGCA', 'protein': 'MKERBGWAQ--QGKKPWRF--EEW'}
 
         # she visits the Formalign.eu site
-        self.browser.get(SERVER_URL + '/')
+        self.browser.get(self.url + '/')
 
         # She clicks the appropriate button and clears the input field
         seq_type_button = self.browser.find_element_by_css_selector(seq_type_button_dict[file['seq_type']])
@@ -136,7 +142,7 @@ class InputValidationTestCaseChrome(TestCase):
         test_seq = {'DNA': 'AGTCC-TAAGGTCGCCAATGGGCA', 'protein': 'MKERBGWAQ--QGKKPWRF--EEW'}
 
         # User visits the formalign.eu site.
-        self.browser.get(SERVER_URL + '/')
+        self.browser.get(self.url + '/')
 
         # She clicks the DNA button
         seq_type_button = self.browser.find_element_by_css_selector(seq_type_button_dict[kwargs['seq_type']])
@@ -292,7 +298,7 @@ class InputValidationTestCaseChrome(TestCase):
 
     def test_alignment_format_validation(self):
         # User visits the formalign.eu site.
-        # self.browser.get(SERVER_URL + '/')
+        # self.browser.get(self.url + '/')
 
         # She tries a number of invalid and valid alignment formats
         files = [
@@ -302,12 +308,16 @@ class InputValidationTestCaseChrome(TestCase):
              'align_format': 'fasta'},
         ]
         for file in files:
-            self.invalid_format_test_sequence(file)
+            self.invalid_format_sequence(file)
 
 
 class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
     def setUp(self):
         self.browser = webdriver.Firefox()
+        if SERVER_URL == 'liveserver':
+            self.url = self.live_server_url
+        else:
+            self.url = SERVER_URL
 
     def tearDown(self):
         self.browser.quit()
