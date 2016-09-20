@@ -20,9 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-from unittest import TestCase
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-
 from configuration import CHROME_DRIVER
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
