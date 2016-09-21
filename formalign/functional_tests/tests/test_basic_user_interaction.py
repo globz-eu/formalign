@@ -89,6 +89,7 @@ class BasicUserTestCase(TEST_CASE):
 
         # She checks the protein button and pastes in an alignment
         alignment_string = file_to_string('spa_protein_alignment.fasta')
+        self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
                                    'align_input': alignment_string})
@@ -109,6 +110,7 @@ class BasicUserTestCase(TEST_CASE):
         self.client.get(self.url)
         csrftoken = self.client.cookies['csrftoken']
         alignment_string = file_to_string('spa_protein_alignment.fasta')
+        self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
                                    'align_input': alignment_string})
@@ -158,6 +160,7 @@ class BasicUserTestCase(TEST_CASE):
         self.client.get(self.url)
         csrftoken = self.client.cookies['csrftoken']
         alignment_string = file_to_string('spa_protein_alignment.fasta')
+        self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
                                    'align_input': alignment_string})

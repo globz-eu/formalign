@@ -63,6 +63,7 @@ class InputValidationTestCase(TEST_CASE):
             for s in seqs:
                 # she submits the invalid alignment
                 alignment_string = file_to_string('%s%s.fasta' % (t, s['seq'])) if s['seq'] else None
+                self.client.headers.update({'referer': self.url})
                 r = self.client.post(self.url,
                                      data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
                                            'align_input': alignment_string})
