@@ -21,14 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
 from unittest import TestCase
-from configuration import CHROME_DRIVER
+from formalign.settings import CHROME_DRIVER, SERVER_URL
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import FORMAT_ERROR
-from configuration import SERVER_URL
 
 __author__ = 'Stefan Dieterle'
 

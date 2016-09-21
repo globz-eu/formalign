@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from helper_funcs.helpers_test import file_to_string
 import requests
-from configuration import SERVER_URL, TEST_CASE
+from formalign.settings import SERVER_URL, TEST_CASE
 from lxml import html
 from io import StringIO
 

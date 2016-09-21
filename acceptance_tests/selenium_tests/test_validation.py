@@ -20,13 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-from configuration import CHROME_DRIVER
+from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from configuration import SERVER_URL, TEST_CASE
 
 __author__ = 'Stefan Dieterle'
 

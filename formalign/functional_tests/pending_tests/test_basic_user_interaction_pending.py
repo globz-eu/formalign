@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from configuration import CHROME_DRIVER
+from formalign.settings import CHROME_DRIVER
 from selenium import webdriver
 
 __author__ = 'Stefan Dieterle'
