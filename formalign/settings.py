@@ -31,8 +31,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
-from configuration import SECRET_KEY, DEBUG, DATABASES, ALLOWED_HOSTS, MIDDLEWARE_CLASSES, CHROME_DRIVER, SERVER_URL,\
-    TEST_CASE
+from configuration import SECRET_KEY, DEBUG, DATABASES, ALLOWED_HOSTS, SECURE_SSL_REDIRECT, SECURE_PROXY_SSL_HEADER
+from configuration import MIDDLEWARE_CLASSES, CHROME_DRIVER, SERVER_URL, TEST_CASE
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
