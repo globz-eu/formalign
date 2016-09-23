@@ -20,22 +20,6 @@ pip install -r requirements.txt]]></param>
           <param name="use.custom.script" value="true" />
         </parameters>
       </runner>
-      <runner id="RUNNER_7" name="Acceptance Tests" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[#! /bin/bash
-export DISPLAY=':0'
-export WORKON_HOME=$HOME/.envs
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
-workon formalign
-cp $HOME/settings/settings_admin.py ./
-cp $HOME/settings/configuration.py ./configuration.py
-kill -9 $(pgrep chrome)
-python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
     </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="Formalign_Formalign" />
