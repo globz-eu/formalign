@@ -8,18 +8,6 @@
     </options>
     <parameters />
     <build-runners>
-      <runner id="RUNNER_8" name="install requirements (on desktop agent)" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[#! /bin/bash
-export WORKON_HOME=$HOME/.envs
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
-workon formalign
-pip install -r requirements.txt]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
       <runner id="RUNNER_7" name="Acceptance Tests" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
