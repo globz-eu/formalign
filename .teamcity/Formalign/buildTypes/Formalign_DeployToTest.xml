@@ -19,20 +19,6 @@
           <param name="teamcitySshKey" value="teamcity server ssh key" />
         </parameters>
       </runner>
-      <runner id="RUNNER_5" name="Functional Tests (against test server)" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[#! /bin/bash
-export WORKON_HOME=$HOME/.envs
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
-workon formalign
-cp $HOME/settings/settings_admin.py ./
-cp $HOME/settings/configuration.py ./configuration.py
-python -m nose ./formalign/functional_tests/tests --with-xunit]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
     </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="Formalign_Formalign" />
