@@ -10,22 +10,6 @@
     </options>
     <parameters />
     <build-runners>
-      <runner id="RUNNER_9" name="deploy to heroku" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[#! /bin/bash
-cp $HOME/settings/.env ./
-cp $HOME/settings/runtime.txt ./
-cp $HOME/settings/configuration_heroku.py ./configuration.py
-git add .
-git commit -am "$(date)"
-heroku git:remote -a tranquil-mountain-43235 --ssh-git
-git push --force heroku master
-heroku run python manage.py makemigrations --app tranquil-mountain-43235
-heroku run python manage.py migrate --app tranquil-mountain-43235]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
       <runner id="RUNNER_5" name="Functional Tests (against test server)" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
