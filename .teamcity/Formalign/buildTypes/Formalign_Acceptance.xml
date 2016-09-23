@@ -5,6 +5,7 @@
   <settings>
     <options>
       <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="shouldFailBuildOnBadExitCode" value="false" />
     </options>
     <parameters />
     <build-runners>
@@ -62,6 +63,12 @@ python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
         </options>
       </depend-on>
       <depend-on sourceBuildTypeId="Formalign_InstallDesktopRequirements">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_FunctionalLocal">
         <options>
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
