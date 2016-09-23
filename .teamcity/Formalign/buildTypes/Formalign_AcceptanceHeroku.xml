@@ -31,7 +31,7 @@ workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration_heroku.py ./configuration.py
 kill -9 $(pgrep chrome)
-python -m nose ./acceptance_tests/selenium_tests --with-xunit]]></param>
+python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
