@@ -3,14 +3,15 @@
   <name>Formalign</name>
   <param name="agentCleanFilesPolicy" value="ALL_UNTRACKED" />
   <param name="agentCleanPolicy" value="ON_BRANCH_CHANGE" />
-  <param name="authMethod" value="PASSWORD" />
+  <param name="authMethod" value="TEAMCITY_SSH_KEY" />
   <param name="branch" value="refs/heads/master" />
   <param name="ignoreKnownHosts" value="true" />
-  <param name="secure:password" value="zxx23ddb7c95c4641fbc2d6036cf5d4a601cc0936d2189b9449" />
+  <param name="push_url" value="git@github.com:globz-eu/formalign.git" />
+  <param name="secure:passphrase" value="zxxe208e22fc97c265beede239a1b3a2b102fd72f3ba505e0cce10b53010b89fa3e4e03c8671e78f235775d03cbe80d301b" />
   <param name="submoduleCheckout" value="CHECKOUT" />
-  <param name="url" value="https://github.com/globz-eu/formalign.git" />
+  <param name="teamcitySshKey" value="teamcity-server" />
+  <param name="url" value="git@github.com:globz-eu/formalign.git" />
   <param name="useAlternates" value="true" />
-  <param name="username" value="globz-eu" />
   <param name="usernameStyle" value="USERID" />
 </vcs-root>
 
