@@ -31,7 +31,7 @@ pip install -r requirements.txt]]></param>
       <build-trigger id="TRIGGER_2" type="buildDependencyTrigger">
         <parameters>
           <param name="afterSuccessfulBuildOnly" value="true" />
-          <param name="dependsOn" value="Formalign_DeployToTest" />
+          <param name="dependsOn" value="Formalign_Build" />
         </parameters>
       </build-trigger>
     </build-triggers>
