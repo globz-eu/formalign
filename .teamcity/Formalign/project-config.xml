@@ -24,6 +24,6 @@
     </extension>
   </project-extensions>
   <cleanup />
-  <buildTypesOrder order="Formalign_Build,Formalign_DeployToTest,Formalign_Acceptance,Formalign_DeployToHeroku,Formalign_FunctionalHeroku,Formalign_AcceptanceHeroku,Formalign_DeployToProduction" />
+  <buildTypesOrder order="Formalign_Build,Formalign_DeployToTest,Formalign_Acceptance,Formalign_InstallDesktopRequirements,Formalign_DeployToHeroku,Formalign_FunctionalHeroku,Formalign_AcceptanceHeroku,Formalign_DeployToProduction" />
 </project>
 
