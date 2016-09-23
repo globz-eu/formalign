@@ -5,6 +5,7 @@
   <settings>
     <options>
       <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="shouldFailBuildOnBadExitCode" value="false" />
     </options>
     <parameters />
     <build-runners>
