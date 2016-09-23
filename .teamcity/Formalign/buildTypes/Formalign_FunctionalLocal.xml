@@ -44,7 +44,7 @@ python -m nose ./formalign/functional_tests/tests --with-xunit]]></param>
       <build-trigger id="TRIGGER_1" type="buildDependencyTrigger">
         <parameters>
           <param name="afterSuccessfulBuildOnly" value="true" />
-          <param name="dependsOn" value="Formalign_Build" />
+          <param name="dependsOn" value="Formalign_DeployToTest" />
         </parameters>
       </build-trigger>
     </build-triggers>
