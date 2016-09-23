@@ -20,9 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE
+from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE, FIREFOX_BINARY
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
@@ -39,7 +40,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
             self.url = self.live_server_url
         else:
             self.url = SERVER_URL
-        self.wait = 5
+        self.wait = 0.1
         self.browser.implicitly_wait(5)
 
     def tearDown(self):
@@ -71,12 +72,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # Since her FASTA format is invalid she gets redirected to the submission form where she sees an
         # error message telling her that her alignment format is invalid
@@ -102,12 +98,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while (title == 'Formalign.eu Home' or not title) and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait * 10)
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(
@@ -148,12 +139,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
@@ -169,12 +155,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
         # error message telling her that her FASTA format is invalid
@@ -193,12 +174,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
         # again where she sees an error message telling her that her sequences contain invalid characters
@@ -218,12 +194,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # unfortunately this time she accidentally erased one sequence and is left with only one sequence so she gets
         # redirected to the submission form again where she sees an error message telling her that her alignment is not
@@ -243,12 +214,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while not title and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # it must be starting to be a bit late since she added some residues to her first sequence so it is longer than
         # the second now so she gets redirected to the submission form again where she sees an error message telling her
@@ -269,12 +235,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        title = self.browser.title
-        c = 0
-        while (title == 'Formalign.eu Home' or not title) and c <= self.wait * 2:
-            time.sleep(0.5)
-            c += 1
-            title = self.browser.title
+        time.sleep(self.wait)
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
@@ -309,11 +270,15 @@ class InputValidationTestCaseChrome(TEST_CASE):
 
 class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        caps = DesiredCapabilities.FIREFOX
+        caps['marionette'] = True
+        caps['binary'] = FIREFOX_BINARY
+        self.browser = webdriver.Firefox(capabilities=caps)
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
         else:
             self.url = SERVER_URL
+        self.wait = 0.1
 
     def tearDown(self):
         self.browser.quit()

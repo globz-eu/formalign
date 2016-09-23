@@ -21,9 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import time
-from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE
+from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE, FIREFOX_BINARY
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
 
@@ -141,6 +142,9 @@ class BasicUserTestCaseChrome(TEST_CASE):
         # home page
         home_button = self.browser.find_element_by_css_selector('.navbar-brand')
         home_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
+
         self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
 
         # She wants to upload a protein stockholm alignment this time from a file
@@ -152,7 +156,10 @@ class BasicUserTestCaseChrome(TEST_CASE):
 
 class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        caps = DesiredCapabilities.FIREFOX
+        caps['marionette'] = True
+        caps['binary'] = FIREFOX_BINARY
+        self.browser = webdriver.Firefox(capabilities=caps)
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
         else:
