@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="d28a4402-f1c1-4e15-b8ca-f56abd152bbc" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/10.0/project-config.xsd">
+  <name>acceptance_local</name>
+  <description>runs selenium acceptance tests</description>
+  <settings>
+    <options>
+      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+    </options>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_8" name="install requirements (on desktop agent)" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[#! /bin/bash
+export WORKON_HOME=$HOME/.envs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+workon formalign
+pip install -r requirements.txt]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_7" name="Acceptance Tests" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[#! /bin/bash
+export DISPLAY=':0'
+export WORKON_HOME=$HOME/.envs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+workon formalign
+cp $HOME/settings/settings_admin.py ./
+cp $HOME/settings/configuration.py ./configuration.py
+kill -9 $(pgrep chrome)
+python -m nose ./acceptance_tests/selenium_tests --with-xunit]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="Formalign_Formalign" />
+    </vcs-settings>
+    <requirements>
+      <equals id="RQ_3" name="teamcity.agent.name" value="teamcity-agent2" />
+    </requirements>
+    <build-triggers>
+      <build-trigger id="TRIGGER_2" type="buildDependencyTrigger">
+        <parameters>
+          <param name="afterSuccessfulBuildOnly" value="true" />
+          <param name="dependsOn" value="Formalign_DeployToTest" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <build-extensions>
+      <extension id="BUILD_EXT_1" type="xml-report-plugin">
+        <parameters>
+          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
+          <param name="xmlReportParsing.reportType" value="junit" />
+          <param name="xmlReportParsing.verboseOutput" value="true" />
+        </parameters>
+      </extension>
+    </build-extensions>
+    <dependencies>
+      <depend-on sourceBuildTypeId="Formalign_DeployToTest">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_Build">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+    </dependencies>
+    <cleanup />
+  </settings>
+</build-type>
+

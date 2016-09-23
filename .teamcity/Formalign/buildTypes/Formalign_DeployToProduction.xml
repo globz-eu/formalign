@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="55e0beb2-cf41-4c62-85f3-f7185ed19fae" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/10.0/project-config.xsd">
+  <name>deploy_to_production</name>
+  <description>deploys app to heroku test server and runs functional tests</description>
+  <settings>
+    <options>
+      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="checkoutMode" value="ON_AGENT" />
+      <option name="cleanBuild" value="true" />
+    </options>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_9" name="deploy to heroku" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[#! /bin/bash
+cp $HOME/settings/.env ./
+cp $HOME/settings/runtime.txt ./
+cp $HOME/settings/configuration_production.py ./configuration.py
+git add .
+git commit -am "$(date)"
+heroku git:remote -a boiling-plateau-97746 --ssh-git
+git push --force heroku master
+heroku run python manage.py makemigrations --app boiling-plateau-97746
+heroku run python manage.py migrate --app boiling-plateau-97746]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_5" name="Functional Tests (against production server)" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[#! /bin/bash
+export WORKON_HOME=$HOME/.envs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+workon formalign
+cp $HOME/settings/settings_admin.py ./
+cp $HOME/settings/configuration_production.py ./configuration.py
+python -m nose ./formalign/functional_tests/tests --with-xunit]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="Formalign_Formalign" />
+    </vcs-settings>
+    <requirements>
+      <equals id="RQ_1" name="teamcity.agent.name" value="teamcity-agent1" />
+    </requirements>
+    <build-triggers />
+    <build-extensions>
+      <extension id="BUILD_EXT_1" type="xml-report-plugin">
+        <parameters>
+          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
+          <param name="xmlReportParsing.reportType" value="junit" />
+          <param name="xmlReportParsing.verboseOutput" value="true" />
+        </parameters>
+      </extension>
+    </build-extensions>
+    <dependencies>
+      <depend-on sourceBuildTypeId="Formalign_AcceptanceHeroku">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_Build">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_DeployToHeroku">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+    </dependencies>
+    <cleanup />
+  </settings>
+</build-type>
+

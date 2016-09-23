@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="70053251-f1aa-4bbc-a977-588929fc51c9" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/10.0/project-config.xsd">
+  <name>Formalign</name>
+  <description>Formalign CI</description>
+  <parameters />
+  <project-extensions>
+    <extension id="PROJECT_EXT_1" type="ReportTab">
+      <parameters>
+        <param name="buildTypeId" value="Formalign_Build" />
+        <param name="revisionRuleName" value="lastFinished" />
+        <param name="revisionRuleRevision" value="latest.lastFinished" />
+        <param name="startPage" value="coverage/index.html" />
+        <param name="title" value="Coverage" />
+        <param name="type" value="ProjectReportTab" />
+      </parameters>
+    </extension>
+    <extension id="PROJECT_EXT_2" type="versionedSettings">
+      <parameters>
+        <param name="buildSettings" value="PREFER_CURRENT" />
+        <param name="enabled" value="true" />
+        <param name="rootId" value="Formalign_Formalign" />
+        <param name="showChanges" value="true" />
+      </parameters>
+    </extension>
+  </project-extensions>
+  <cleanup />
+  <buildTypesOrder order="Formalign_Build,Formalign_DeployToTest,Formalign_Acceptance,Formalign_DeployToHeroku,Formalign_AcceptanceHeroku,Formalign_DeployToProduction" />
+</project>
+
