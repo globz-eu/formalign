@@ -41,7 +41,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration.py ./
-python manage.py test --settings=settings_admin --exclude-dir=acceptance_tests --exclude-dir=formalign/functional_tests --with-coverage --cover-package=base --cover-html --with-xunit]]></param>
+python manage.py test --settings=settings_admin --exclude-dir=acceptance_tests --exclude-dir=formalign/functional_tests --with-coverage --cover-package=base,helper_funcs --cover-html --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
