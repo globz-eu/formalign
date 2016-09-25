@@ -30,7 +30,7 @@ from Bio.Alphabet import Gapped
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 
-from base.models import Alignment, Seqrecord  # save_alignment_to_db, get_multipleseqalignment_object_from_db
+from base.models import Alignment, Seqrecord
 
 __author__ = 'Stefan Dieterle'
 
@@ -80,7 +80,6 @@ class AlignmentModelTestCase(TestCase):
     def test_alignment_basic(self):
         """
         Tests the basic functionality of Alignment
-        :return:
         """
         alignment = Alignment.objects.create(name=self.name)
         for s in self.data:

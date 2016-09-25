@@ -77,6 +77,9 @@ class BasicUserTestCaseChrome(TEST_CASE):
 
         # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
         protein_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
+
         self.assertEqual(protein_button.is_selected(), True)
         self.assertEqual(dna_button.is_selected(), False)
 
@@ -87,7 +90,7 @@ class BasicUserTestCaseChrome(TEST_CASE):
         alignment_input.send_keys(Keys.CONTROL, 'v')
         self.browser.find_element_by_id('submit-align').click()
         # Wait for Firefox
-        time.sleep(self.sleep)
+        time.sleep(self.sleep * 5)
 
         # She is redirected to a page showing the submitted sequences from her alignment and a simple consensus sequence
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
@@ -120,7 +123,7 @@ class BasicUserTestCaseChrome(TEST_CASE):
         self.assertIsNotNone(render_button)
         render_button.click()
         # Wait for Firefox
-        time.sleep(self.sleep)
+        time.sleep(self.sleep * 10)
 
         # She is redirected to the alignment display page
         self.assertEqual('Formalign.eu Alignment Display', self.browser.title, self.browser.title)
@@ -164,7 +167,7 @@ class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
             self.url = self.live_server_url
         else:
             self.url = SERVER_URL
-        self.sleep = 2
+        self.sleep = 0.1
 
     def tearDown(self):
         self.browser.quit()

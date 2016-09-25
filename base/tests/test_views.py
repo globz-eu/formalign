@@ -624,3 +624,20 @@ class FormatHelpersTestCase(TestCase):
                 annot_alignment[i].letter_annotations['eq'],
                 annot_alignment[i].letter_annotations['eq']
             )
+
+
+class BioHelpers(TestCase):
+    """
+    tests for parse_fasta_alignment and consensus_add functions
+    """
+    def test_parse_fasta_alignment_returns_expected_object(self):
+        """
+        tests that parse_fasta_alignment returns the expected object
+        """
+        align = io.StringIO(file_to_string('ser_thr_kin_short.fasta'))
+        parsed = parse_fasta_alignment(align)
+        self.assertEqual(
+            ['DMD401_1-640', 'CER09D1_11-435', 'EGFR', 'DMDPR2_1-384'],
+            [p.description for p in parsed],
+            [p.description for p in parsed]
+        )
