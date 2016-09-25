@@ -47,11 +47,11 @@ class SeqrecordModelTestCase(TestCase):
         for s in self.seqs:
             s.seq.alphabet = ExtendedIUPACProtein()
         self.seq = Seqrecord.objects.create(
-                seq=str(self.seqs[0].seq),
-                alphabet=str(self.seqs[0].seq.alphabet),
-                seq_id=str(self.seqs[0].id),
-                name=str(self.seqs[0].name),
-                description=self.seqs[0].description,
+            seq=str(self.seqs[0].seq),
+            alphabet=str(self.seqs[0].seq.alphabet),
+            seq_id=str(self.seqs[0].id),
+            name=str(self.seqs[0].name),
+            description=self.seqs[0].description,
         )
 
     def test_seqrecord_basic(self):
@@ -84,51 +84,65 @@ class AlignmentModelTestCase(TestCase):
         alignment = Alignment.objects.create(name=self.name)
         for s in self.data:
             seqrec = Seqrecord.objects.create(
-                    seq=str(s.seq),
-                    alphabet=str(s.seq.alphabet),
-                    seq_id=s.id,
-                    name=s.name,
-                    description=s.description
+                seq=str(s.seq),
+                alphabet=str(s.seq.alphabet),
+                seq_id=s.id,
+                name=s.name,
+                description=s.description
             )
             alignment.seqs.add(seqrec)
         self.assertEqual(alignment.name, 'A. tha. SPA family alignment')
         self.assertEqual(
-                [seq.seq_id for seq in alignment.seqs.all()],
-                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+            [seq.seq_id for seq in alignment.seqs.all()],
+            ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
         )
 
     def test_save_alignment_to_db(self):
+        """
+        Tests that an alignment can be retrieved directly from the database after having been saved to the database
+        """
         save = Alignment.objects.create_alignment(self.name, self.data)
         alignment = Alignment.objects.all()
         self.assertEqual(alignment[0].name, 'A. tha. SPA family alignment', alignment[0].name)
         self.assertEqual(
-                [seq.seq_id for seq in alignment[0].seqs.all()],
-                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+            [('NP_175717', 0), ('NP_683567', 1), ('NP_182157', 2), ('NP_192849', 3)],
+            [(seq.seq_id, seq.display_order) for seq in alignment[0].seqs.all()],
+            [(seq.seq_id, seq.display_order) for seq in alignment[0].seqs.all()]
         )
         self.assertEqual(save.id, alignment[0].pk, save.id)
 
     def test_get_multipleseqalignment_object_from_db(self):
+        """
+        Tests that an alignment can be retrieved as a MultipleSeqAlignment object after having been saved to the
+        database
+        """
         alignment = Alignment.objects.create(name=self.name)
         for s in self.data:
             seqrec = Seqrecord.objects.create(
-                    seq=str(s.seq),
-                    alphabet="Gapped(ExtendedIUPACProtein(), '-')",
-                    seq_id=s.id,
-                    name=s.name,
-                    description=s.description
+                seq=str(s.seq),
+                alphabet="Gapped(ExtendedIUPACProtein(), '-')",
+                seq_id=s.id,
+                name=s.name,
+                description=s.description
             )
             alignment.seqs.add(seqrec)
         mulseqal = Alignment.objects.get_alignment(alignment.pk)
         self.assertEqual(
-                [seq.id for seq in mulseqal],
-                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+            ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849'],
+            [seq.id for seq in mulseqal],
+            [seq.id for seq in mulseqal],
         )
 
     def test_save_and_get_sanity_check(self):
+        """
+        Tests that an alignment can be retrieved intact after having been saved to the database
+        :return:
+        """
         align_pk = Alignment.objects.create_alignment(self.name, self.data).id
         mulseqal = Alignment.objects.get_alignment(align_pk)
         self.assertEqual(
-                [seq.id for seq in mulseqal],
-                ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+            ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849'],
+            [seq.id for seq in mulseqal],
+            [seq.id for seq in mulseqal],
         )
         self.assertEqual(str(mulseqal), str(self.data), str(mulseqal))

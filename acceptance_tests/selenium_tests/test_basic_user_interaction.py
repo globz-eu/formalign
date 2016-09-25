@@ -146,7 +146,7 @@ class BasicUserTestCaseChrome(TEST_CASE):
         home_button = self.browser.find_element_by_css_selector('.navbar-brand')
         home_button.click()
         # Wait for Firefox
-        time.sleep(self.sleep)
+        time.sleep(self.sleep * 2)
 
         self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
 
