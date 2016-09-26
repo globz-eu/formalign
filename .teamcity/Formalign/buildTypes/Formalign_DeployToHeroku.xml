@@ -20,8 +20,7 @@ git add .
 git commit -am "$(date)"
 heroku git:remote -a tranquil-mountain-43235 --ssh-git
 git push --force heroku master
-heroku run python manage.py makemigrations --app tranquil-mountain-43235
-heroku run python manage.py migrate --app tranquil-mountain-43235]]></param>
+heroku run 'python manage.py makemigrations && python manage.py migrate' --app tranquil-mountain-43235]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
