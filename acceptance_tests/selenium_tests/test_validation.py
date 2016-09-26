@@ -235,7 +235,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        time.sleep(self.wait)
+        time.sleep(self.wait * 5)
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
@@ -278,7 +278,7 @@ class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
             self.url = self.live_server_url
         else:
             self.url = SERVER_URL
-        self.wait = 0.1
+        self.wait = 0.2
 
     def tearDown(self):
         self.browser.quit()

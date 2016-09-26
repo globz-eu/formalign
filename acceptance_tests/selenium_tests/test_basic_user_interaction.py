@@ -167,7 +167,7 @@ class BasicUserTestCaseFirefox(BasicUserTestCaseChrome):
             self.url = self.live_server_url
         else:
             self.url = SERVER_URL
-        self.sleep = 0.1
+        self.sleep = 0.2
 
     def tearDown(self):
         self.browser.quit()
