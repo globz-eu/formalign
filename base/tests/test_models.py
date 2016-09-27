@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.test import TestCase
 
 import io
-
+from datetime import datetime, timedelta, timezone
 from Bio import SeqIO
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import Gapped
@@ -110,6 +110,14 @@ class AlignmentModelTestCase(TestCase):
             [(seq.seq_id, seq.display_order) for seq in alignment[0].seqs.all()]
         )
         self.assertEqual(save.id, alignment[0].pk, save.id)
+
+    def test_save_alignment_adds_created_timestamp(self):
+        """
+        Tests that when an alignment is saved to the database it contains a created time stamp
+        """
+        Alignment.objects.create_alignment(self.name, self.data)
+        alignment = Alignment.objects.all()
+        self.assertTrue(datetime.now(timezone.utc) - alignment[0].created < timedelta(minutes=1))
 
     def test_get_multipleseqalignment_object_from_db(self):
         """

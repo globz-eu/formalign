@@ -98,6 +98,7 @@ class Alignment(models.Model):
     """
     Alignment model
     """
+    created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50)
     seqs = models.ManyToManyField(Seqrecord)
 
