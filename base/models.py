@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.db import models
+from randomslugfield import RandomSlugField
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
@@ -101,5 +102,6 @@ class Alignment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50)
     seqs = models.ManyToManyField(Seqrecord)
+    slug = RandomSlugField(length=16)
 
     objects = AlignmentManager()

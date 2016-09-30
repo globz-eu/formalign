@@ -10,6 +10,7 @@ Django==1.9.7
 django-celery==3.1.17
 django-debug-toolbar==1.4
 django-nose==1.4.4
+django-randomslugfield==0.3.0
 django-with-asserts==0.0.1
 flake8==2.6.2
 gunicorn==19.6.0

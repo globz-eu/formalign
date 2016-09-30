@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.test import TestCase
 
 import io
+import re
 from datetime import datetime, timedelta, timezone
 from Bio import SeqIO
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
@@ -116,7 +117,20 @@ class AlignmentModelTestCase(TestCase):
         """
         Alignment.objects.create_alignment(self.name, self.data)
         alignment = Alignment.objects.all()
-        self.assertTrue(datetime.now(timezone.utc) - alignment[0].created < timedelta(minutes=1))
+        self.assertTrue(
+            datetime.now(timezone.utc) - alignment[0].created < timedelta(minutes=1),
+            'alignment was not created within the last minute'
+        )
+
+    def test_save_alignment_adds_slug_value(self):
+        """
+        Tests that when an alignment is saved to the database it contains a slug value
+        """
+        Alignment.objects.create_alignment(self.name, self.data)
+        alignment = Alignment.objects.all()
+        self.assertTrue(len(alignment[0].slug) == 16, alignment[0].slug)
+        slug_pattern = re.compile('^([a-zA-Z]|\d){16}$')
+        self.assertTrue(re.match(slug_pattern, alignment[0].slug), alignment[0].slug)
 
     def test_get_multipleseqalignment_object_from_db(self):
         """
