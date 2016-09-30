@@ -19,6 +19,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration_heroku.py ./configuration.py
+export REDIS_URL='redis://localhost:6379/0'
 kill -9 $(pgrep chrome)
 python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
