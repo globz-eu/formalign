@@ -57,7 +57,6 @@ class SeqrecordModelTestCase(TestCase):
     def test_seqrecord_basic(self):
         """
         Tests the basic functionality of Seqrecord
-        :return:
         """
         self.assertEqual(self.seq.alphabet, 'ExtendedIUPACProtein()', self.seq.alphabet)
         self.assertEqual(self.seq.seq, str(self.seqs[0].seq), self.seq.seq)

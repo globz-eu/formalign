@@ -30,10 +30,11 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 from configuration import SECRET_KEY, DEBUG, DATABASES, ALLOWED_HOSTS, SECURE_SSL_REDIRECT, SECURE_PROXY_SSL_HEADER
 from configuration import MIDDLEWARE_CLASSES, CHROME_DRIVER, SERVER_URL, TEST_CASE, FIREFOX_BINARY
-from configuration import STATIC_ROOT, STATICFILES_DIRS
+from configuration import STATIC_ROOT, STATICFILES_DIRS, BROKER_URL, CELERY_RESULT_BACKEND
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
     'base',
     'debug_toolbar',
     'django_nose',
+    'djcelery',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -92,7 +94,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'formalign.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 DATABASES = DATABASES
@@ -115,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -129,17 +129,27 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATIC_ROOT = ''
-# STATICFILES_DIRS = []
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
-
 ALLOWED_HOSTS = ALLOWED_HOSTS
+
+# Celery configuration
+BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND
+BROKER_TRANSPORT_OPTIONS = {
+    'fanout_prefix': True,
+    'fanout_patterns': True,
+    'visibility_timeout': 3600
+}
+CELERY_ACCEPT_CONTENT = ['json']
+
+# Celery beat configuration
+CELERYBEAT_SCHEDULE = {
+    'remove_more_than_week_old_alignments': {
+        'task': 'base.tasks.clean_alignments',
+        'schedule': timedelta(hours=1),
+    },
+}
