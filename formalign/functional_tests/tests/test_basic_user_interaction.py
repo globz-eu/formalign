@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
+import re
 from helper_funcs.helpers_test import file_to_string
 import requests
 from formalign.settings import SERVER_URL, TEST_CASE
@@ -140,7 +141,8 @@ class BasicUserTestCase(TEST_CASE):
         self.assertEqual('get', render_form[0].attrib.get('method'), render_form[0].attrib.get('method'))
         self.assertEqual('align-display', render_form[0].attrib.get('action').split('/')[1],
                          render_form[0].attrib.get('action').split('/')[1])
-        self.assertTrue(render_form[0].attrib.get('action').split('/')[-2].isdigit(),
+        slug_pattern = re.compile('^([a-zA-Z]|\d){16}$')
+        self.assertTrue(re.match(slug_pattern, render_form[0].attrib.get('action').split('/')[-2]),
                         render_form[0].attrib.get('action').split('/')[-2])
         r = self.client.get(self.url + render_form[0].attrib.get('action'))
 

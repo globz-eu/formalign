@@ -77,7 +77,8 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
         response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
-        pk = re.match(r'^/query-sequences/(?P<align_id>\d+)/', response.url).group('align_id')
+        slug = re.match(r'^/query-sequences/(?P<align_id>([a-zA-Z]|\d){16})/', response.url).group('align_id')
+        pk = Alignment.objects.get(slug=slug).pk
         alignment = Alignment.objects.get_alignment(pk)
         self.assertEqual(
             [seq.id for seq in alignment],
@@ -97,14 +98,14 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
         align = Alignment.objects.create_alignment(name, data)
-        self.response_prot = self.client.get('/query-sequences/' + str(align.id) + '/')
+        self.response_prot = self.client.get('/query-sequences/' + str(align.slug) + '/')
         name = 'A. tha. SPA family DNA alignment'
         align_input = io.StringIO(file_to_string('spa_cds_alignment.fasta'))
         data = parse_fasta_alignment(align_input)
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACDNA())
         align = Alignment.objects.create_alignment(name, data)
-        self.response_dna = self.client.get('/query-sequences/' + str(align.id) + '/')
+        self.response_dna = self.client.get('/query-sequences/' + str(align.slug) + '/')
 
     def test_display_page_uses_display_seq_template(self):
         """
@@ -213,7 +214,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
         save = Alignment.objects.create_alignment(name, data)
-        response = self.client.get('/query-sequences/' + str(save.id) + '/')
+        response = self.client.get('/query-sequences/' + str(save.slug) + '/')
         self.assertEqual(response.status_code, 200)
 
         # Does not work with Jinja2
@@ -316,7 +317,7 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         for d in data:
             d.seq.alphabet = Gapped(ExtendedIUPACProtein())
         align = Alignment.objects.create_alignment(name, data)
-        self.response = self.client.get('/align-display/' + str(align.id) + '/')
+        self.response = self.client.get('/align-display/' + str(align.slug) + '/')
 
     def test_align_display_page_uses_align_display_seq_template(self):
         """

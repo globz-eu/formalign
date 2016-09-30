@@ -45,15 +45,15 @@ def index(request):
         if form.is_valid():
             align = form.cleaned_data['align_input']
             save_align = Alignment.objects.create_alignment('name', align)
-            pk = save_align.id
-            return redirect('/query-sequences/' + str(pk) + '/')
+            slug = save_align.slug
+            return redirect('/query-sequences/' + str(slug) + '/')
         else:
             return render(request, 'base/index.html', {'form': form})
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
 
 
-def seq_display(request, align_id):
+def seq_display(request, align_slug):
     """
     Serves query display page
     :param request: HTTP request
@@ -62,6 +62,7 @@ def seq_display(request, align_id):
     """
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
+        align_id = Alignment.objects.get(slug=align_slug).pk
         alignment = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
@@ -74,14 +75,14 @@ def seq_display(request, align_id):
         return render(
             request,
             'base/query_display.html',
-            {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_id}
+            {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_slug}
         )
 
     else:
         return HttpResponseNotAllowed(['GET'])
 
 
-def align_display(request, align_id):
+def align_display(request, align_slug):
     """
     serves alignment display page
     :param request: HTTP request
@@ -89,7 +90,7 @@ def align_display(request, align_id):
     :return: HttpResponse object
     """
     if request.method == 'GET':
-
+        align_id = Alignment.objects.get(slug=align_slug).pk
         alignment_fetch = Alignment.objects.get_alignment(align_id)
 
         alignment = consensus_add(alignment_fetch)

@@ -44,7 +44,7 @@ from base.views import index, seq_display, align_display
 
 urlpatterns = [
     url(r'^$', index),
-    url(r'^query-sequences/(?P<align_id>\d+)', seq_display),
-    url(r'^align-display/(?P<align_id>\d+)', align_display),
+    url(r'^query-sequences/(?P<align_slug>([a-zA-Z]|\d){16})', seq_display),
+    url(r'^align-display/(?P<align_slug>([a-zA-Z]|\d){16})', align_display),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL)

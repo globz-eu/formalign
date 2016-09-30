@@ -132,6 +132,18 @@ class AlignmentModelTestCase(TestCase):
         slug_pattern = re.compile('^([a-zA-Z]|\d){16}$')
         self.assertTrue(re.match(slug_pattern, alignment[0].slug), alignment[0].slug)
 
+    def test_saved_alignment_can_be_retrieved_with_slug(self):
+        """
+        Tests that when an alignment that is saved to the database can be retrieved by its slug value
+        """
+        alignment = Alignment.objects.create_alignment(self.name, self.data)
+        slug = alignment.slug
+        id = alignment.pk
+        alignment_got = Alignment.objects.get(slug=slug)
+        alignment_id = Alignment.objects.get(slug=slug).pk
+        self.assertEqual('A. tha. SPA family alignment', alignment_got.name, alignment_got.name)
+        self.assertEqual(id, alignment_id, alignment_id)
+
     def test_get_multipleseqalignment_object_from_db(self):
         """
         Tests that an alignment can be retrieved as a MultipleSeqAlignment object after having been saved to the
