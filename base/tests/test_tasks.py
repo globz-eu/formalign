@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.test import TestCase
+from django.test.utils import override_settings
 
 import io
 from datetime import datetime, timedelta, timezone
@@ -48,6 +49,7 @@ class CleanAlignmentsTestCase(TestCase):
             a.seq.alphabet = alphabet
         self.data._alphabet = alphabet
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_removes_old_alignments(self):
         """
         Tests that an alignment older than 7 days is removed from the database when clean_alignments is run
@@ -57,13 +59,16 @@ class CleanAlignmentsTestCase(TestCase):
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=7), modified.created)
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual(['A. tha. SPA family alignment'], r, r)
         try:
-            old = Alignment.objects.get_alignment(pk=alignment.pk)
+            old = Alignment.objects.get(pk=alignment.pk)
             self.assertFalse(old.name == self.name, '%s was not removed' % old.name)
         except Alignment.DoesNotExist as error:
             self.assertEqual(str(error), 'Alignment matching query does not exist.', error)
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_removes_sequences_associated_to_old_alignments(self):
         """
         Tests that all sequences associated to an alignment older than 7 days are removed from the database when
@@ -75,7 +80,9 @@ class CleanAlignmentsTestCase(TestCase):
         modified = Alignment.objects.get(pk=alignment.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=7), modified.created)
         seq_ids = [m.pk for m in modified.seqs.all()]
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual(['A. tha. SPA family alignment'], r, r)
         for s in seq_ids:
             try:
                 old_seq = Seqrecord.objects.get(pk=s)
@@ -83,6 +90,7 @@ class CleanAlignmentsTestCase(TestCase):
             except Seqrecord.DoesNotExist as error:
                 self.assertEqual(str(error), 'Seqrecord matching query does not exist.', error)
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_leaves_recent_alignments_untouched(self):
         """
         Tests that an alignment not older than 7 days is not removed from the database when clean_alignments is run
@@ -92,13 +100,16 @@ class CleanAlignmentsTestCase(TestCase):
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=7), modified.created)
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual([], r, r)
         try:
             new = Alignment.objects.get(name=self.name)
             self.assertTrue(new.name == self.name, '%s was removed' % new.name)
         except Alignment.DoesNotExist as error:
             self.assertFalse(str(error) == 'Alignment matching query does not exist.', error)
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_leaves_sequences_associated_to_recent_alignments_untouched(self):
         """
         Tests that all sequences associated to an alignment not older than 7 days are not removed from the database when
@@ -110,7 +121,9 @@ class CleanAlignmentsTestCase(TestCase):
         modified = Alignment.objects.get(pk=alignment.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=7), modified.created)
         seq_ids = [m.pk for m in modified.seqs.all()]
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual([], r, r)
         for s in seq_ids:
             try:
                 new_seq = Seqrecord.objects.get(pk=s)
@@ -118,6 +131,7 @@ class CleanAlignmentsTestCase(TestCase):
             except Seqrecord.DoesNotExist as error:
                 self.assertFalse(str(error) == 'Seqrecord matching query does not exist.', error)
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_cleans_only_old_alignemnts(self):
         """
         Tests that only alignments older than 7 days are removed from the database when clean_alignments is run
@@ -129,7 +143,9 @@ class CleanAlignmentsTestCase(TestCase):
         modified_old = Alignment.objects.get(pk=alignment_old.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified_old.created > timedelta(days=7), modified_old.created)
 
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual(['A. tha. SPA family alignment'], r, r)
 
         try:
             new = Alignment.objects.get(pk=alignment_new.pk)
@@ -142,6 +158,7 @@ class CleanAlignmentsTestCase(TestCase):
         except Alignment.DoesNotExist as error:
             self.assertEqual(str(error), 'Alignment matching query does not exist.', error)
 
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_cleans_only_old_alignemnts_sequences(self):
         """
         Tests that only alignments older than 7 days are removed from the database when clean_alignments is run
@@ -156,7 +173,9 @@ class CleanAlignmentsTestCase(TestCase):
         alignment_new = Alignment.objects.create_alignment(self.name, self.data)
         seq_ids_new = [a.pk for a in alignment_new.seqs.all()]
 
-        clean_alignments()
+        result = clean_alignments.delay()
+        r = result.get()
+        self.assertEqual(['A. tha. SPA family alignment', 'A. tha. SPA family alignment'], r, r)
 
         for s in seq_ids_new:
             try:

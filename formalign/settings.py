@@ -146,6 +146,8 @@ BROKER_TRANSPORT_OPTIONS = {
     'visibility_timeout': 3600
 }
 CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 # Celery beat configuration
 CELERYBEAT_SCHEDULE = {
