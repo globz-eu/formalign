@@ -27,6 +27,8 @@ export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
+cp $HOME/settings/settings_admin.py ./
+cp $HOME/settings/configuration.py ./
 flake8 --ignore=E501 .]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
