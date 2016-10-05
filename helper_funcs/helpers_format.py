@@ -172,7 +172,7 @@ def split_lines_in_blocks(alignment, block_size=10):
             [                                                                   # last line of first sequence
                 SeqRecord.id(sequence1),
                 [
-                    [],                                                         # first block_size residues of sequence 1
+                    [],                                                         # first block_size residues of seq 1
                     ...,                                                        # or remaining residues
                     []
                 ],
@@ -181,7 +181,7 @@ def split_lines_in_blocks(alignment, block_size=10):
             [                                                                   # last line of last sequence
                 SeqRecord.id(sequence1),                                        # or of consensus sequence
                 [
-                    [],                                                         # first block_size residues of sequence 1
+                    [],                                                         # first block_size residues of seq 1
                     ...,                                                        # or remaining residues
                     []
                 ]

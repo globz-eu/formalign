@@ -70,7 +70,9 @@ class QueryFormTest(TestCase):
         field = form['seq_type']
         self.assertIn('Input sequence type:', field.label_tag())
         self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="Protein"', form.as_p())
-        self.assertIn('<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p())
+        self.assertIn(
+            '<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p()
+        )
 
     def test_form_validation_for_blank_items(self):
         """
@@ -121,10 +123,18 @@ class QueryFormTest(TestCase):
         form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'Protein'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:
-            self.assertEqual(str(f.seq.alphabet), "Gapped(ExtendedIUPACProtein(), '-')", Gapped(ExtendedIUPACProtein()).letters)
+            self.assertEqual(
+                "Gapped(ExtendedIUPACProtein(), '-')",
+                str(f.seq.alphabet),
+                Gapped(ExtendedIUPACProtein()).letters
+            )
 
         input_seqs = file_to_string('DNA.fasta')
         form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'DNA'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:
-            self.assertEqual(str(f.seq.alphabet), "Gapped(ExtendedIUPACDNA(), '-')", Gapped(ExtendedIUPACDNA()).letters)
+            self.assertEqual(
+                "Gapped(ExtendedIUPACDNA(), '-')",
+                str(f.seq.alphabet),
+                Gapped(ExtendedIUPACDNA()).letters
+            )
