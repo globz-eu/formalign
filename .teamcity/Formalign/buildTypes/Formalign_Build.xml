@@ -41,6 +41,8 @@ export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
+cp $HOME/settings/settings_admin.py ./
+cp $HOME/settings/configuration.py ./
 python manage.py makemigrations --settings=settings_admin
 python manage.py migrate --settings=settings_admin
 python manage.py test --settings=settings_admin --exclude-dir=acceptance_tests --exclude-dir=formalign/functional_tests --with-coverage --cover-package=base,helper_funcs --cover-html --with-xunit]]></param>
