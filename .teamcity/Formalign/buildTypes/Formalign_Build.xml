@@ -29,7 +29,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration.py ./
-flake8 --ignore=E501 .]]></param>
+flake8 .]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
