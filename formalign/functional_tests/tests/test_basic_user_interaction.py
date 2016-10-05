@@ -44,6 +44,81 @@ class BasicUserTestCase(TEST_CASE):
     def tearDown(self):
         self.client.close()
 
+    def test_demo_alignment(self):
+        """
+        Tests submission of the demo alignment
+        """
+        # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
+        # She visits the formalign.eu site.
+        r = self.client.get(self.url)
+        csrftoken = self.client.cookies['csrftoken']
+        index = html.parse(StringIO(r.text)).getroot()
+        title = index.cssselect('title[id="head-title"]')
+        brand = index.cssselect('a[class="navbar-brand"]')
+        demo_button = index.cssselect('button[id="submit-demo"]')
+
+        # page displays no error message
+        self.assertEqual(r.status_code, 200, r.status_code)
+
+        # User sees she's on the right page because she can see the name of the site in the title and the brand.
+        self.assertEqual('Formalign.eu Home', title[0].text_content(), title[0].text_content())
+        self.assertEqual(self.url + '/', r.url, r.url)
+        self.assertEqual('Formalign.eu', brand[0].text_content(), brand[0].text_content())
+
+        # She sees a button saying use demo alignment
+        self.assertTrue(
+            re.match('^\\n\s+Demo\\n\s+$', demo_button[0].text_content()),
+            demo_button[0].text_content()
+        )
+        # self.assertEqual('Use Demo Alignment', demo_button[0].text_content(), demo_button[0].text_content())
+        self.assertEqual('demo', demo_button[0].attrib.get('value'), demo_button[0].attrib.get('value'))
+        self.assertEqual('custom_data', demo_button[0].attrib.get('name'), demo_button[0].attrib.get('name'))
+
+        # She clicks the use demo alignment button
+        self.client.headers.update({'referer': self.url})
+        r = self.client.post(self.url,
+                             data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'DNA',
+                                   'align_input': '', 'custom_data': 'demo'})
+        self.assertEqual(r.status_code, 200, r.status_code)
+        display = html.parse(StringIO(r.text)).getroot()
+        title = display.cssselect('title[id="head-title"]')
+        sequence_lines = display.cssselect('p[class="query_seq_display"]')
+        sequence_meta = display.find_class('query_seq_meta')
+        render_form = display.cssselect('form[id="render"]')
+
+        # She is redirected to the sequence display page
+        self.assertEqual('Formalign.eu Sequence Display', title[0].text_content(), title[0].text_content())
+        self.assertEqual('%s/query-sequences' % self.url, '/'.join(r.url.split('/')[:-2]),
+                         '/'.join(r.url.split('/')[:-2]))
+        self.assertEqual('Formalign.eu Sequence Display', title[0].text_content(), title[0].text_content())
+        self.assertIsNotNone(sequence_lines, 'sequences are empty')
+        for l in sequence_lines:
+            self.assertTrue(len(l.text_content()) <= 80, l.text_content())
+        seqs = file_to_string('ser_thr_kinase_family_display.txt').splitlines()
+        for i, a in enumerate(seqs):
+            self.assertEqual(a, sequence_lines[i].text_content(),
+                             '%s: %s' % (format(i), sequence_lines[i].text_content()))
+        seqs_meta = file_to_string('ser_thr_kinase_family_display_meta.txt').splitlines()
+        for i, a in enumerate(seqs_meta):
+            self.assertEqual(a, sequence_meta[i].text_content(), sequence_meta[i].text_content())
+
+        # She is happy with the result, sees a "Render" button and clicks it.
+        self.assertEqual('get', render_form[0].attrib.get('method'), render_form[0].attrib.get('method'))
+        self.assertEqual('align-display', render_form[0].attrib.get('action').split('/')[1],
+                         render_form[0].attrib.get('action').split('/')[1])
+        slug_pattern = re.compile('^([a-zA-Z]|\d){16}$')
+        self.assertTrue(re.match(slug_pattern, render_form[0].attrib.get('action').split('/')[-2]),
+                        render_form[0].attrib.get('action').split('/')[-2])
+        r = self.client.get(self.url + render_form[0].attrib.get('action'))
+
+        # She is redirected to the render page
+        self.assertEqual(r.status_code, 200, r.status_code)
+        align = html.parse(StringIO(r.text)).getroot()
+        title = align.cssselect('title[id="head-title"]')
+        self.assertEqual('Formalign.eu Alignment Display', title[0].text_content(), title[0].text_content())
+        self.assertEqual('%s/align-display' % self.url, '/'.join(r.url.split('/')[:-2]),
+                         '/'.join(r.url.split('/')[:-2]))
+
     def test_index(self):
         """
         Tests index page
@@ -59,6 +134,8 @@ class BasicUserTestCase(TEST_CASE):
         prot_button = index.cssselect('input[id="id_seq_type_0"]')
         prot_button_label = index.cssselect('label[for="id_seq_type_0"]')
         dna_button = index.cssselect('input[id="id_seq_type_1"]')
+        submit_button = index.cssselect('button[id="submit-align"]')
+        demo_button = index.cssselect('button[id="submit-demo"]')
 
         # page displays no error message
         self.assertEqual(r.status_code, 200, r.status_code)
@@ -88,12 +165,26 @@ class BasicUserTestCase(TEST_CASE):
         self.assertTrue(dna_button[0].checkable, 'DNA button is not checkable')
         self.assertTrue(dna_button[0].checked, 'DNA button was not checked by default')
 
-        # She checks the protein button and pastes in an alignment
+        # She sees a button saying use demo alignment
+        self.assertTrue(
+            re.match('^\\n\s+Demo\\n\s+$', demo_button[0].text_content()),
+            demo_button[0].text_content()
+        )
+        self.assertEqual('demo', demo_button[0].attrib.get('value'), demo_button[0].attrib.get('value'))
+        self.assertEqual('custom_data', demo_button[0].attrib.get('name'), demo_button[0].attrib.get('name'))
+
+        # She checks the protein button, pastes in an alignment and clicks the submit button
+        self.assertTrue(
+            re.match('^\\n\s+Submit\\n\s+$', submit_button[0].text_content()),
+            submit_button[0].text_content()
+        )
+        self.assertEqual('custom', submit_button[0].attrib.get('value'), submit_button[0].attrib.get('value'))
+        self.assertEqual('custom_data', submit_button[0].attrib.get('name'), submit_button[0].attrib.get('name'))
         alignment_string = file_to_string('spa_protein_alignment.fasta')
         self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
-                                   'align_input': alignment_string})
+                                   'align_input': alignment_string, 'custom_data': 'custom'})
         self.assertEqual(r.status_code, 200, r.status_code)
         display = html.parse(StringIO(r.text)).getroot()
         title = display.cssselect('title[id="head-title"]')
@@ -114,7 +205,7 @@ class BasicUserTestCase(TEST_CASE):
         self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
-                                   'align_input': alignment_string})
+                                   'align_input': alignment_string, 'custom_data': 'custom'})
         display = html.parse(StringIO(r.text)).getroot()
         title = display.cssselect('title[id="head-title"]')
         sequence_lines = display.cssselect('p[class="query_seq_display"]')
@@ -165,7 +256,7 @@ class BasicUserTestCase(TEST_CASE):
         self.client.headers.update({'referer': self.url})
         r = self.client.post(self.url,
                              data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
-                                   'align_input': alignment_string})
+                                   'align_input': alignment_string, 'custom_data': 'custom'})
         render_form = html.parse(StringIO(r.text)).getroot().cssselect('form[id="render"]')
         r = self.client.get(self.url + render_form[0].attrib.get('action'))
 

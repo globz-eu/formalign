@@ -66,7 +66,7 @@ class InputValidationTestCase(TEST_CASE):
                 self.client.headers.update({'referer': self.url})
                 r = self.client.post(self.url,
                                      data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
-                                           'align_input': alignment_string})
+                                           'align_input': alignment_string, 'custom_data': 'custom'})
                 index = html.parse(StringIO(r.text)).getroot()
                 title = index.cssselect('title[id="head-title"]')
                 brand = index.cssselect('a[class="navbar-brand"]')

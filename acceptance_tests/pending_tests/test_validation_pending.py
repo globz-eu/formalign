@@ -51,10 +51,10 @@ class InputValidationTestCaseChrome(TestCase):
         seq_type_button = self.browser.find_element_by_css_selector(seq_type_button_dict[kwargs['seq_type']])
         seq_type_button.click()
         self.assertEqual(
-                True,
-                seq_type_button.is_selected(),
-                'button is selected for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' +
-                str(seq_type_button.is_selected())
+            True,
+            seq_type_button.is_selected(),
+            'button is selected for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' +
+            str(seq_type_button.is_selected())
         )
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
@@ -68,15 +68,15 @@ class InputValidationTestCaseChrome(TestCase):
         # Since her FASTA format is invalid she gets redirected to the submission form where she sees an
         # error message telling her that her alignment format is invalid
         self.assertEqual(
-                'Formalign.eu Home',
-                self.browser.title,
-                'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title
+            'Formalign.eu Home',
+            self.browser.title,
+            'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title
         )
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                FORMAT_ERROR,
-                error.text,
-                'error.text for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + error.text,
+            FORMAT_ERROR,
+            error.text,
+            'error.text for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + error.text,
 
         )
 
@@ -92,22 +92,22 @@ class InputValidationTestCaseChrome(TestCase):
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(
-                'Formalign.eu Sequence Display',
-                self.browser.title,
-                'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title)
+            'Formalign.eu Sequence Display',
+            self.browser.title,
+            'browser.title for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-                'sequence1:',
-                first_seq_info.text,
-                'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_info.text
+            'sequence1:',
+            first_seq_info.text,
+            'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_info.text
 
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
         self.assertEqual(
-                test_seq[kwargs['seq_type']],
-                first_seq_content.text,
-                'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_content.text
+            test_seq[kwargs['seq_type']],
+            first_seq_content.text,
+            'seq id for ' + kwargs['align_format'] + ' ' + kwargs['seq_type'] + ': ' + first_seq_content.text
         )
 
         # She wonders whether she can use other formats and decides to navigate back to the home page

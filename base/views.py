@@ -19,14 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
+import io
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotAllowed
+
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
+from Bio.Alphabet import Gapped
 
 from base.models import Alignment
 from base.forms import QueryForm
 
-from helper_funcs.helpers_bio import consensus_add
+from helper_funcs.helpers_bio import consensus_add, parse_fasta_alignment
 from helper_funcs.helpers_format import split_lines, annotate
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 
@@ -41,13 +47,25 @@ def index(request):
         form = QueryForm()
         return render(request, 'base/index.html', {'form': form})
     elif request.method == 'POST':
-        form = QueryForm(request.POST)
-        if form.is_valid():
-            align = form.cleaned_data['align_input']
-            save_align = Alignment.objects.create_alignment('name', align)
+        if request.POST['custom_data'] == 'custom':
+            form = QueryForm(request.POST)
+            if form.is_valid():
+                align = form.cleaned_data['align_input']
+                save_align = Alignment.objects.create_alignment('name', align)
+                slug = save_align.slug
+                return redirect('/query-sequences/' + str(slug) + '/')
+            else:
+                return render(request, 'base/index.html', {'form': form})
+        elif request.POST['custom_data'] == 'demo':
+            align_input = io.StringIO(file_to_string('ser_thr_kinase_family.fasta'))
+            align = parse_fasta_alignment(align_input)
+            for d in align:
+                d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+            save_align = Alignment.objects.create_alignment('ser_thr_kinase_family', align)
             slug = save_align.slug
             return redirect('/query-sequences/' + str(slug) + '/')
         else:
+            form = QueryForm()
             return render(request, 'base/index.html', {'form': form})
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])

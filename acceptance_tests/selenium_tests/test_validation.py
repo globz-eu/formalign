@@ -38,9 +38,10 @@ class InputValidationTestCaseChrome(TEST_CASE):
         )
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
+            self.wait = 0.5
         else:
             self.url = SERVER_URL
-        self.wait = 0.1
+            self.wait = 0.1
         self.browser.implicitly_wait(5)
 
     def tearDown(self):
@@ -57,10 +58,10 @@ class InputValidationTestCaseChrome(TEST_CASE):
         seq_type_button = self.browser.find_element_by_css_selector(seq_type_button_dict[file['seq_type']])
         seq_type_button.click()
         self.assertEqual(
-                True,
-                seq_type_button.is_selected(),
-                'button is selected for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' +
-                str(seq_type_button.is_selected())
+            True,
+            seq_type_button.is_selected(),
+            'button is selected for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' +
+            str(seq_type_button.is_selected())
         )
         alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
         alignment_input.clear()
@@ -77,15 +78,15 @@ class InputValidationTestCaseChrome(TEST_CASE):
         # Since her FASTA format is invalid she gets redirected to the submission form where she sees an
         # error message telling her that her alignment format is invalid
         self.assertEqual(
-                'Formalign.eu Home',
-                self.browser.title,
-                'browser.title for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + self.browser.title
+            'Formalign.eu Home',
+            self.browser.title,
+            'browser.title for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + self.browser.title
         )
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                FORMAT_ERROR,
-                error.text,
-                'error.text for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + error.text,
+            FORMAT_ERROR,
+            error.text,
+            'error.text for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + error.text,
 
         )
 
@@ -102,22 +103,22 @@ class InputValidationTestCaseChrome(TEST_CASE):
 
         # She got it right this time and is redirected to a page showing the submitted sequences from her alignment
         self.assertEqual(
-                'Formalign.eu Sequence Display',
-                self.browser.title,
-                'browser.title for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + self.browser.title)
+            'Formalign.eu Sequence Display',
+            self.browser.title,
+            'browser.title for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-                'sequence1:',
-                first_seq_info.text,
-                'seq id for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + first_seq_info.text
+            'sequence1:',
+            first_seq_info.text,
+            'seq id for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + first_seq_info.text
 
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
         self.assertEqual(
-                test_seq[file['seq_type']],
-                first_seq_content.text,
-                'seq id for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + first_seq_content.text
+            test_seq[file['seq_type']],
+            first_seq_content.text,
+            'seq id for ' + file['align_format'] + ' ' + file['seq_type'] + ': ' + first_seq_content.text
         )
 
         # She wonders whether she can use other formats and decides to navigate back to the home page
@@ -144,8 +145,8 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                EMPTY_ERROR,
-                error.text
+            EMPTY_ERROR,
+            error.text
         )
 
         # She decides to try it out so she pastes in an alignment and submits
@@ -155,15 +156,15 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        time.sleep(self.wait)
+        time.sleep(self.wait * 5)
 
         # unfortunately her FASTA format is invalid so she gets redirected to the submission form where she sees an
         # error message telling her that her FASTA format is invalid
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                FORMAT_ERROR,
-                error.text
+            FORMAT_ERROR,
+            error.text
         )
 
         # she corrects her alignment and resubmits
@@ -174,15 +175,15 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        time.sleep(self.wait)
+        time.sleep(self.wait * 2)
 
         # unfortunately now her sequences contain invalid characters so she gets redirected to the submission form
         # again where she sees an error message telling her that her sequences contain invalid characters
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                CHARACTER_ERROR + 'sequence1',
-                error.text
+            CHARACTER_ERROR + 'sequence1',
+            error.text
 
         )
 
@@ -194,7 +195,7 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser.find_element_by_id('submit-align').click()
 
         # Wait for Firefox
-        time.sleep(self.wait)
+        time.sleep(self.wait * 2)
 
         # unfortunately this time she accidentally erased one sequence and is left with only one sequence so she gets
         # redirected to the submission form again where she sees an error message telling her that her alignment is not
@@ -202,8 +203,8 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.assertEqual('Formalign.eu Home', self.browser.title, self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                LESS_THAN_TWO_SEQS_ERROR,
-                error.text,
+            LESS_THAN_TWO_SEQS_ERROR,
+            error.text,
         )
 
         # she adds the missing sequence and resubmits
@@ -222,8 +223,8 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
         error = self.browser.find_element_by_css_selector('.errorlist').find_element_by_tag_name('li')
         self.assertEqual(
-                ALIGNMENT_ERROR,
-                error.text,
+            ALIGNMENT_ERROR,
+            error.text,
         )
 
         # She tries one final time and threatens to throw her laptop out of the window if she gets another
@@ -241,8 +242,8 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.assertEqual(self.browser.title, 'Formalign.eu Sequence Display', self.browser.title)
         first_seq_info = self.browser.find_elements_by_css_selector('.query_seq_meta')[0]
         self.assertEqual(
-                'sequence1:',
-                first_seq_info.text
+            'sequence1:',
+            first_seq_info.text
         )
         first_seq_content = self.browser.find_elements_by_css_selector('.query_seq_display')[0]
         self.assertIsNotNone(first_seq_content)
@@ -276,9 +277,10 @@ class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
         self.browser = webdriver.Firefox(capabilities=caps)
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
+            self.wait = 1
         else:
             self.url = SERVER_URL
-        self.wait = 0.2
+            self.wait = 0.2
 
     def tearDown(self):
         self.browser.quit()

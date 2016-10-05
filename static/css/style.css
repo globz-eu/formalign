@@ -143,6 +143,7 @@ input {
 
 .errors{
     background-color: #802F15;
+    border-radius: 4px;
 }
 
 pre {

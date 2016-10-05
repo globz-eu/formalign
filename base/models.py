@@ -77,7 +77,7 @@ class AlignmentManager(models.Manager):
                     name=a.name,
                     description=a.description
                 ) for a in alignment
-                ],
+            ],
             alphabet=alphabets[alignment[0].alphabet]
         )
         return mul_seq_al

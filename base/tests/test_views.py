@@ -52,7 +52,6 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
     def test_index_view_basic(self):
         """
         Tests that index view returns a 200 response and uses the correct template
-        :return:
         """
         response = self.client.get('/')
 
@@ -64,25 +63,44 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
     def test_redirect_to_seqdisplay_on_post(self):
         """
         Tests that valid POST request on index page redirects to /query-sequences/
-        :return:
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein', 'custom_data': 'custom'})
         self.assertTrue('/query-sequences/' in response.url)
 
     def test_alignment_is_saved_on_post(self):
         """
         Tests that alignment is saved on valid POST request to index
-        :return:
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'Protein', 'custom_data': 'custom'})
         slug = re.match(r'^/query-sequences/(?P<align_id>([a-zA-Z]|\d){16})/', response.url).group('align_id')
         pk = Alignment.objects.get(slug=slug).pk
         alignment = Alignment.objects.get_alignment(pk)
         self.assertEqual(
             [seq.id for seq in alignment],
             ['NP_175717', 'NP_683567', 'NP_182157', 'NP_192849']
+        )
+
+    def test_redirect_to_seqdisplay_on_post_demo(self):
+        """
+        Tests that POST request with demo alignment button on index page redirects to /query-sequences/
+        """
+        response = self.client.post('/', {'align_input': '', 'seq_type': 'DNA', 'custom_data': 'demo'})
+        self.assertTrue('/query-sequences/' in response.url)
+
+    def test_demo_alignment_is_saved_on_post(self):
+        """
+        Tests that alignment is saved on POST request with demo alignment button to index
+        """
+        response = self.client.post('/', {'align_input': '', 'seq_type': 'Protein', 'custom_data': 'demo'})
+        slug = re.match(r'^/query-sequences/(?P<align_id>([a-zA-Z]|\d){16})/', response.url).group('align_id')
+        pk = Alignment.objects.get(slug=slug).pk
+        alignment = Alignment.objects.get_alignment(pk)
+        self.assertEqual(
+            ['DMD401_1-640', 'CER09D1_11-435', 'EGFR', 'DMDPR2_1-384', 'ITK_HUMAN-620', 'GCTK2ID_1-692'],
+            [seq.id for seq in alignment][:6],
+            [seq.id for seq in alignment][:6]
         )
 
 
@@ -113,7 +131,7 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
         :return:
         """
         input_seqs = file_to_string('protein.fasta')
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'DNA', 'custom_data': 'custom'})
         self.assertEqual(response.status_code, 200)
 
         # Does not work with Jinja2
@@ -249,7 +267,7 @@ class SeqDisplayInvalidInput(TestCase):
             input_seqs = file_to_string(input_file)
         else:
             input_seqs = ''
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': seq_type})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': seq_type, 'custom_data': 'custom'})
         return response
 
     def invalid_input_renders_index_template(self, input_file='', seq_type='Protein'):
@@ -583,8 +601,8 @@ class FormatHelpersTestCase(TestCase):
             [
                 [line[0], [[(annot, res) for (annot, res) in res_block] for res_block in line[1]]
                  ] for line in seq_block
-                ] for seq_block in split_blocks
-            ]
+            ] for seq_block in split_blocks
+        ]
         for seq_block in split_blocks_li:
             for line in seq_block:
                 res_blocks = line[1]
