@@ -59,7 +59,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration_live_server.py ./configuration.py
-python manage.py test --settings=settings_admin ./formalign/functional_tests/tests --with-xunit]]></param>
+python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_admin --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
