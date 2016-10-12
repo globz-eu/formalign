@@ -35,7 +35,7 @@ workon formalign
 cp $HOME/settings/settings_admin.py ./
 cp $HOME/settings/configuration_production.py ./configuration.py
 export REDIS_URL='redis://localhost:6379/0'
-python -m nose ./formalign/functional_tests/tests --with-xunit]]></param>
+python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
