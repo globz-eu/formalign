@@ -4,7 +4,7 @@
   <description>builds app, runs unit tests and functional tests against live server</description>
   <settings>
     <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml&#xA;reports =&gt; reports" />
     </options>
     <parameters />
     <build-runners>
