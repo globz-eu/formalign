@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django_nose',
     'djcelery',
     'randomslugfield',
+    'behave_django',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

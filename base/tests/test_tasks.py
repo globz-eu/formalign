@@ -1,6 +1,6 @@
 """
 =====================================================================
-Django app deployment scripts
+Formalign.eu format and display multiple sequence alignments
 Copyright (C) 2016 Stefan Dieterle
 e-mail: golgoths@yahoo.fr
 

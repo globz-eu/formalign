@@ -19,23 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from __future__ import absolute_import
-from celery import shared_task
-from datetime import datetime, timedelta, timezone
-
-from base.models import Alignment, Seqrecord
+from behave import then
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
 
 __author__ = 'Stefan Dieterle'
 
 
-@shared_task
-def clean_alignments():
-    old_alignments = Alignment.objects.filter(created__lte=(datetime.now(timezone.utc) - timedelta(days=7)))
-    old_alignments_names = []
-    old_seq_ids = []
-    for old in old_alignments:
-        old_seq_ids.extend([o.pk for o in old.seqs.all()])
-        old_alignments_names.append(old.name)
-    Seqrecord.objects.filter(pk__in=old_seq_ids).delete()
-    old_alignments.delete()
-    return old_alignments_names
+@then(r'the user should see the error message: (?P<error_message>.*)')
+def check_error_message(context, error_message):
+    errors = {
+        'empty error': EMPTY_ERROR,
+        'character error': '%ssequence1' % CHARACTER_ERROR,
+        'less than two sequences error': LESS_THAN_TWO_SEQS_ERROR,
+        'alignment error': ALIGNMENT_ERROR,
+        'format error': FORMAT_ERROR
+    }
+    error_text = context.display.cssselect('ul[class="errorlist"]')[0].cssselect('li')[0].text_content()
+    assert errors[error_message] == error_text, 'Got %s' % error_text

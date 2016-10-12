@@ -32,7 +32,7 @@ __author__ = 'Stefan Dieterle'
 
 class QueryFormTest(TestCase):
 
-    def validation(self, error_text, input_file='', seq_type='Protein'):
+    def validation(self, error_text, input_file='', seq_type='protein'):
         """
         Performs validation test for invalid forms, takes a user alignment input, asserts form.is_valid as false and
         checks the error
@@ -69,7 +69,7 @@ class QueryFormTest(TestCase):
         form = QueryForm()
         field = form['seq_type']
         self.assertIn('Input sequence type:', field.label_tag())
-        self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="Protein"', form.as_p())
+        self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="protein"', form.as_p())
         self.assertIn(
             '<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p()
         )
@@ -120,7 +120,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         input_seqs = file_to_string('protein.fasta')
-        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'Protein'})
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'protein'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:
             self.assertEqual(

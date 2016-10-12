@@ -55,7 +55,7 @@ class BasicUserSpeedLiveServerTestCase(StaticLiveServerTestCase):
                 alignment_string = file_to_string(f)
                 start = time.time()
                 r = self.client.post(self.live_server_url,
-                                     data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'Protein',
+                                     data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'protein',
                                            'align_input': alignment_string, 'custom_data': 'custom'})
                 roundtrip1 = time.time() - start
                 q_display.append(roundtrip1)

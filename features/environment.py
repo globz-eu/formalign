@@ -19,23 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from __future__ import absolute_import
-from celery import shared_task
-from datetime import datetime, timedelta, timezone
-
-from base.models import Alignment, Seqrecord
+import requests
+from behave import use_step_matcher
 
 __author__ = 'Stefan Dieterle'
 
 
-@shared_task
-def clean_alignments():
-    old_alignments = Alignment.objects.filter(created__lte=(datetime.now(timezone.utc) - timedelta(days=7)))
-    old_alignments_names = []
-    old_seq_ids = []
-    for old in old_alignments:
-        old_seq_ids.extend([o.pk for o in old.seqs.all()])
-        old_alignments_names.append(old.name)
-    Seqrecord.objects.filter(pk__in=old_seq_ids).delete()
-    old_alignments.delete()
-    return old_alignments_names
+use_step_matcher('re')
+
+
+def before_feature(context, feature):
+    context.client = requests.Session()
+
+
+def after_feature(context, feature):
+    context.client.close()

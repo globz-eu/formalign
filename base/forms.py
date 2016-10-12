@@ -55,7 +55,7 @@ class QueryForm(forms.Form):
     )
 
     seq_type_choices = [
-        ('Protein', 'Protein'),
+        ('protein', 'Protein'),
         ('DNA', 'DNA')
     ]
     seq_type = forms.ChoiceField(
@@ -96,7 +96,7 @@ class QueryForm(forms.Form):
         """
         cleaned_data = forms.Form.clean(self)
         seq_type = cleaned_data.get('seq_type')
-        alphabets = {'DNA': Gapped(ExtendedIUPACDNA()), 'Protein': Gapped(ExtendedIUPACProtein())}
+        alphabets = {'DNA': Gapped(ExtendedIUPACDNA()), 'protein': Gapped(ExtendedIUPACProtein())}
 
         align_input = cleaned_data.get('align_input')
         if align_input:
