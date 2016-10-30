@@ -21,5 +21,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from formalign.settings import *  # noqa
 
-DATABASES['default']['USER'] = json_setting('DB_ADMIN_USER')
-DATABASES['default']['PASSWORD'] = json_setting('DB_ADMIN_PASSWORD')
+DATABASES['default']['USER'] = json_setting('DB_ADMIN_USER')  # noqa
+DATABASES['default']['PASSWORD'] = json_setting('DB_ADMIN_PASSWORD')  # noqa
