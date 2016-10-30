@@ -17,8 +17,7 @@ export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
-cp $HOME/settings/settings_admin.py ./
-cp $HOME/settings/configuration_heroku.py ./configuration.py
+cp $HOME/settings/settings_heroku.json ./settings.json
 export REDIS_URL='redis://localhost:6379/0'
 kill -9 $(pgrep chrome)
 python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
