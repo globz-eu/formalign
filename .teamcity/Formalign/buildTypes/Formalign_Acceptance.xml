@@ -17,8 +17,7 @@ export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
-cp $HOME/settings/settings_admin.py ./
-cp $HOME/settings/configuration.py ./configuration.py
+cp $HOME/settings/settings.json ./settings.json
 kill -9 $(pgrep chrome)
 python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
