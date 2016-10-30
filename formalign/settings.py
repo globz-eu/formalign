@@ -30,23 +30,37 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import json
+import dj_database_url
+from unittest import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core.exceptions import ImproperlyConfigured
 from datetime import timedelta
 
-from configuration import SECRET_KEY, DEBUG, DATABASES, ALLOWED_HOSTS, SECURE_SSL_REDIRECT, SECURE_PROXY_SSL_HEADER  # noqa
-from configuration import MIDDLEWARE_CLASSES, CHROME_DRIVER, SERVER_URL, TEST_CASE, FIREFOX_BINARY  # noqa
-from configuration import STATIC_ROOT, STATICFILES_DIRS, BROKER_URL, CELERY_RESULT_BACKEND  # noqa
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Load settings from json settings file
+with open(os.path.join(BASE_DIR, 'settings.json')) as secrets_file:
+    secrets = json.load(secrets_file)
+
+
+def json_setting(setting, secrets=secrets):
+    """Get secret setting or fail with ImproperlyConfigured"""
+    try:
+        return secrets[setting]
+    except KeyError:
+        raise ImproperlyConfigured("Set the %s setting" % setting)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRET_KEY
+SECRET_KEY = json_setting('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DEBUG
+DEBUG = json_setting('DEBUG')
 
 # Application definition
 
@@ -67,6 +81,17 @@ INSTALLED_APPS = [
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+MIDDLEWARE_CLASSES = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'formalign.urls'
 
@@ -98,7 +123,18 @@ WSGI_APPLICATION = 'formalign.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-DATABASES = DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': json_setting('DB_ENGINE'),
+        'NAME': json_setting('DB_NAME'),
+        'USER': json_setting('DB_USER'),
+        "PASSWORD": json_setting('DB_PASSWORD'),
+        'HOST': json_setting('DB_HOST'),
+        'TEST': {
+            'NAME': json_setting('TEST_DB_NAME'),
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -135,12 +171,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'base/static'), ]
 
-ALLOWED_HOSTS = ALLOWED_HOSTS
+# Access control and SSL
+ALLOWED_HOSTS = json_setting('ALLOWED_HOSTS')
+SECURE_SSL_REDIRECT = json_setting('SECURE_SSL_REDIRECT')
+SECURE_PROXY_SSL_HEADER = json_setting('SECURE_PROXY_SSL_HEADER')
 
 # Celery configuration
-BROKER_URL = BROKER_URL
-CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND
+BROKER_URL = json_setting('BROKER_URL')
+CELERY_RESULT_BACKEND = json_setting('CELERY_RESULT_BACKEND')
 BROKER_TRANSPORT_OPTIONS = {
     'fanout_prefix': True,
     'fanout_patterns': True,
@@ -157,3 +198,22 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),
     },
 }
+
+# Selenium configuration
+CHROME_DRIVER = json_setting('CHROME_DRIVER')
+FIREFOX_BINARY = json_setting('FIREFOX_BINARY')
+SERVER_URL = json_setting('SERVER_URL')
+if SERVER_URL == 'liveserver':
+    TEST_CASE = StaticLiveServerTestCase
+else:
+    TEST_CASE = TestCase
+
+# Heroku configuration
+HEROKU = json_setting('HEROKU')
+if HEROKU:
+    MIDDLEWARE_CLASSES.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    BROKER_URL = os.environ['REDIS_URL']
+    CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
