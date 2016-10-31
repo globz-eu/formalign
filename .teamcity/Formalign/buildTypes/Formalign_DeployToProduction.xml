@@ -32,7 +32,7 @@ export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
-cp $HOME/settings/settings_production.json ./settings.json
+cp $HOME/settings/settings_production_functional.json ./settings.json
 export REDIS_URL='redis://localhost:6379/0'
 python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
