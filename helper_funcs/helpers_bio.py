@@ -22,9 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from Bio import AlignIO
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 from Bio.SeqRecord import SeqRecord
-import Bio.SubsMat.MatrixInfo as matinf
-from Bio.Alphabet.IUPAC import IUPACProtein
-from itertools import combinations
+# import Bio.SubsMat.MatrixInfo as matinf
+# from Bio.Alphabet.IUPAC import IUPACProtein
+# from itertools import combinations
 
 __author__ = 'Stefan Dieterle'
 
