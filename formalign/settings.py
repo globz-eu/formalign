@@ -123,18 +123,23 @@ WSGI_APPLICATION = 'formalign.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': json_setting('DB_ENGINE'),
-        'NAME': json_setting('DB_NAME'),
-        'USER': json_setting('DB_USER'),
-        "PASSWORD": json_setting('DB_PASSWORD'),
-        'HOST': json_setting('DB_HOST'),
-        'TEST': {
-            'NAME': json_setting('TEST_DB_NAME'),
+HEROKU = json_setting('HEROKU')
+if HEROKU:
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES = {'default': db_from_env}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': json_setting('DB_ENGINE'),
+            'NAME': json_setting('DB_NAME'),
+            'USER': json_setting('DB_USER'),
+            "PASSWORD": json_setting('DB_PASSWORD'),
+            'HOST': json_setting('DB_HOST'),
+            'TEST': {
+                'NAME': json_setting('TEST_DB_NAME'),
+            }
         }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -209,11 +214,8 @@ else:
     TEST_CASE = TestCase
 
 # Heroku configuration
-HEROKU = json_setting('HEROKU')
 if HEROKU:
     MIDDLEWARE_CLASSES.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'] = db_from_env
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     BROKER_URL = os.environ['REDIS_URL']
     CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
