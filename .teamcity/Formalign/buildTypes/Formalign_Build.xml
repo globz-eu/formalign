@@ -44,7 +44,7 @@ cp $HOME/settings/settings.json ./
 python manage.py collectstatic --no-input -c --settings=settings_admin
 python manage.py makemigrations --settings=settings_admin
 python manage.py migrate --settings=settings_admin
-python manage.py test --settings=settings_admin --exclude-dir=acceptance_tests --exclude-dir=formalign/functional_tests --with-coverage --cover-package=base,helper_funcs --cover-html --with-xunit]]></param>
+python manage.py test --settings=settings_admin --exclude-dir=acceptance_tests --with-coverage --cover-package=base,helper_funcs --cover-html --with-xunit]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
