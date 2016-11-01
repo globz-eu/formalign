@@ -31,15 +31,6 @@
         </parameters>
       </build-trigger>
     </build-triggers>
-    <build-extensions>
-      <extension id="BUILD_EXT_1" type="xml-report-plugin">
-        <parameters>
-          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
-          <param name="xmlReportParsing.reportType" value="junit" />
-          <param name="xmlReportParsing.verboseOutput" value="true" />
-        </parameters>
-      </extension>
-    </build-extensions>
     <dependencies>
       <depend-on sourceBuildTypeId="Formalign_Build">
         <options>
