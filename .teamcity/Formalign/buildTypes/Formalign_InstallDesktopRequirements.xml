@@ -3,9 +3,6 @@
   <name>install_desktop_requirements</name>
   <description>runs selenium acceptance tests</description>
   <settings>
-    <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
-    </options>
     <parameters />
     <build-runners>
       <runner id="RUNNER_8" name="install requirements (on desktop agent)" type="simpleRunner">
