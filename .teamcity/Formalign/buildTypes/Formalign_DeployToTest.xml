@@ -3,9 +3,6 @@
   <name>deploy_to_local</name>
   <description>deploys app to local test server and runs functional tests</description>
   <settings>
-    <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
-    </options>
     <parameters />
     <build-runners>
       <runner id="RUNNER_4" name="Deploy on local test server" type="ssh-exec-runner">
