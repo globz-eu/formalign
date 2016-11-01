@@ -4,7 +4,6 @@
   <description>deploys app to heroku test server and runs functional tests</description>
   <settings>
     <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
       <option name="checkoutMode" value="ON_AGENT" />
       <option name="cleanBuild" value="true" />
     </options>
