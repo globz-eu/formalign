@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-import time
 
 from behave import when, then
 
@@ -44,7 +43,6 @@ def visit_url_and_click_button(context, button):
         context.r = context.client.get(
             context.home_url + context.display.cssselect('form[id="render"]')[0].attrib.get('action')
         )
-        time.sleep(2)
     context.display = html.parse(StringIO(context.r.text)).getroot()
 
 
