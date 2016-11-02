@@ -30,6 +30,9 @@ django.setup()
 
 
 def add_old_alignment():
+    """
+    Adds an alignment with a creation date older than CLEAN_OLDER days
+    """
     import io
     import sys
     from datetime import datetime, timedelta, timezone
@@ -63,5 +66,20 @@ def add_old_alignment():
     )
 
 
+def set_last_run_at_to_overdue():
+    """
+    Sets last_run_at in djcelery_periodictask to a date overdue for running task
+    """
+    from datetime import datetime, timedelta, timezone
+    from djcelery.models import PeriodicTask
+
+    PeriodicTask.objects.filter(
+        name='remove_more_than_week_old_alignments'
+    ).update(
+        last_run_at=(datetime.now(timezone.utc) - timedelta(hours=1, minutes=1))
+    )
+
+
 if __name__ == '__main__':
     add_old_alignment()
+    set_last_run_at_to_overdue()
