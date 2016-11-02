@@ -197,6 +197,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 # Celery beat configuration
+try:
+    CLEAN_OLDER = json_setting('CLEAN_OLDER')
+except ImproperlyConfigured:
+    CLEAN_OLDER = '7'
+
 CELERYBEAT_SCHEDULE = {
     'remove_more_than_week_old_alignments': {
         'task': 'base.tasks.clean_alignments',
@@ -208,6 +213,11 @@ CELERYBEAT_SCHEDULE = {
 CHROME_DRIVER = json_setting('CHROME_DRIVER')
 FIREFOX_BINARY = json_setting('FIREFOX_BINARY')
 SERVER_URL = json_setting('SERVER_URL')
+try:
+    BROWSER_DELAY = json_setting('BROWSER_DELAY')
+except ImproperlyConfigured:
+    BROWSER_DELAY = '0.1'
+
 if SERVER_URL == 'liveserver':
     TEST_CASE = StaticLiveServerTestCase
 else:

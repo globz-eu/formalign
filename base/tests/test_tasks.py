@@ -29,6 +29,7 @@ from Bio.Alphabet import Gapped
 from helper_funcs.helpers_bio import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string
 from base.models import Alignment, Seqrecord
+from formalign.settings import CLEAN_OLDER
 
 from base.tasks import clean_alignments
 
@@ -48,6 +49,7 @@ class CleanAlignmentsTestCase(TestCase):
         for a in self.data:
             a.seq.alphabet = alphabet
         self.data._alphabet = alphabet
+        self.older = int(CLEAN_OLDER)
 
     @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
     def test_clean_alignments_removes_old_alignments(self):
@@ -55,10 +57,10 @@ class CleanAlignmentsTestCase(TestCase):
         Tests that an alignment older than 7 days is removed from the database when clean_alignments is run
         """
         alignment = Alignment.objects.create_alignment(self.name, self.data)
-        alignment.created = datetime.now(timezone.utc) - timedelta(days=7)
+        alignment.created = datetime.now(timezone.utc) - timedelta(days=self.older)
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
-        self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=7), modified.created)
+        self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=self.older), modified.created)
         result = clean_alignments.delay()
         r = result.get()
         self.assertEqual(['A. tha. SPA family alignment'], r, r)
@@ -75,10 +77,10 @@ class CleanAlignmentsTestCase(TestCase):
         clean_alignments is run
         """
         alignment = Alignment.objects.create_alignment(self.name, self.data)
-        alignment.created = datetime.now(timezone.utc) - timedelta(days=7)
+        alignment.created = datetime.now(timezone.utc) - timedelta(days=self.older)
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
-        self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=7), modified.created)
+        self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=self.older), modified.created)
         seq_ids = [m.pk for m in modified.seqs.all()]
         result = clean_alignments.delay()
         r = result.get()
@@ -96,10 +98,10 @@ class CleanAlignmentsTestCase(TestCase):
         Tests that an alignment not older than 7 days is not removed from the database when clean_alignments is run
         """
         alignment = Alignment.objects.create_alignment(self.name, self.data)
-        alignment.created = datetime.now(timezone.utc) - timedelta(days=6)
+        alignment.created = datetime.now(timezone.utc) - timedelta(days=self.older) + timedelta(hours=1)
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
-        self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=7), modified.created)
+        self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=self.older), modified.created)
         result = clean_alignments.delay()
         r = result.get()
         self.assertEqual([], r, r)
@@ -116,10 +118,10 @@ class CleanAlignmentsTestCase(TestCase):
         clean_alignments is run
         """
         alignment = Alignment.objects.create_alignment(self.name, self.data)
-        alignment.created = datetime.now(timezone.utc) - timedelta(days=6)
+        alignment.created = datetime.now(timezone.utc) - timedelta(days=self.older) + timedelta(hours=1)
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
-        self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=7), modified.created)
+        self.assertTrue(datetime.now(timezone.utc) - modified.created < timedelta(days=self.older), modified.created)
         seq_ids = [m.pk for m in modified.seqs.all()]
         result = clean_alignments.delay()
         r = result.get()
@@ -138,10 +140,13 @@ class CleanAlignmentsTestCase(TestCase):
         """
         alignment_old = Alignment.objects.create_alignment(self.name, self.data)
         alignment_new = Alignment.objects.create_alignment(self.name, self.data)
-        alignment_old.created = datetime.now(timezone.utc) - timedelta(days=7)
+        alignment_old.created = datetime.now(timezone.utc) - timedelta(days=self.older)
         alignment_old.save()
         modified_old = Alignment.objects.get(pk=alignment_old.pk)
-        self.assertTrue(datetime.now(timezone.utc) - modified_old.created > timedelta(days=7), modified_old.created)
+        self.assertTrue(
+            datetime.now(timezone.utc) - modified_old.created > timedelta(days=self.older),
+            modified_old.created
+        )
 
         result = clean_alignments.delay()
         r = result.get()
@@ -166,7 +171,7 @@ class CleanAlignmentsTestCase(TestCase):
         seq_ids_old = []
         for i in range(2):
             alignment_old = Alignment.objects.create_alignment(self.name, self.data)
-            alignment_old.created = datetime.now(timezone.utc) - timedelta(days=7)
+            alignment_old.created = datetime.now(timezone.utc) - timedelta(days=self.older)
             alignment_old.save()
             modified_old = Alignment.objects.get(pk=alignment_old.pk)
             seq_ids_old.extend([m.pk for m in modified_old.seqs.all()])

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-from formalign.settings import CHROME_DRIVER, SERVER_URL, TEST_CASE, FIREFOX_BINARY
+from formalign.settings import CHROME_DRIVER, SERVER_URL, BROWSER_DELAY, TEST_CASE, FIREFOX_BINARY
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -36,12 +36,13 @@ class InputValidationTestCaseChrome(TEST_CASE):
         self.browser = webdriver.Chrome(
             CHROME_DRIVER
         )
+        self.delay = float(BROWSER_DELAY)
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
-            self.wait = 0.5
+            self.wait = self.delay * 5
         else:
             self.url = SERVER_URL
-            self.wait = 0.1
+            self.wait = self.delay
         self.browser.implicitly_wait(5)
 
     def tearDown(self):
@@ -275,12 +276,13 @@ class InputValidationTestCaseFirefox(InputValidationTestCaseChrome):
         caps['marionette'] = True
         caps['binary'] = FIREFOX_BINARY
         self.browser = webdriver.Firefox(capabilities=caps)
+        self.delay = float(BROWSER_DELAY)
         if SERVER_URL == 'liveserver':
             self.url = self.live_server_url
-            self.wait = 1
+            self.wait = self.delay * 10
         else:
             self.url = SERVER_URL
-            self.wait = 0.2
+            self.wait = self.delay * 2.5
 
     def tearDown(self):
         self.browser.quit()

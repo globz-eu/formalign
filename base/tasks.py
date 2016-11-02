@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import absolute_import
 from celery import shared_task
 from datetime import datetime, timedelta, timezone
+from formalign.settings import CLEAN_OLDER
 
 from base.models import Alignment, Seqrecord
 
@@ -30,7 +31,12 @@ __author__ = 'Stefan Dieterle'
 
 @shared_task
 def clean_alignments():
-    old_alignments = Alignment.objects.filter(created__lte=(datetime.now(timezone.utc) - timedelta(days=7)))
+    """
+    Removes alignments older than CLEAN_OLDER (in days)
+    :return: list of names of the removed alignments
+    """
+    days = timedelta(days=int(CLEAN_OLDER))
+    old_alignments = Alignment.objects.filter(created__lte=(datetime.now(timezone.utc) - days))
     old_alignments_names = []
     old_seq_ids = []
     for old in old_alignments:
