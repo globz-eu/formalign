@@ -15,7 +15,7 @@
           <param name="script.content"><![CDATA[#! /bin/bash
 cp $HOME/settings/.env ./
 cp $HOME/settings/runtime.txt ./
-cp $HOME/settings/settings_production.py ./settings.json
+cp $HOME/settings/settings_production.json ./settings.json
 git add .
 git commit -am "$(date)"
 heroku git:remote -a boiling-plateau-97746 --ssh-git
