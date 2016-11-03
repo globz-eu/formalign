@@ -27,14 +27,14 @@ from unittest import TestCase as UniTestCase
 from django.test import TestCase
 
 from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_add
-# from helper_funcs.helpers_bio import find_similar_residues
+from helper_funcs.helpers_bio import find_similar_residues
 from helper_funcs.helpers_test import file_to_string
 from helper_funcs.helpers_format import split_lines, split_lines_in_blocks, annotate
 
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import Gapped
 from Bio.Align import AlignInfo
-# import Bio.SubsMat.MatrixInfo as matinf
+import Bio.SubsMat.MatrixInfo as matinf
 
 __author__ = 'Stefan Dieterle'
 
@@ -181,22 +181,31 @@ class BioHelpers(UniTestCase):
             [p.description for p in parsed]
         )
 
-    # def test_find_similar_residues_returns_the_correct_object(self):
-    #     """
-    #     tests that find_similar_residues returns the correct object
-    #     """
-    #     blosum_62_high = find_similar_residues(matinf.blosum62, threshold_min=0.6, max_group_length=6)
-    #     blosum_62_high = [[set(co), sc] for co, sc in blosum_62_high]
-    #     self.assertEqual(
-    #         [[{'H', 'N'}, 1], [{'A', 'T', 'S'}, 0.6666666666666666], [{'E', 'K', 'Q', 'D'}, 0.8333333333333334],
-    #          [{'E', 'N', 'Q', 'D'}, 0.8333333333333334], [{'E', 'N', 'D', 'S'}, 0.6666666666666666],
-    #          [{'W', 'Y', 'F', 'H'}, 0.8333333333333334], [{'E', 'K', 'N', 'Q', 'R'}, 0.7],
-    #          [{'M', 'L', 'V', 'A', 'I'}, 0.7], [{'M', 'L', 'F', 'I', 'V'}, 0.9]],
-    #         blosum_62_high, blosum_62_high)
-    #     pam_250_high = find_similar_residues(matinf.pam250, threshold_min=1.3, max_group_length=7)
-    #     pam_250_high = [[set(co), sc] for co, sc in pam_250_high]
-    #     self.assertEqual(
-    #         [[{'R', 'W'}, 2], [{'G', 'D', 'E'}, 1.3333333333333333], [{'Y', 'H', 'F'}, 1.6666666666666667],
-    #          [{'Q', 'D', 'H', 'R'}, 1.3333333333333333], [{'N', 'Q', 'R', 'K', 'H'}, 1.4],
-    #          [{'M', 'I', 'L', 'F', 'V'}, 1.8], [{'H', 'N', 'Q', 'D', 'K', 'E'}, 1.3333333333333333]],
-    #         pam_250_high, pam_250_high)
+    def test_find_similar_residues_returns_the_correct_object(self):
+        """
+        tests that find_similar_residues returns the correct object (groups and scores)
+        """
+        blosum_62_high = find_similar_residues(threshold_min=0.5)
+        self.assertEqual(
+            [[['F', 'I', 'L', 'M'], 0.8333333333333334], [['H', 'N'], 1.0], [['E', 'H', 'Q'], 0.6666666666666666],
+             [['E', 'K', 'N', 'Q', 'R'], 0.7], [['E', 'K', 'Q', 'S'], 0.6666666666666666],
+             [['D', 'E', 'N', 'Q', 'S'], 0.6], [['A', 'S', 'T'], 0.6666666666666666],
+             [['N', 'S', 'T'], 0.6666666666666666], [['I', 'L', 'M', 'V'], 1.6666666666666667], [['H', 'Y'], 2.0],
+             [['F', 'W', 'Y'], 2.0]],
+            blosum_62_high, blosum_62_high)
+        blosum_62_low = find_similar_residues(matinf.blosum62, threshold_min=0, threshold_max=0.5)
+        self.assertEqual(
+            [[['F', 'I', 'M'], 0.3333333333333333], [['E', 'K', 'N', 'R'], 0.5], [['E', 'H', 'N', 'Q', 'R'], 0.4],
+             [['A', 'G', 'S'], 0.3333333333333333], [['G', 'N', 'S'], 0.3333333333333333],
+             [['D', 'N', 'Q', 'S'], 0.3333333333333333], [['E', 'K', 'N', 'Q', 'S'], 0.5]],
+            blosum_62_low, blosum_62_low)
+        pam_250_high = find_similar_residues(matinf.pam250, threshold_min=0.5)
+        self.assertEqual(
+            [[['F', 'I', 'L', 'M'], 1.8333333333333333], [['A', 'D', 'E', 'N', 'Q'], 1.1],
+             [['D', 'E', 'H', 'K', 'N', 'Q'], 1.3333333333333333], [['K', 'M', 'R'], 1.0],
+             [['H', 'K', 'N', 'Q', 'R'], 1.4], [['H', 'N', 'P', 'Q', 'R'], 0.9],
+             [['K', 'N', 'R', 'S'], 0.8333333333333334], [['A', 'D', 'E', 'G', 'N', 'S', 'T'], 0.6190476190476191],
+             [['D', 'E', 'K', 'N', 'S', 'T'], 0.6], [['A', 'G', 'N', 'P', 'S', 'T'], 0.5333333333333333],
+             [['I', 'L', 'M', 'V'], 2.6666666666666665], [['I', 'T', 'V'], 1.3333333333333333], [['R', 'W'], 2.0],
+             [['F', 'W', 'Y'], 2.3333333333333335]],
+            pam_250_high, pam_250_high)
