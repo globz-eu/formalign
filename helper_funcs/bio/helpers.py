@@ -29,12 +29,6 @@ from itertools import combinations
 __author__ = 'Stefan Dieterle'
 
 
-class AlignInfoSubsMat(AlignInfo.SummaryInfo):
-    """
-    subclasses SummaryInfo and overrides gap_consensus to use substitution matrices
-    """
-
-
 def find_similar_residues(matrix=matinf.blosum62, threshold_min=0.5, threshold_max=0.0):
     """
     finds groups of similar residues based on a substitution matrix and score thresholds
