@@ -30,7 +30,7 @@ from django.test.utils import override_settings
 __author__ = 'Stefan Dieterle'
 
 
-@given(r'an old alignment with slug "1234567890123456" was present')
+@given(r'an old alignment with slug "ToOldAlignment01" was present')
 def initialize_with_old_alignment(context):
     """
     creates an old alignment
@@ -65,4 +65,3 @@ def visit_url(context, url):
     else:
         context.home_url = SERVER_URL
     context.r = context.client.get(context.home_url + url)
-    context.display = html.parse(StringIO(context.r.text)).getroot()
