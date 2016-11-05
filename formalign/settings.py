@@ -203,7 +203,7 @@ except ImproperlyConfigured:
     CLEAN_OLDER = '7'
 
 CELERYBEAT_SCHEDULE = {
-    'remove_more_than_week_old_alignments': {
+    'remove_old_alignments': {
         'task': 'base.tasks.clean_alignments',
         'schedule': timedelta(hours=1),
     },

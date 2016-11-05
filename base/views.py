@@ -25,7 +25,7 @@ from Bio.Alphabet import Gapped
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from base.forms import QueryForm
 from base.models import Alignment
-from django.http import HttpResponseNotAllowed, HttpResponseNotFound
+from django.http import HttpResponseNotAllowed, Http404
 from django.shortcuts import render, redirect
 from helper_funcs.bio.helpers import consensus_add, parse_fasta_alignment
 from helper_funcs.helpers_format import split_lines, annotate
@@ -80,7 +80,7 @@ def seq_display(request, align_slug):
         try:
             align_id = Alignment.objects.get(slug=align_slug).pk
         except Alignment.DoesNotExist:
-            return HttpResponseNotFound()
+            raise Http404('Alignment does not exist')
         alignment = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
@@ -111,7 +111,7 @@ def align_display(request, align_slug):
         try:
             align_id = Alignment.objects.get(slug=align_slug).pk
         except Alignment.DoesNotExist:
-            return HttpResponseNotFound()
+            raise Http404('Alignment does not exist')
 
         alignment_fetch = Alignment.objects.get_alignment(align_id)
         alignment = consensus_add(alignment_fetch)

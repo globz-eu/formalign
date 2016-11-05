@@ -150,9 +150,10 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              format(elem[0].text)
                              )
 
-    def test_align_display_page_returns_404_when_non_existing_alignment_requested(self):
+    def test_sequence_display_page_returns_404_when_non_existing_alignment_requested(self):
         """
-        Tests that file not found (404) error is returned when a non existing alignment is requested
+        Tests that file not found (404) error is returned when a non existing
+        alignment is requested
         """
         response = self.client.get('/query-sequences/DoesNotExistAl01/')
         self.assertEqual(404, response.status_code, response.status_code)
@@ -192,8 +193,8 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
 
     def test_display_page_displays_consensus(self):
         """
-        Tests that seq_display displays the consensus sequence on a valid POST request
-        :return:
+        Tests that seq_display displays the consensus sequence on a valid POST
+        request
         """
         response = self.response_prot
         with self.assertHTML(response, 'h3[class="query_seq_meta bg-color-body"]') as elems:

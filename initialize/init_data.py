@@ -68,13 +68,14 @@ def add_old_alignment():
 
 def set_last_run_at_to_overdue():
     """
-    Sets last_run_at in djcelery_periodictask to a date overdue for running task
+    Sets last_run_at in djcelery_periodictask to a date overdue for running
+    task
     """
     from datetime import datetime, timedelta, timezone
     from djcelery.models import PeriodicTask
 
     PeriodicTask.objects.filter(
-        name='remove_more_than_week_old_alignments'
+        name='remove_old_alignments'
     ).update(
         last_run_at=(datetime.now(timezone.utc) - timedelta(hours=1, minutes=1))
     )

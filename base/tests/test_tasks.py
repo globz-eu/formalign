@@ -60,9 +60,13 @@ class CleanAlignmentsTestCase(TestCase):
         alignment.save()
         modified = Alignment.objects.get(pk=alignment.pk)
         self.assertTrue(datetime.now(timezone.utc) - modified.created > timedelta(days=self.older), modified.created)
+        response = self.client.get('/align-display/%s' % alignment.slug)
+        self.assertEqual(200, response.status_code, response.status_code)
         result = clean_alignments.delay()
         r = result.get()
         self.assertEqual(['A. tha. SPA family alignment'], r, r)
+        response = self.client.get('/align-display/%s' % alignment.slug)
+        self.assertEqual(404, response.status_code, response.status_code)
         try:
             old = Alignment.objects.get(pk=alignment.pk)
             self.assertFalse(old.name == self.name, '%s was not removed' % old.name)
