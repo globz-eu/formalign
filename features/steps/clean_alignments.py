@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from behave import given, when
-from lxml import html
-from io import StringIO
 from formalign.settings import SERVER_URL
 from initialize.init_data import add_old_alignment
 from base.tasks import clean_alignments
