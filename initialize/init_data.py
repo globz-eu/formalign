@@ -36,7 +36,7 @@ def add_old_alignment():
     import io
     import sys
     from datetime import datetime, timedelta, timezone
-    from helper_funcs.helpers_bio import parse_fasta_alignment
+    from helper_funcs.bio.helpers import parse_fasta_alignment
     from helper_funcs.helpers_test import file_to_string
     from base.models import Alignment
     from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
