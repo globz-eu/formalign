@@ -51,8 +51,8 @@ def add_old_alignment():
         a.seq.alphabet = alphabet
     data._alphabet = alphabet
     try:
-        Alignment.objects.get(slug='1234567890123456')
-        Alignment.objects.get(slug='1234567890123456').delete()
+        Alignment.objects.get(slug='ToOldAlignment01')
+        Alignment.objects.get(slug='ToOldAlignment01').delete()
         print('removed alignment', file=sys.stderr)
     except Alignment.DoesNotExist:
         pass
@@ -62,7 +62,7 @@ def add_old_alignment():
         slug=alignment.slug
     ).update(
         created=(datetime.now(timezone.utc) - timedelta(days=int(CLEAN_OLDER), hours=1)),
-        slug='1234567890123456'
+        slug='ToOldAlignment01'
     )
 
 
