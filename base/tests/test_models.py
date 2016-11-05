@@ -19,19 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from django.test import TestCase
-
 import io
 import re
 from datetime import datetime, timedelta, timezone
+
 from Bio import SeqIO
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import Gapped
-
-from helper_funcs.helpers_bio import parse_fasta_alignment
-from helper_funcs.helpers_test import file_to_string
-
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from base.models import Alignment, Seqrecord
+from django.test import TestCase
+from helper_funcs.bio.helpers import parse_fasta_alignment
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 

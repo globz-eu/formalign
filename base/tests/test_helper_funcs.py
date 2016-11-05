@@ -22,19 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import io
 import os
 import pickle
-
 from unittest import TestCase as UniTestCase
-from django.test import TestCase
 
-from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_add
-from helper_funcs.helpers_bio import find_similar_residues
-from helper_funcs.helpers_test import file_to_string
-from helper_funcs.helpers_format import split_lines, split_lines_in_blocks, annotate
-
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
-from Bio.Alphabet import Gapped
-from Bio.Align import AlignInfo
 import Bio.SubsMat.MatrixInfo as matinf
+from Bio.Align import AlignInfo
+from Bio.Alphabet import Gapped
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
+from django.test import TestCase
+from helper_funcs.bio.helpers import find_similar_residues
+from helper_funcs.bio.helpers import parse_fasta_alignment, consensus_add
+from helper_funcs.helpers_format import split_lines, split_lines_in_blocks, annotate
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 

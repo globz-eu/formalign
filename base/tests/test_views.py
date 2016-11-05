@@ -23,20 +23,17 @@ import io
 import re
 import time
 
+from Bio.Alphabet import Gapped
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
+from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
+from base.forms import QueryForm
+from base.models import Alignment
 from django.test import TestCase
 from django.utils.html import escape
-from with_asserts.mixin import AssertHTMLMixin
-
-from base.forms import QueryForm
-from base.forms import EMPTY_ERROR, FORMAT_ERROR, CHARACTER_ERROR, ALIGNMENT_ERROR, LESS_THAN_TWO_SEQS_ERROR
-from helper_funcs.helpers_bio import parse_fasta_alignment, consensus_add
-from helper_funcs.helpers_test import file_to_string
+from helper_funcs.bio.helpers import parse_fasta_alignment, consensus_add
 from helper_funcs.helpers_format import annotate
-
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
-from Bio.Alphabet import Gapped
-
-from base.models import Alignment
+from helper_funcs.helpers_test import file_to_string
+from with_asserts.mixin import AssertHTMLMixin
 
 __author__ = 'Stefan Dieterle'
 
@@ -152,6 +149,13 @@ class SeqDisplayTestCase(TestCase, AssertHTMLMixin):
                              'DNA sequences:',
                              format(elem[0].text)
                              )
+
+    def test_align_display_page_returns_404_when_non_existing_alignment_requested(self):
+        """
+        Tests that file not found (404) error is returned when a non existing alignment is requested
+        """
+        response = self.client.get('/query-sequences/DoesNotExistAl01/')
+        self.assertEqual(404, response.status_code, response.status_code)
 
     def test_display_page_displays_protein_query_seq(self):
         """
@@ -348,6 +352,13 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
             self.assertEqual(len([e for e in elems[0].findall('td') if e.attrib['class'] == 'block_sep']),
                              8, elems[0].getchildren()[0].text
                              )
+
+    def test_align_display_page_returns_404_when_non_existing_alignment_requested(self):
+        """
+        Tests that file not found (404) error is returned when a non existing alignment is requested
+        """
+        response = self.client.get('/align-display/DoesNotExistAl01/')
+        self.assertEqual(404, response.status_code, response.status_code)
 
     def test_align_display_page_displays_correct_protein_alignment_sequence(self):
         """

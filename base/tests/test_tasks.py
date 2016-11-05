@@ -19,19 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from django.test import TestCase
-from django.test.utils import override_settings
-
 import io
 from datetime import datetime, timedelta, timezone
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
-from Bio.Alphabet import Gapped
-from helper_funcs.helpers_bio import parse_fasta_alignment
-from helper_funcs.helpers_test import file_to_string
-from base.models import Alignment, Seqrecord
-from formalign.settings import CLEAN_OLDER
 
+from Bio.Alphabet import Gapped
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
+from base.models import Alignment, Seqrecord
 from base.tasks import clean_alignments
+from django.test import TestCase
+from django.test.utils import override_settings
+from formalign.settings import CLEAN_OLDER
+from helper_funcs.bio.helpers import parse_fasta_alignment
+from helper_funcs.helpers_test import file_to_string
 
 __author__ = 'Stefan Dieterle'
 

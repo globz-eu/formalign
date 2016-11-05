@@ -19,13 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
+import io
+
+from Bio.Alphabet import Gapped
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
 from django import forms
 from django.utils.safestring import mark_safe
-from helper_funcs.helpers_bio import parse_fasta_alignment
-import io
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein, ExtendedIUPACDNA
-from Bio.Alphabet import Gapped
-
+from helper_funcs.bio.helpers import parse_fasta_alignment
 
 __author__ = 'Stefan Dieterle'
 

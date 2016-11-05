@@ -21,16 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import io
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponseNotAllowed
-
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import Gapped
-
-from base.models import Alignment
+from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from base.forms import QueryForm
-
-from helper_funcs.helpers_bio import consensus_add, parse_fasta_alignment
+from base.models import Alignment
+from django.http import HttpResponseNotAllowed, HttpResponseNotFound
+from django.shortcuts import render, redirect
+from helper_funcs.bio.helpers import consensus_add, parse_fasta_alignment
 from helper_funcs.helpers_format import split_lines, annotate
 from helper_funcs.helpers_test import file_to_string
 
@@ -80,7 +77,10 @@ def seq_display(request, align_slug):
     """
     if request.method == 'GET':
         # split sequences in chunks of 80 characters
-        align_id = Alignment.objects.get(slug=align_slug).pk
+        try:
+            align_id = Alignment.objects.get(slug=align_slug).pk
+        except Alignment.DoesNotExist:
+            return HttpResponseNotFound()
         alignment = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
             "Gapped(ExtendedIUPACProtein(), '-')": 'Protein',
@@ -104,13 +104,16 @@ def align_display(request, align_slug):
     """
     serves alignment display page
     :param request: HTTP request
-    :param align_id: alignment pk
+    :param align_slug: alignment slug value
     :return: HttpResponse object
     """
     if request.method == 'GET':
-        align_id = Alignment.objects.get(slug=align_slug).pk
-        alignment_fetch = Alignment.objects.get_alignment(align_id)
+        try:
+            align_id = Alignment.objects.get(slug=align_slug).pk
+        except Alignment.DoesNotExist:
+            return HttpResponseNotFound()
 
+        alignment_fetch = Alignment.objects.get_alignment(align_id)
         alignment = consensus_add(alignment_fetch)
 
         alignment = annotate(alignment)
@@ -147,3 +150,6 @@ def align_display(request, align_slug):
             {'align': align, 'id_width': id_width * .6, 'total_width': (id_width + 80) * .5}
         )
         return r
+
+    else:
+        return HttpResponseNotAllowed(['GET'])
