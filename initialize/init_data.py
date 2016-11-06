@@ -22,10 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import django
+from formalign.settings import HEROKU
 
 __author__ = 'Stefan Dieterle'
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings_admin')
+if HEROKU:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'formalign.settings')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings_admin')
 django.setup()
 
 
