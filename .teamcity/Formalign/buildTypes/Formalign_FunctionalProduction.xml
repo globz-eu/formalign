@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="1615596c-5a16-490c-b0fd-ac48bcc33c3e" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/10.0/project-config.xsd">
+  <name>functional_production</name>
+  <description>runs functional tests on production server</description>
+  <settings>
+    <parameters />
+    <build-runners />
+    <vcs-settings />
+    <requirements />
+    <build-triggers />
+    <cleanup />
+  </settings>
+</build-type>
+
