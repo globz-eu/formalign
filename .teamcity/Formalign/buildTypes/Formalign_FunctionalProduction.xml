@@ -4,7 +4,22 @@
   <description>runs functional tests on production server</description>
   <settings>
     <parameters />
-    <build-runners />
+    <build-runners>
+      <runner id="RUNNER_10" name="Functional Tests (against production server)" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[#! /bin/bash
+export WORKON_HOME=$HOME/.envs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+workon formalign
+cp $HOME/settings/settings_production_functional.json ./settings.json
+export REDIS_URL='redis://localhost:6379/0'
+python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_admin]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="Formalign_Formalign" />
     </vcs-settings>
