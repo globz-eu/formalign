@@ -5,7 +5,9 @@
   <settings>
     <parameters />
     <build-runners />
-    <vcs-settings />
+    <vcs-settings>
+      <vcs-entry-ref root-id="Formalign_Formalign" />
+    </vcs-settings>
     <requirements />
     <build-triggers />
     <cleanup />
