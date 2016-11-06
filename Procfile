@@ -1,3 +1,2 @@
 web: gunicorn formalign.wsgi --log-file -
-worker: celery -A formalign worker -l info
-worker: celery -A formalign beat -S djcelery.schedulers.DatabaseScheduler -l info
+worker: python manage.py celeryd -c 3 --beat --scheduler=djcelery.schedulers.DatabaseScheduler
