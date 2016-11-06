@@ -20,7 +20,8 @@ git commit -am "$(date)"
 heroku git:remote -a tranquil-mountain-43235 --ssh-git
 git push --force heroku master
 heroku run 'python manage.py collectstatic --no-input -c && python manage.py makemigrations && python manage.py migrate' --app tranquil-mountain-43235
-heroku run 'python ./initialize/init_data.py' --app tranquil-mountain-43235]]></param>
+heroku run 'python ./initialize/init_data.py' --app tranquil-mountain-43235
+heroku ps:restart worker --app tranquil-mountain-43235]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
