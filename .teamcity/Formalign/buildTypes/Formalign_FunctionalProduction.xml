@@ -26,7 +26,13 @@ python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_a
     <requirements>
       <equals id="RQ_4" name="teamcity.agent.name" value="teamcity-agent1" />
     </requirements>
-    <build-triggers />
+    <build-triggers>
+      <build-trigger id="TRIGGER_3" type="buildDependencyTrigger">
+        <parameters>
+          <param name="dependsOn" value="Formalign_DeployToHeroku" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
     <dependencies>
       <depend-on sourceBuildTypeId="Formalign_DeployToProduction">
         <options>
