@@ -18,6 +18,7 @@
 # =====================================================================
 
 @skip
+@pending
 Feature: Supported alignment formats
   Checks functionality of Formalign with different kinds of alignment formats
 

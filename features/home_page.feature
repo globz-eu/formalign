@@ -20,12 +20,18 @@
 Feature: Formalign home page
   Checks that the Formalign home page is displayed and contains all expected elements
 
-  Scenario: User visits the Formalign home page
+  Scenario: User checks basic elements of Formalign home page
     Given a user visits the URL "/"
+    When the user looks at the page
     Then the server's response status code is 200
     And the url is the home url
     And the page title is "Formalign.eu Home"
     And the brand text says "Formalign.eu"
+
+  Scenario: User checks basic form elements of Formalign home page
+    Given a user visits the URL "/"
+    When the user looks at the page
+    Then the server's response status code is 200
     And there is a form labeled "Paste in your alignment:(FASTA, clustalw, stockholm or phylip)"
     And there is a text area with a placeholder saying "Alignment (FASTA, clustalw, stockholm or phylip)"
     And there are radio buttons labeled "Input sequence type:"
@@ -38,3 +44,43 @@ Feature: Formalign home page
     And there is a "Demo" button named "custom_data" with the value "demo"
     And there is a "Submit" button named "custom_data" with the value "custom"
     And there is a "Formalign.eu" button with "/" href
+
+  @skip
+  @pending
+  Scenario: User checks advanced form elements of Formalign home page
+    Given a user visits the URL "/"
+    When the user looks at the page
+    Then the server's response status code is 200
+    And there is a "% identity" consensus type radio button
+    And there is a "substitution matrix" consensus type radio button
+    And the "% identity" button is checkable
+    And the "substitution matrix" button is checkable
+    And the "% identity" button is checked by default
+    And the "substitution matrix" button is not checked by default
+    And there is a "consensus" dropdown menu
+
+  @skip
+  @pending
+  Scenario Outline: User checks consensus choices
+    Given a user visits the URL "/"
+    When the user looks at the page
+    Then the server's response status code is 200
+    And the "consensus" dropdown menu contains <consensus_choice>
+
+  Examples: % identity
+    | consensus_choice |
+    | consensus 70%    |
+    | consensus 100%   |
+
+  @skip
+  @pending
+  Scenario Outline: User does not see hidden consensus choices
+    Given a user visits the URL "/"
+    When the user looks at the page
+    Then the server's response status code is 200
+    And the "consensus" dropdown menu contents <hidden_consensus_choice> are hidden
+
+  Examples: substitution matrix
+    | hidden_consensus_choice |
+    | blosum 62               |
+    | pam 250                 |

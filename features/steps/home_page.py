@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 
-from behave import given, then
+from behave import given, when, then
 
 from formalign.settings import SERVER_URL
 from lxml import html
@@ -37,6 +37,10 @@ def visit_url(context, url):
     else:
         context.home_url = SERVER_URL
     context.r = context.client.get(context.home_url + url)
+
+
+@when(r'the user looks at the page')
+def get_elements(context):
     context.display = html.parse(StringIO(context.r.text)).getroot()
 
 
@@ -80,13 +84,19 @@ def check_sequence_type_label(context, expected_sequence_type_label):
     assert expected_sequence_type_label == sequence_type_label, 'Got %s' % sequence_type_label
 
 
-@then(r'there is a "(?P<expected_radio_button_text>[^"]*)" input sequence type radio button')
-def check_sequence_type_radio_buttons(context, expected_radio_button_text):
+@then(r'there is a "(?P<expected_radio_button_text>[^"]*)" (?P<choice>[^"]*) type radio button')
+def check_sequence_type_radio_buttons(context, expected_radio_button_text, choice):
     radio_button = {
-        'DNA': context.display.cssselect('input[id="id_seq_type_1"]')[0].label.text_content(),
-        'Protein': context.display.cssselect('label[for="id_seq_type_0"]')[1].text_content()
+        'input sequence': {
+            'DNA': context.display.cssselect('input[id="id_seq_type_1"]')[0].label.text_content(),
+            'Protein': context.display.cssselect('label[for="id_seq_type_0"]')[1].text_content()
+        },
+        'consensus': {
+            '% identity': context.display.cssselect('input[id="id_cons_type_1"]')[0].label.text_content(),
+            'substitution matrix': context.display.cssselect('label[for="id_cons_type_0"]')[1].text_content()
+        },
     }
-    radio_button_text = radio_button[expected_radio_button_text]
+    radio_button_text = radio_button[choice][expected_radio_button_text]
     assert re.match(
         '^\s+' + re.escape(expected_radio_button_text) + '$',
         radio_button_text

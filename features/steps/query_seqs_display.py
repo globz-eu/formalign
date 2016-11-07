@@ -61,6 +61,7 @@ def submit_custom_alignment(context, sequence_type, alignment_name):
     context.client.headers.update({'referer': context.r.url})
     context.r = context.client.post(context.r.url,
                                     data={'csrfmiddlewaretoken': csrftoken, 'seq_type': sequence_type,
+                                          'cons_type': 'identity',
                                           'align_input': alignment_string, 'custom_data': 'custom'})
     context.display = html.parse(StringIO(context.r.text)).getroot()
 

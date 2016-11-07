@@ -59,7 +59,14 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         Tests that valid POST request on index page redirects to /query-sequences/
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'protein', 'custom_data': 'custom'})
+        response = self.client.post(
+            '/', {
+                'align_input': input_seqs,
+                'seq_type': 'protein',
+                'cons_type': 'identity',
+                'custom_data': 'custom'
+            }
+        )
         self.assertTrue('/query-sequences/' in response.url)
 
     def test_alignment_is_saved_on_post(self):
@@ -67,7 +74,8 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         Tests that alignment is saved on valid POST request to index
         """
         input_seqs = file_to_string('spa_protein_alignment.fasta')
-        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'protein', 'custom_data': 'custom'})
+        response = self.client.post('/', {'align_input': input_seqs, 'seq_type': 'protein', 'cons_type': 'identity',
+                                          'custom_data': 'custom'})
         slug = re.match(r'^/query-sequences/(?P<align_id>([a-zA-Z]|\d){16})/', response.url).group('align_id')
         pk = Alignment.objects.get(slug=slug).pk
         alignment = Alignment.objects.get_alignment(pk)
@@ -80,7 +88,8 @@ class IndexViewTestCase(TestCase, AssertHTMLMixin):
         """
         Tests that POST request with demo alignment button on index page redirects to /query-sequences/
         """
-        response = self.client.post('/', {'align_input': '', 'seq_type': 'DNA', 'custom_data': 'demo'})
+        response = self.client.post('/', {'align_input': '', 'seq_type': 'DNA', 'cons_type': 'identity',
+                                          'custom_data': 'demo'})
         self.assertTrue('/query-sequences/' in response.url)
 
     def test_demo_alignment_is_saved_on_post(self):

@@ -17,6 +17,13 @@
                 {{ form.seq_type }}
             </div>
             <div class="col-sm-2 control-label">
+                {{ form.cons_type.label_tag() }}
+            </div>
+            <div class="col-sm-9">
+                {{ form.cons_type.errors }}
+                {{ form.cons_type }}
+            </div>
+            <div class="col-sm-2 control-label">
                 {{ form.align_input.label_tag() }}
             </div>
             <div class="col-sm-9">

@@ -18,6 +18,7 @@
 # =====================================================================
 
 @skip
+@pending
 Feature: Submit alignment by uploading file
   Checks that alignments can be submitted by uploading a file
 

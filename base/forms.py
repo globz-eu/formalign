@@ -66,6 +66,18 @@ class QueryForm(forms.Form):
         initial='DNA',
     )
 
+    cons_type_choices = [
+        ('identity', 'identity'),
+        ('subs_matrix', 'substitution matrix')
+    ]
+    cons_type = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=cons_type_choices,
+        label='Consensus type:',
+        required=True,
+        initial='identity',
+    )
+
     def clean_align_input(self):
         """
         Returns cleaned and validated alignment sequence data. Validates FASTA for standard FASTA alignment

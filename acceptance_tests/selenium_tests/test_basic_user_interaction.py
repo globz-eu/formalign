@@ -153,6 +153,33 @@ class BasicUserTestCaseChrome(TEST_CASE):
         self.assertEqual(protein_button.is_selected(), True)
         self.assertEqual(dna_button.is_selected(), False)
 
+        # She sees two radio buttons for identity and substitution matrix
+        # consensus
+        identity_button = self.browser.find_element_by_css_selector('input#id_cons_type_0')
+        self.assertIsNotNone(identity_button)
+        subs_matrix_button = self.browser.find_element_by_css_selector('input#id_cons_type_1')
+        self.assertIsNotNone(subs_matrix_button)
+
+        # She sees that the identity button is selected by default
+        self.assertEqual(identity_button.is_selected(), True)
+
+        # She clicks the substitution matrix radio button and sees that it gets
+        # selected and the identity button gets unselected
+        subs_matrix_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
+
+        self.assertEqual(subs_matrix_button.is_selected(), True)
+        self.assertEqual(identity_button.is_selected(), False)
+
+        # She goes back to identity
+        identity_button.click()
+        # Wait for Firefox
+        time.sleep(self.sleep)
+
+        self.assertEqual(subs_matrix_button.is_selected(), False)
+        self.assertEqual(identity_button.is_selected(), True)
+
         # She pastes in a protein alignment to see what happens
         alignment_string = file_to_string('spa_protein_alignment.fasta')
         pyperclip.copy(alignment_string)

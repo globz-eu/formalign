@@ -115,21 +115,19 @@ input {
 
 #render-align {
 }
-#id_seq_type {
+#id_seq_type, #id_cons_type {
     list-style-type: none;
-}
-
-#id_seq_type {
     margin-bottom: 40px;
     margin-left: -20px;
 }
-#id_seq_type li {
+
+#id_seq_type li, #id_cons_type li {
     display: inline;
     /*margin-bottom: 40px;*/
     /*margin-left: -20px;*/
 }
 
-#id_seq_type_1 {
+#id_seq_type_1, #id_cons_type_1 {
     margin-left: 25px;
 }
 

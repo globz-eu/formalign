@@ -63,7 +63,7 @@ class QueryFormTest(TestCase):
 
     def test_form_renders_sequence_type_radio_buttons(self):
         """
-        Tests correct rendering of form radio buttons
+        Tests correct rendering of form sequence type radio buttons
         :return:
         """
         form = QueryForm()
@@ -72,6 +72,19 @@ class QueryFormTest(TestCase):
         self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="protein"', form.as_p())
         self.assertIn(
             '<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p()
+        )
+
+    def test_form_renders_consensus_type_radio_buttons(self):
+        """
+        Tests correct rendering of form consensus type radio buttons
+        :return:
+        """
+        form = QueryForm()
+        field = form['cons_type']
+        self.assertIn('Consensus type:', field.label_tag())
+        self.assertIn('<input id="id_cons_type_1" name="cons_type" type="radio" value="subs_matrix"', form.as_p())
+        self.assertIn(
+            '<input checked="checked" id="id_cons_type_0" name="cons_type" type="radio" value="identity"', form.as_p()
         )
 
     def test_form_validation_for_blank_items(self):
@@ -120,7 +133,7 @@ class QueryFormTest(TestCase):
         :return:
         """
         input_seqs = file_to_string('protein.fasta')
-        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'protein'})
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'protein', 'cons_type': 'identity'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:
             self.assertEqual(
@@ -130,7 +143,7 @@ class QueryFormTest(TestCase):
             )
 
         input_seqs = file_to_string('DNA.fasta')
-        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'DNA'})
+        form = QueryForm(data={'align_input': input_seqs, 'seq_type': 'DNA', 'cons_type': 'identity'})
         self.assertTrue(form.is_valid())
         for f in form.cleaned_data['align_input']:
             self.assertEqual(
