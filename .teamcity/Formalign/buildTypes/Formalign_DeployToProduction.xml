@@ -51,13 +51,6 @@ python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_a
     </requirements>
     <build-triggers />
     <build-extensions>
-      <extension id="BUILD_EXT_1" type="xml-report-plugin">
-        <parameters>
-          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
-          <param name="xmlReportParsing.reportType" value="junit" />
-          <param name="xmlReportParsing.verboseOutput" value="true" />
-        </parameters>
-      </extension>
       <extension id="BUILD_EXT_3" type="xml-report-plugin">
         <parameters>
           <param name="xmlReportParsing.reportDirs" value="reports/*.xml" />
