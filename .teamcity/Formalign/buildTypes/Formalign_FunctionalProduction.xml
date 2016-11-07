@@ -27,6 +27,14 @@ python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_a
       <equals id="RQ_4" name="teamcity.agent.name" value="teamcity-agent1" />
     </requirements>
     <build-triggers />
+    <dependencies>
+      <depend-on sourceBuildTypeId="Formalign_DeployToProduction">
+        <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+    </dependencies>
     <cleanup />
   </settings>
 </build-type>
