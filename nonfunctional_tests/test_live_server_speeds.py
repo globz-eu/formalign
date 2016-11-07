@@ -56,6 +56,7 @@ class BasicUserSpeedLiveServerTestCase(StaticLiveServerTestCase):
                 start = time.time()
                 r = self.client.post(self.live_server_url,
                                      data={'csrfmiddlewaretoken': csrftoken, 'seq_type': 'protein',
+                                           'cons_type': 'identity',
                                            'align_input': alignment_string, 'custom_data': 'custom'})
                 roundtrip1 = time.time() - start
                 q_display.append(roundtrip1)
