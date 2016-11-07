@@ -23,7 +23,9 @@ python manage.py behave --tags ~@skip --no-skipped --junit --settings=settings_a
     <vcs-settings>
       <vcs-entry-ref root-id="Formalign_Formalign" />
     </vcs-settings>
-    <requirements />
+    <requirements>
+      <equals id="RQ_4" name="teamcity.agent.name" value="teamcity-agent1" />
+    </requirements>
     <build-triggers />
     <cleanup />
   </settings>
