@@ -22,7 +22,8 @@ heroku git:remote -a boiling-plateau-97746 --ssh-git
 git push --force heroku master
 heroku run 'python manage.py collectstatic --no-input -c && python manage.py makemigrations && python manage.py migrate' --app boiling-plateau-97746
 heroku run 'python ./initialize/init_data.py' --app boiling-plateau-97746
-heroku ps:restart worker --app boiling-plateau-97746]]></param>
+heroku ps:restart worker --app boiling-plateau-97746
+sleep 15]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
