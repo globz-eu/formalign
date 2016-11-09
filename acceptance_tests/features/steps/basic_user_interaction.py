@@ -123,4 +123,5 @@ def check_button_text(context, button_text, button_name, button_value):
 def check_link_href(context, link_text, href):
     home_button = context.browser.find_elements_by_css_selector('a[class="navbar-brand"]')
     assert link_text == home_button[0].text, 'Got %s' % home_button[0].text
-    assert context.home_url + href == home_button[0].get_attribute('href'), 'Got %s' % home_button[0].get_attribute('href')
+    assert context.home_url + href == home_button[0].get_attribute('href'),\
+        'Got %s' % home_button[0].get_attribute('href')
