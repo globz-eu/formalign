@@ -88,12 +88,12 @@ def check_sequence_type_label(context, expected_sequence_type_label):
 def check_sequence_type_radio_buttons(context, expected_radio_button_text, choice):
     radio_button = {
         'input sequence': {
-            'DNA': context.display.cssselect('input[id="id_seq_type_1"]')[0].label.text_content(),
+            'DNA': context.display.cssselect('label[for="id_seq_type_1"]')[0].text_content(),
             'Protein': context.display.cssselect('label[for="id_seq_type_0"]')[1].text_content()
         },
         'consensus': {
-            '% identity': context.display.cssselect('input[id="id_cons_type_1"]')[0].label.text_content(),
-            'substitution matrix': context.display.cssselect('label[for="id_cons_type_0"]')[1].text_content()
+            'Identity': context.display.cssselect('label[for="id_cons_type_0"]')[1].text_content(),
+            'Substitution Matrix': context.display.cssselect('label[for="id_cons_type_1"]')[0].text_content()
         },
     }
     radio_button_text = radio_button[choice][expected_radio_button_text]
@@ -103,21 +103,30 @@ def check_sequence_type_radio_buttons(context, expected_radio_button_text, choic
     ), 'Got %s' % radio_button_text
 
 
-@then(r'the "(?P<type>[^"]*)" button is checkable')
-def check_type_buttons_are_checkable(context, type):
+@then(r'the "(?P<button_type>[^"]*)" button is checkable')
+def check_type_buttons_are_checkable(context, button_type):
     radio_button = {
-        'DNA': '1',
-        'Protein': '0'
+        'DNA': {'type': 'seq', 'number': '1'},
+        'Protein': {'type': 'seq', 'number': '0'},
+        'Identity': {'type': 'cons', 'number': '0'},
+        'Substitution Matrix': {'type': 'cons', 'number': '1'}
     }
-    button_checkable = context.display.cssselect('input[id="id_seq_type_%s"]' % radio_button[type])[0].checkable
+    button_checkable = context.display.cssselect(
+        'input[id="id_%s_type_%s"]' % (
+            radio_button[button_type]['type'],
+            radio_button[button_type]['number']
+        )
+    )[0].checkable
     assert button_checkable, 'Got %s' % button_checkable
 
 
 @then(r'the "(?P<type>[^"]*)" button is(?P<default>.*) checked by default')
 def check_type_buttons_are_in_the_right_default_state(context, type, default):
     radio_button = {
-        'DNA': '1',
-        'Protein': '0'
+        'DNA': {'type': 'seq', 'number': '1'},
+        'Protein': {'type': 'seq', 'number': '0'},
+        'Identity': {'type': 'cons', 'number': '0'},
+        'Substitution Matrix': {'type': 'cons', 'number': '1'}
     }
     if default == '':
         test = True
@@ -125,8 +134,13 @@ def check_type_buttons_are_in_the_right_default_state(context, type, default):
         test = False
     else:
         test = 'some unlikely string'
-    button_checked = context.display.cssselect('input[id="id_seq_type_%s"]' % radio_button[type])[0].checked
-    assert button_checked == test
+    button_checked = context.display.cssselect(
+        'input[id="id_%s_type_%s"]' % (
+            radio_button[type]['type'],
+            radio_button[type]['number']
+        )
+    )[0].checked
+    assert button_checked == test, 'Got %s' % button_checked
 
 
 @then(

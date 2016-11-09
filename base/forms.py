@@ -67,8 +67,8 @@ class QueryForm(forms.Form):
     )
 
     cons_type_choices = [
-        ('identity', 'identity'),
-        ('subs_matrix', 'substitution matrix')
+        ('identity', 'Identity'),
+        ('subs_matrix', 'Substitution Matrix')
     ]
     cons_type = forms.ChoiceField(
         widget=forms.RadioSelect(),

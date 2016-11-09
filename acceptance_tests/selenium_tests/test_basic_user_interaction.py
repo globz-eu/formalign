@@ -121,29 +121,29 @@ class BasicUserTestCaseChrome(TEST_CASE):
         """
         # Lambda user is a biologist who has to make a nice figure containing a multiple alignment for a presentation.
         # She visits the formalign.eu site.
-        self.browser.get(self.url + '/')
+        # self.browser.get(self.url + '/')
 
         # User sees she's on the right page because she can see the name of the site in the heading.
-        self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
-        brand_element = self.browser.find_element_by_css_selector('.navbar-brand')
-        self.assertEqual('Formalign.eu', brand_element.text)
+        # self.assertEqual(self.browser.title, 'Formalign.eu Home', self.browser.title)
+        # brand_element = self.browser.find_element_by_css_selector('.navbar-brand')
+        # self.assertEqual('Formalign.eu', brand_element.text)
 
         # She sees a form that says 'Paste in your alignment in FASTA format:'
-        alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
-        self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
-        self.assertEqual(
-            'Alignment (FASTA, clustalw, stockholm or phylip)',
-            alignment_input.get_attribute('placeholder'),
-        )
+        # alignment_input = self.browser.find_element_by_css_selector('textarea#id_align_input')
+        # self.assertIsNotNone(self.browser.find_element_by_css_selector('label[for="id_align_input"]'))
+        # self.assertEqual(
+        #     'Alignment (FASTA, clustalw, stockholm or phylip)',
+        #     alignment_input.get_attribute('placeholder'),
+        # )
 
         # She sees two radio buttons for DNA and protein
-        dna_button = self.browser.find_element_by_css_selector('input#id_seq_type_1')
-        self.assertIsNotNone(dna_button)
-        protein_button = self.browser.find_element_by_css_selector('input#id_seq_type_0')
-        self.assertIsNotNone(protein_button)
+        # dna_button = self.browser.find_element_by_css_selector('input#id_seq_type_1')
+        # self.assertIsNotNone(dna_button)
+        # protein_button = self.browser.find_element_by_css_selector('input#id_seq_type_0')
+        # self.assertIsNotNone(protein_button)
 
         # She sees that the DNA button is selected by default
-        self.assertEqual(dna_button.is_selected(), True)
+        # self.assertEqual(dna_button.is_selected(), True)
 
         # She clicks the Protein radio button and sees that it gets selected and the DNA button gets unselected
         protein_button.click()
