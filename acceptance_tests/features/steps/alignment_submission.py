@@ -66,7 +66,11 @@ def check_sequences_presence(context, sequence_type):
         context.sequence_lines = context.browser.find_elements_by_css_selector('.query_seq_display')
         assert context.sequence_lines, 'Got %s' % context.sequence_lines
     elif sequence_type == 'consensus':
-        context.consensus_seq = context.browser.find_elements_by_css_selector('.query_seq')[-1].find_elements_by_css_selector('.query_seq_display')
+        context.consensus_seq = context.browser.find_elements_by_css_selector(
+            '.query_seq'
+        )[-1].find_elements_by_css_selector(
+            '.query_seq_display'
+        )
         assert context.consensus_seq is not None, 'Got %s' % context.consensus_seq
 
 
@@ -95,9 +99,11 @@ def check_correct_sequences(context, alignment_type):
     seqs = file_to_string(displayed_seqs[alignment_type]).splitlines()
     for i, a in enumerate(seqs):
         if alignment_type in ['demo', 'protein']:
-            assert a == context.sequence_lines[i].text, 'Sequence %s is not as expected' % context.sequence_lines[i].text
+            assert a == context.sequence_lines[i].text,\
+                'Sequence %s is not as expected' % context.sequence_lines[i].text
         elif alignment_type == 'consensus':
-            assert a == context.consensus_seq[i].text, 'Sequence %s is not as expected' % context.consensus_seq[i].text
+            assert a == context.consensus_seq[i].text,\
+                'Sequence %s is not as expected' % context.consensus_seq[i].text
 
 
 @then(r'the correct (?P<alignment_type>.+) sequence metadata (?:are|is) displayed')
