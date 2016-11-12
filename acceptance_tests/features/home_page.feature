@@ -33,12 +33,25 @@ Feature: Formalign home page
     And there are radio buttons labeled "Input sequence type:"
     And there is a "DNA" input sequence type radio button
     And there is a "Protein" input sequence type radio button
-    And the "DNA" button is checked by default
-    And the "Protein" button is not checked by default
+    And the "DNA" button is checked
+    And the "Protein" button is not checked
     And there is a "Identity" consensus type radio button
     And there is a "Substitution Matrix" consensus type radio button
-    And the "Identity" button is checked by default
-    And the "Substitution Matrix" button is not checked by default
+    And the "Identity" button is checked
+    And the "Substitution Matrix" button is not checked
     And there is a "Demo" button named "custom_data" with the value "demo"
     And there is a "Submit" button named "custom_data" with the value "custom"
     And there is a "Formalign.eu" button with "/" href
+
+  Scenario Outline: User checks basic functionality of radio buttons
+    Given a user visits the URL "/"
+    When the user clicks the "<active>" radio button
+    Then the "<active>" button is checked
+    And the "<inactive>" button is not checked
+
+  Examples: buttons
+    | active              | inactive            |
+    | Protein             | DNA                 |
+    | DNA                 | Protein             |
+    | Identity            | Substitution Matrix |
+    | Substitution Matrix | Identity            |

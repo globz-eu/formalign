@@ -32,6 +32,7 @@ __author__ = 'Stefan Dieterle'
 def initialize_with_old_alignment(context):
     """
     creates an old alignment
+    :param context: behave context
     """
     if SERVER_URL == 'liveserver':
         add_old_alignment()
@@ -41,6 +42,7 @@ def initialize_with_old_alignment(context):
 def run_clean_alignments(context):
     """
     runs clean_alignments task
+    :param context: behave context
     """
     if SERVER_URL == 'liveserver':
         @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True, CELERY_ALWAYS_EAGER=True)
@@ -56,6 +58,7 @@ def run_clean_alignments(context):
 def visit_url(context, url):
     """
     visits the given URL from the base server URL
+    :param context: behave context
     :param url: URL to visit
     """
     if SERVER_URL == 'liveserver':

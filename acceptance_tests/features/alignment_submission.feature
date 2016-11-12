@@ -17,24 +17,29 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # =====================================================================
 
-Feature: Demo alignment
-  Tests submission of the demo alignment
+@pending
+@current
+Feature: Protein alignment submission
+  Checks the submission of a protein alignment
 
-  Scenario: User visits the Formalign home page and submits the demo alignment
+  Scenario: User submits a protein alignment
     Given a user visits the URL "/"
-    When the "Demo" button is pressed
-    Then the server's response status code is 200
-    And the user is redirected to the "sequence display" page
-    And there are demo sequences displayed
+    When the user clicks the "Protein" radio button
+    And the user pastes a protein alignment in the form text area
+    And the user clicks the "Submit" submit button
+    Then the user is redirected to the "sequence display" page
+    And there are protein sequences displayed
     And the sequences are displayed in lines of 80 characters
-    And the correct demo sequences are displayed
-    And the correct demo sequence metadata are displayed
-    And there is a "Render" button with "get" method and "align-display" action
-    And the action URL of the "Render" button contains a 16 character slug
+    And the correct protein sequences are displayed
+    And the correct protein sequence metadata are displayed
+    And there is a consensus sequence displayed
+    And the correct consensus sequence is displayed
+    And the correct consensus sequence metadata is displayed
 
-  Scenario: User submits the demo alignment and renders it
+  Scenario: User submits a protein alignment and renders it
     Given a user visits the URL "/"
-    When the "Demo" button is pressed
-    And the "Render" button is pressed
-    Then the server's response status code is 200
-    And the user is redirected to the "alignment display" page
+    When the user clicks the "Protein" radio button
+    And the user pastes a protein alignment in the form text area
+    And the user clicks the "Submit" submit button
+    And the user clicks the "Render" submit button
+    Then the user is redirected to the "alignment display" page
