@@ -20,14 +20,19 @@
 Feature: Formalign home page
   Checks that the Formalign home page is displayed and contains all expected elements
 
-  Scenario: User checks basic elements of Formalign home page
-    Given a user visits the URL "/"
-    Then the url is the home url
-    And the page title is "Formalign.eu Home"
+  Scenario Outline: User checks basic elements of Formalign home page
+    Given a user visits the URL "/" with "<browser>"
+    Then the user is on the "home" page
+    And the current URL is the "home" URL
     And the brand text says "Formalign.eu"
 
-  Scenario: User checks basic form elements of Formalign home page
-    Given a user visits the URL "/"
+  Examples: browsers
+     | browser |
+     | Chrome  |
+     | Firefox |
+
+  Scenario Outline: User checks basic form elements of Formalign home page
+    Given a user visits the URL "/" with "<browser>"
     Then there is a form with a label matching "Paste in your alignment:\n\(FASTA, clustalw, stockholm or phylip\)"
     And there is a text area with a placeholder saying "Alignment (FASTA, clustalw, stockholm or phylip)"
     And there are radio buttons labeled "Input sequence type:"
@@ -43,15 +48,24 @@ Feature: Formalign home page
     And there is a "Submit" button named "custom_data" with the value "custom"
     And there is a "Formalign.eu" button with "/" href
 
+  Examples: browsers
+     | browser |
+     | Chrome  |
+     | Firefox |
+
   Scenario Outline: User checks basic functionality of radio buttons
-    Given a user visits the URL "/"
+    Given a user visits the URL "/" with "<browser>"
     When the user clicks the "<active>" radio button
     Then the "<active>" button is checked
     And the "<inactive>" button is not checked
 
   Examples: buttons
-    | active              | inactive            |
-    | Protein             | DNA                 |
-    | DNA                 | Protein             |
-    | Identity            | Substitution Matrix |
-    | Substitution Matrix | Identity            |
+    | browser | active              | inactive            |
+    | Chrome  | Protein             | DNA                 |
+    | Chrome  | DNA                 | Protein             |
+    | Chrome  | Identity            | Substitution Matrix |
+    | Chrome  | Substitution Matrix | Identity            |
+    | Firefox | Protein             | DNA                 |
+    | Firefox | DNA                 | Protein             |
+    | Firefox | Identity            | Substitution Matrix |
+    | Firefox | Substitution Matrix | Identity            |

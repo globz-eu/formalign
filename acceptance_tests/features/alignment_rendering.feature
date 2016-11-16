@@ -17,25 +17,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # =====================================================================
 
-Feature: Demo alignment
-  Tests submission of the demo alignment
+Feature: Formalign alignment display page
+  Checks that the alignment display page displays the correct sequences
+  with the correct alignment formatting
 
-  Scenario: User visits the Formalign home page and submits the demo alignment
+  Scenario: User submits a custom alignment and renders it
     Given a user visits the URL "/"
-    When the user clicks the "Demo" submit button
-    Then the server's response status code is 200
-    And the user is redirected to the "sequence display" page
-    And the current URL is the "sequence display" URL
-    And there are demo sequences displayed
-    And the sequences are displayed in lines of 80 characters
-    And the correct demo sequences are displayed
-    And the correct demo sequence metadata are displayed
-    And there is a "Render" button with "get" method and "align-display" action
-    And the action URL of the "Render" button contains a 16 character slug
-
-  Scenario: User submits the demo alignment and renders it
-    Given a user visits the URL "/"
-    When the user clicks the "Demo" submit button
+    When the user clicks the "Protein" radio button
+    And the user pastes a protein alignment: "spa protein alignment" in the form text area
+    And the user clicks the "Submit" submit button
     And the user clicks the "Render" submit button
-    Then the server's response status code is 200
-    And the user is redirected to the "alignment display" page
+    Then the user is redirected to the "alignment display" page
+    And the alignment is displayed with 80 characters per line in blocks of 10 with sequence IDs
+    And the expected alignments are displayed
+    And the expected consensus sequence is displayed
+    And the sequence elements have the expected color classes
+    And there is a "Formalign.eu" button with "/" href

@@ -22,9 +22,10 @@ Feature: Formalign alignment validation
 
   Scenario Outline: User visits the Formalign home page and submits a series of invalid alignments
     Given a user visits the URL "/"
-    When a <sequence type> alignment: "<alignment>" is submitted
+    When the user clicks the "<sequence type>" radio button
+    And the user pastes a <sequence type> alignment: "<alignment>" in the form text area
+    And the user clicks the "Submit" submit button
     Then the user stays on the "home" page
-    And the server's response status code is 200
     And the current URL is the "home" URL
     And the user should see the error message: <error message>
 

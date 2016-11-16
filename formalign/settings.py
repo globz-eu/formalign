@@ -223,6 +223,8 @@ if SERVER_URL == 'liveserver':
 else:
     TEST_CASE = TestCase
 
+TEST = json_setting('TEST')
+
 # Heroku configuration
 if HEROKU:
     MIDDLEWARE_CLASSES.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')

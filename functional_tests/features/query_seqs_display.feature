@@ -21,11 +21,12 @@ Feature: Formalign query sequences display page
   Checks that the query sequences display page displays the sequences with the
   correct formatting
 
-  Scenario: User visits the Formalign home page and submits a custom alignment
+  Scenario: User visits the Formalign home page and submits a protein alignment
     Given a user visits the URL "/"
-    When a custom protein alignment: "spa protein alignment" is submitted
+    When a protein alignment: "spa protein alignment" is submitted
     Then the server's response status code is 200
     And the user is redirected to the "sequence display" page
+    And the current URL is the "sequence display" URL
     And there are protein sequences displayed
     And the sequences are displayed in lines of 80 characters
     And the correct protein sequences are displayed
@@ -39,8 +40,8 @@ Feature: Formalign query sequences display page
 
   Scenario: User submits a custom alignment and renders it
     Given a user visits the URL "/"
-    When a custom protein alignment: "spa protein alignment" is submitted
-    And the "Render" button is pressed
+    When a protein alignment: "spa protein alignment" is submitted
+    And the user clicks the "Render" submit button
     Then the server's response status code is 200
     And the user is redirected to the "alignment display" page
     And there is a "Formalign.eu" button with "/" href

@@ -494,7 +494,7 @@ class AlignDisplayTestCase(TestCase, AssertHTMLMixin):
         # check color classes
         for i, al in enumerate(alignment):
             al_li = ['residue S%s' % a for a in al.letter_annotations['eq']]
-            self.assertEqual(al_li, re_seqs[i], re_seqs)
+            self.assertEqual(al_li, re_seqs[i], re_seqs[i])
 
 
 class AlignDisplayTestCaseSpeed(TestCase, AssertHTMLMixin):

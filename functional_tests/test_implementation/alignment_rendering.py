@@ -19,17 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from behave import then
-
-from helper_funcs.helpers_test import file_to_string
-
 __author__ = 'Stefan Dieterle'
 
 
-@then(r'the alignment is displayed with 80 characters per line in blocks of 10 with sequence IDs')
-def check_alignment_formatting(context):
-    seqs_meta = file_to_string('spa_protein_alignment_meta.txt').splitlines()
-    tables = context.display.find_class('align_table')
+def alignment_formatting(seqs_meta, tables):
+    """
+    tests that the alignments are displayed with the correct formatting
+    :param seqs_meta: list of sequence meta data
+    :param tables: lxml html object (align_table elements)
+    """
     for nr, t in enumerate(tables):
         lines = t.find_class('al_ln')
         for i, l in enumerate(lines):
@@ -49,3 +47,47 @@ def check_alignment_formatting(context):
                 for j in range(1, len(l)):
                     assert l[j].attrib.get('class') == 'residue S0' or l[j].attrib.get('class') == 'residue S1', \
                         l[j].attrib.get('class')
+
+
+def get_displayed_seqs(elems, alignment_length, cons=False, annot=False):
+    """
+    gets and recomposes sequences displayed on align-display page
+    :return: re_seqs: recomposed sequences
+    """
+    # get displayed sequences
+    seq_disp = []
+    for els in elems:
+        seq_disp_line = []
+        for e in els.cssselect('td')[:-1]:
+            if e.attrib.get('class') in ['residue S0', 'residue S1']:
+                if annot:
+                    seq_disp_line.append(e.attrib.get('class'))
+                else:
+                    seq_disp_line.append(e.text_content())
+        if seq_disp_line:
+            seq_disp.append(seq_disp_line)
+
+    # recompose sequences
+    if cons:
+        cat_re_seq = []
+        for j in range(alignment_length - 1, len(seq_disp), alignment_length):
+            re_seq = [seq_disp[j] for j in range(alignment_length - 1, len(seq_disp), alignment_length)]
+            cat_re_seq = []
+            for r in re_seq:
+                cat_re_seq.extend(r)
+        return cat_re_seq
+    else:
+        re_seqs = []
+        cat_re_seq = []
+        if annot:
+            length = alignment_length
+        else:
+            length = alignment_length + 1
+        for i in range(0, length):
+            for j in range(i, len(seq_disp), length):
+                re_seq = [seq_disp[j] for j in range(i, len(seq_disp), length)]
+                cat_re_seq = []
+                for r in re_seq:
+                    cat_re_seq.extend(r)
+            re_seqs.append(cat_re_seq)
+        return re_seqs

@@ -19,15 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-# from selenium import webdriver
-# from formalign.settings import CHROME_DRIVER
+from functional_tests.test_implementation.steps.home_page import *  # noqa
+from functional_tests.test_implementation.steps.alignment_submission import *  # noqa
+from functional_tests.test_implementation.steps.alignment_rendering import *  # noqa
+from functional_tests.test_implementation.steps.validation import *  # noqa
 
 __author__ = 'Stefan Dieterle'
-
-#
-# def before_scenario(context, scenario):
-#     context.browser = webdriver.Chrome(CHROME_DRIVER)
-
-
-def after_scenario(context, scenario):
-    context.browser.quit()

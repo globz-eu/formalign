@@ -28,9 +28,9 @@ __author__ = 'Stefan Dieterle'
 use_step_matcher('re')
 
 
-def before_feature(context, feature):
+def before_scenario(context, scenario):
     context.client = requests.Session()
 
 
-def after_feature(context, feature):
+def after_scenario(context, scenario):
     context.client.close()

@@ -23,24 +23,24 @@ Feature: Formalign home page
   Scenario: User checks basic elements of Formalign home page
     Given a user visits the URL "/"
     When the user looks at the page
+    Then the user is on the "home" page
     Then the server's response status code is 200
-    And the url is the home url
-    And the page title is "Formalign.eu Home"
+    And the current URL is the "home" URL
     And the brand text says "Formalign.eu"
 
   Scenario: User checks basic form elements of Formalign home page
     Given a user visits the URL "/"
     When the user looks at the page
     Then the server's response status code is 200
-    And there is a form labeled "Paste in your alignment:(FASTA, clustalw, stockholm or phylip)"
+    And there is a form with a label matching "Paste in your alignment:\(FASTA, clustalw, stockholm or phylip\)"
     And there is a text area with a placeholder saying "Alignment (FASTA, clustalw, stockholm or phylip)"
     And there are radio buttons labeled "Input sequence type:"
     And there is a "DNA" input sequence type radio button
     And there is a "Protein" input sequence type radio button
     And the "DNA" button is checkable
     And the "Protein" button is checkable
-    And the "DNA" button is checked by default
-    And the "Protein" button is not checked by default
+    And the "DNA" button is checked
+    And the "Protein" button is not checked
     And there is a "Demo" button named "custom_data" with the value "demo"
     And there is a "Submit" button named "custom_data" with the value "custom"
     And there is a "Formalign.eu" button with "/" href
@@ -53,10 +53,9 @@ Feature: Formalign home page
     And there is a "Substitution Matrix" consensus type radio button
     And the "Identity" button is checkable
     And the "Substitution Matrix" button is checkable
-    And the "Identity" button is checked by default
-    And the "Substitution Matrix" button is not checked by default
+    And the "Identity" button is checked
+    And the "Substitution Matrix" button is not checked
 
-  @skip
   @pending
   Scenario Outline: User checks consensus choices
     Given a user visits the URL "/"
@@ -70,7 +69,6 @@ Feature: Formalign home page
     | consensus 70%    |
     | consensus 100%   |
 
-  @skip
   @pending
   Scenario Outline: User does not see hidden consensus choices
     Given a user visits the URL "/"
