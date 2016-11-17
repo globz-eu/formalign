@@ -47,7 +47,7 @@ def visit_url(context, url):
 
 
 @given(r'a user visits the URL "(?P<url>[^"]*)" with "(?P<browser>[^"]*)"')
-def visit_url(context, url, browser):
+def visit_url_with_browser(context, url, browser):
     """
     browses to given URL
     :param context: behave context
