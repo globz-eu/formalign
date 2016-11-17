@@ -43,7 +43,7 @@ python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
     <build-extensions>
       <extension id="BUILD_EXT_1" type="xml-report-plugin">
         <parameters>
-          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
+          <param name="xmlReportParsing.reportDirs" value="reports/TESTS-*.xml" />
           <param name="xmlReportParsing.reportType" value="junit" />
           <param name="xmlReportParsing.verboseOutput" value="true" />
         </parameters>
