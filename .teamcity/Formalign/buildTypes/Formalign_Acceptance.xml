@@ -4,7 +4,7 @@
   <description>runs selenium acceptance tests</description>
   <settings>
     <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="artifactRules" value="reports =&gt; reports" />
       <option name="shouldFailBuildOnBadExitCode" value="false" />
     </options>
     <parameters />
