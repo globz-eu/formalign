@@ -41,9 +41,10 @@ def check_alignment_formatting(context):
     tables = None
     seqs_meta = file_to_string('spa_protein_alignment_meta.txt').splitlines()
     if TEST == 'acceptance':
-        align_display_html = context.browser.find_element_by_css_selector('.align_display').get_attribute('innerHTML')
-        align_display = html.parse(StringIO(align_display_html)).getroot()
-        tables = align_display.find_class('align_table')
+        align_display_elem = context.browser.find_element_by_css_selector('.align_display')
+        align_display = context.browser.execute_script('return arguments[0].innerHTML', align_display_elem)
+        align_display_html = html.parse(StringIO(align_display)).getroot()
+        tables = align_display_html.find_class('align_table')
     elif TEST == 'functional':
         tables = context.display.find_class('align_table')
 
@@ -60,9 +61,10 @@ def check_alignment_sequences(context):
     alignment_list = [[c for c in a] for a in alignment.split('\n')[:-1]]
     elems = None
     if TEST == 'acceptance':
-        align_display = context.browser.find_element_by_css_selector('.align_display').get_attribute('innerHTML')
-        display = html.parse(StringIO(align_display)).getroot()
-        elems = display.cssselect('tr')
+        align_display_elem = context.browser.find_element_by_css_selector('.align_display')
+        align_display = context.browser.execute_script('return arguments[0].innerHTML', align_display_elem)
+        align_display_html = html.parse(StringIO(align_display)).getroot()
+        elems = align_display_html.cssselect('tr')
     elif TEST == 'functional':
         elems = context.display.cssselect('tr')
 
@@ -82,9 +84,10 @@ def check_consensus_sequence(context):
     alignment_list = [[c for c in a] for a in alignment.split('\n')[:-1]]
     elems = None
     if TEST == 'acceptance':
-        align_display = context.browser.find_element_by_css_selector('.align_display').get_attribute('innerHTML')
-        display = html.parse(StringIO(align_display)).getroot()
-        elems = display.cssselect('tr')
+        align_display_elem = context.browser.find_element_by_css_selector('.align_display')
+        align_display = context.browser.execute_script('return arguments[0].innerHTML', align_display_elem)
+        align_display_html = html.parse(StringIO(align_display)).getroot()
+        elems = align_display_html.cssselect('tr')
     elif TEST == 'functional':
         elems = context.display.cssselect('tr')
 
@@ -105,9 +108,10 @@ def check_alignment_sequences_annotation(context):
     alignment_list = [['residue S%s' % a for a in al] for al in alignment.split('\n')[:-1]]
     elems = None
     if TEST == 'acceptance':
-        align_display = context.browser.find_element_by_css_selector('.align_display').get_attribute('innerHTML')
-        display = html.parse(StringIO(align_display)).getroot()
-        elems = display.cssselect('tr')
+        align_display_elem = context.browser.find_element_by_css_selector('.align_display')
+        align_display = context.browser.execute_script('return arguments[0].innerHTML', align_display_elem)
+        align_display_html = html.parse(StringIO(align_display)).getroot()
+        elems = align_display_html.cssselect('tr')
     elif TEST == 'functional':
         elems = context.display.cssselect('tr')
 
