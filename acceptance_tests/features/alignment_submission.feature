@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # =====================================================================
 
-@current
 Feature: Protein alignment submission
   Checks the submission of a protein alignment
 
@@ -48,7 +47,8 @@ Feature: Protein alignment submission
     When the user clicks the "Protein" radio button
     And the user pastes a protein alignment: "spa protein alignment" in the form text area
     And the user clicks the "Submit" submit button
-    And the user clicks the "Render" submit button
+    Then the user is redirected to the "sequence display" page
+    When the user clicks the "Render" submit button
     Then the user is redirected to the "alignment display" page
     And the current URL is the "alignment display" URL
 

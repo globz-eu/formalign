@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 from formalign.settings import CHROME_DRIVER, FIREFOX_BINARY, SERVER_URL, TEST
 import re
 from behave import given, when, then, use_step_matcher
@@ -113,12 +111,6 @@ def click_button(context, choice_type, button_type):
         elif button_type == 'submit':
             button = context.browser.find_element_by_id(submit_button[choice_type.lower()]['id'])
             button.click()
-            try:
-                WebDriverWait(context.browser, 10).until(
-                    ec.title_is(submit_button[choice_type.lower()]['redir_title'])
-                )
-            finally:
-                pass
 
     elif TEST == 'functional' and button_type == 'submit':
         if choice_type == 'Demo':

@@ -27,7 +27,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from helper_funcs.helpers_test import file_to_string
 from lxml import html
-from lxml.etree import XMLSyntaxError
 from io import StringIO
 from formalign.settings import TEST
 
@@ -123,7 +122,7 @@ def check_sequences_presence(context, sequence_type):
     """
     if sequence_type in ['protein', 'demo']:
         if TEST == 'acceptance':
-            body_elem = context.browser.find_element_by_css_selector('body')  # .get_attribute('innerHTML')
+            body_elem = context.browser.find_element_by_css_selector('body')
             body = context.browser.execute_script('return arguments[0].innerHTML', body_elem)
             body_html = html.parse(StringIO(body)).getroot()
             context.sequence_lines = body_html.cssselect('p[class="query_seq_display"]')

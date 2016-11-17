@@ -21,7 +21,7 @@ Feature: Formalign alignment validation
   Checks that alignments are properly validated on submission
 
   Scenario Outline: User visits the Formalign home page and submits a series of invalid alignments
-    Given a user visits the URL "/"
+    Given a user visits the URL "/" with "Chrome"
     When the user clicks the "<sequence type>" radio button
     And the user pastes a <sequence type> alignment: "<alignment>" in the form text area
     And the user clicks the "Submit" submit button

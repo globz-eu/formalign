@@ -22,7 +22,7 @@ Feature: Formalign alignment display page
   with the correct alignment formatting
 
   Scenario: User submits a custom alignment and renders it
-    Given a user visits the URL "/"
+    Given a user visits the URL "/" with "Chrome"
     When the user clicks the "Protein" radio button
     And the user pastes a protein alignment: "spa protein alignment" in the form text area
     And the user clicks the "Submit" submit button
