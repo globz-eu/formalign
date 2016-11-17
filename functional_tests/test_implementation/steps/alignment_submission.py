@@ -98,7 +98,8 @@ def check_redirection(context, page):
     pages = {
         'sequence display': 'Formalign.eu Sequence Display',
         'alignment display': 'Formalign.eu Alignment Display',
-        'home': 'Formalign.eu Home'
+        'home': 'Formalign.eu Home',
+        '404': 'Formalign.eu Error 404',
     }
     title = ''
     if TEST == 'acceptance':

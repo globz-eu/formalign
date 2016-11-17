@@ -19,13 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from behave import given, when
+from behave import given, use_step_matcher
 from formalign.settings import SERVER_URL
 from initialize.init_data import add_old_alignment
 from base.tasks import clean_alignments
 from django.test.utils import override_settings
 
 __author__ = 'Stefan Dieterle'
+
+
+use_step_matcher('re')
 
 
 @given(r'an old alignment with slug "ToOldAlignment01" was present')
@@ -52,17 +55,3 @@ def run_clean_alignments(context):
         def clean():
             pass
     clean()
-
-
-@when(r'a user visits the URL "(?P<url>[^"]*)"')
-def visit_url(context, url):
-    """
-    visits the given URL from the base server URL
-    :param context: behave context
-    :param url: URL to visit
-    """
-    if SERVER_URL == 'liveserver':
-        context.home_url = context.base_url
-    else:
-        context.home_url = SERVER_URL
-    context.r = context.client.get(context.home_url + url)
