@@ -20,7 +20,7 @@ workon formalign
 cp $HOME/settings/settings.json ./settings.json
 cp $HOME/settings/behave.ini ./behave.ini
 kill -9 $(pgrep chrome)
-sudo -u postgres psql postgres -c 'DROP DATABASE IF EXISTS test_formalign;'
+$HOME/settings/drop_db.sh
 python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
