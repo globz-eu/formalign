@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # =====================================================================
 
-@current
 Feature: Formalign alignment validation
   Checks that alignments are properly validated on submission
 
