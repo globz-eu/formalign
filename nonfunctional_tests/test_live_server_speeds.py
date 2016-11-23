@@ -68,5 +68,5 @@ class BasicUserSpeedLiveServerTestCase(StaticLiveServerTestCase):
                 a_display.append(roundtrip2)
 
                 self.client.close()
-            self.assertTrue(mean(q_display) <= 2, 'query sequences display of %s took: %s' % (f, mean(q_display)))
-            self.assertTrue(mean(a_display) <= 2, 'alignment display of %s took: %s' % (f, mean(a_display)))
+            self.assertTrue(mean(q_display) <= 3, 'query sequences display of %s took: %s' % (f, mean(q_display)))
+            self.assertTrue(mean(a_display) <= 3, 'alignment display of %s took: %s' % (f, mean(a_display)))
