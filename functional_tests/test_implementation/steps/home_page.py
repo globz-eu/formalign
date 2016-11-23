@@ -56,12 +56,12 @@ def visit_url_with_browser(context, url, browser):
     """
     context.browser_name = browser
     if browser == 'Chrome':
-        context.browser = webdriver.Chrome(CHROME_DRIVER)
+        caps = webdriver.DesiredCapabilities.CHROME
+        context.browser = webdriver.Remote('http://selenium-hub:4444/wd/hub', caps.copy())
     elif browser == 'Firefox':
-        caps = DesiredCapabilities.FIREFOX
+        caps = webdriver.DesiredCapabilities.FIREFOX
         caps['marionette'] = True
-        caps['binary'] = FIREFOX_BINARY
-        context.browser = webdriver.Firefox(capabilities=caps)
+        context.browser = webdriver.Remote('http://selenium-hub:4444/wd/hub', caps.copy())
     if SERVER_URL == 'liveserver':
         context.home_url = context.base_url
     else:
@@ -338,12 +338,16 @@ def check_link_href(context, link_text, href):
     """
     if TEST == 'acceptance':
         home_button = context.browser.find_elements_by_css_selector('a[class="navbar-brand"]')
+        if SERVER_URL == 'liveserver':
+            href_expected = context.base_url + href
+        else:
+            href_expected = SERVER_URL + href
         assert link_text == home_button[0].text, 'Expected: %s\nGot: %s' % (link_text, home_button[0].text)
         browser_href = ''
         if context.browser_name == 'Firefox':
-            browser_href = href
+            browser_href = href_expected
         elif context.browser_name == 'Chrome':
-            browser_href = context.home_url + href
+            browser_href = href_expected
         assert browser_href == home_button[0].get_attribute('href'), \
             '\nExpected: %s\nGot: %s' % (browser_href, home_button[0].get_attribute('href'))
     elif TEST == 'functional':

@@ -19,15 +19,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =====================================================================
 """
 
-from behave import then
+from behave import then, use_step_matcher
+from formalign.settings import TEST
 
 __author__ = 'Stefan Dieterle'
 
 
+use_step_matcher('re')
+
+
 @then(r'there is a "(?P<dropdown>[^"]*)" dropdown menu')
 def dropdown_present(context, dropdown):
-    dropdown_menu = {'consensus': context.display.cssselect('input[id="id_consensus_select"]')[0].label.text_content()}
-    assert 'consensus' == dropdown_menu[dropdown], 'Got %s' % dropdown_menu[dropdown]
+    dropdown_menu_label = ''
+    if TEST == 'acceptance':
+        context.dropdown_menu = {
+            'consensus': context.browser.get_element_by_css_selector('#id_consensus_select')
+        }
+        dropdown_menu_label = context.dropdown_menu[dropdown].label.text
+    elif TEST == 'functional':
+        context.dropdown_menu = {
+            'consensus': context.display.cssselect('input[id="id_consensus_select"]')[0]
+        }
+        dropdown_menu_label = context.dropdown_menu[dropdown].label.text_content()
+    assert 'consensus' == dropdown_menu_label, 'Got %s' % dropdown_menu_label
 
 
 @then(r'the "(?P<dropdown>[^"]*)" dropdown menu contains (?P<consensus_choice>.*)')

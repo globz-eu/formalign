@@ -57,9 +57,10 @@ def paste_alignment(context, sequence_type, alignment_name):
         'invalid FASTA format': sequence_type + '_invalid_fasta.fasta',
     }
     alignment_string = file_to_string(alignments[alignment_name]) if alignments[alignment_name] else ''
-    pyperclip.copy(alignment_string)
+    # pyperclip.copy(alignment_string)
     alignment_input = context.browser.find_element_by_css_selector('textarea#id_align_input')
-    alignment_input.send_keys(Keys.CONTROL, 'v')
+    alignment_input.send_keys(alignment_string)
+    # alignment_input.send_keys(Keys.CONTROL, 'v')
 
 
 @when(r'a (?P<sequence_type>.*) alignment: "(?P<alignment_name>[^"]*)" is submitted')

@@ -33,7 +33,8 @@ Feature: Formalign home page
 
   Scenario Outline: User checks basic form elements of Formalign home page
     Given a user visits the URL "/" with "<browser>"
-    Then there is a form with a label matching "Paste in your alignment:\n\(FASTA, clustalw, stockholm or phylip\)"
+    Then the user is on the "home" page
+    And there is a form with a label matching "Paste in your alignment:\n\(FASTA, clustalw, stockholm or phylip\)"
     And there is a text area with a placeholder saying "Alignment (FASTA, clustalw, stockholm or phylip)"
     And there are radio buttons labeled "Input sequence type:"
     And there is a "DNA" input sequence type radio button
@@ -55,6 +56,7 @@ Feature: Formalign home page
 
   Scenario Outline: User checks basic functionality of radio buttons
     Given a user visits the URL "/" with "<browser>"
+    Then the user is on the "home" page
     When the user clicks the "<active>" radio button
     Then the "<active>" button is checked
     And the "<inactive>" button is not checked
@@ -69,3 +71,30 @@ Feature: Formalign home page
     | Firefox | DNA                 | Protein             |
     | Firefox | Identity            | Substitution Matrix |
     | Firefox | Substitution Matrix | Identity            |
+
+  @pending
+  Scenario Outline: User checks consensus choices
+    Given a user visits the URL "/" with "<browser>"
+    Then the user is on the "home" page
+    And there is a "consensus" dropdown menu
+    And the "consensus" dropdown menu contains <consensus_choice>
+
+  Examples: % identity
+    | browser | consensus_choice |
+    | Chrome  | consensus 70%    |
+    | Chrome  | consensus 100%   |
+    | Firefox | consensus 70%    |
+    | Firefox | consensus 100%   |
+
+  @pending
+  Scenario Outline: User does not see hidden consensus choices
+    Given a user visits the URL "/" with "<browser>"
+    Then the user is on the "home" page
+    And the "consensus" dropdown menu contents <hidden_consensus_choice> are hidden
+
+  Examples: substitution matrix
+    | browser | hidden_consensus_choice |
+    | Chrome  | blosum 62               |
+    | Chrome  | pam 250                 |
+    | Firefox | blosum 62               |
+    | Firefox | pam 250                 |
