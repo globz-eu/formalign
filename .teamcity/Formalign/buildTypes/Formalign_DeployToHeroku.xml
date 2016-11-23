@@ -12,13 +12,13 @@
       <runner id="RUNNER_9" name="deploy to heroku" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
+heroku ps:scale web=1 --app $(cat $HOME/settings/heroku-app.txt)
+heroku ps:scale worker=1 --app $(cat $HOME/settings/heroku-app.txt)
 cp $HOME/settings/.env ./
 cp $HOME/settings/runtime.txt ./
 cp $HOME/settings/settings_heroku.json ./settings.json
 git add .
 git commit -am "$(date)"
-heroku ps:scale web=1 --app $(cat $HOME/settings/heroku-app.txt)
-heroku ps:scale worker=1 --app $(cat $HOME/settings/heroku-app.txt)
 heroku git:remote -a $(cat $HOME/settings/heroku-app.txt) --ssh-git
 git push --force heroku master
 heroku run 'python manage.py collectstatic --no-input -c && python manage.py makemigrations && python manage.py migrate' --app $(cat $HOME/settings/heroku-app.txt)
