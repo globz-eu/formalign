@@ -12,15 +12,12 @@
       <runner id="RUNNER_7" name="Acceptance Tests" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
-export DISPLAY=':0'
 export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
-cp $HOME/settings/settings.json ./settings.json
-cp $HOME/settings/behave.ini ./behave.ini
-kill -9 $(pgrep chrome)
-$HOME/settings/drop_db.sh
+cp $HOME/settings/settings_acceptance.json ./settings.json
+cp $HOME/settings/behave_acceptance.ini ./behave.ini
 python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
