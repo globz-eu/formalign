@@ -51,12 +51,6 @@ python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --se
       </extension>
     </build-extensions>
     <dependencies>
-      <depend-on sourceBuildTypeId="Formalign_DeployToTest">
-        <options>
-          <option name="take-started-build-with-same-revisions" value="true" />
-          <option name="take-successful-builds-only" value="true" />
-        </options>
-      </depend-on>
       <depend-on sourceBuildTypeId="Formalign_Build">
         <options>
           <option name="take-started-build-with-same-revisions" value="true" />
@@ -71,6 +65,13 @@ python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --se
       </depend-on>
       <depend-on sourceBuildTypeId="Formalign_FunctionalLocal">
         <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_DeployToTest">
+        <options>
+          <option name="run-build-on-the-same-agent" value="true" />
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
         </options>
