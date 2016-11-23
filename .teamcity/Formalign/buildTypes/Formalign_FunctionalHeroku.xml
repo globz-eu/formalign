@@ -13,6 +13,9 @@
       <runner id="RUNNER_5" name="Functional Tests (against test server)" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
+heroku ps:scale web=1 --app $(cat $HOME/settings/heroku-app.txt)
+heroku ps:scale worker=1 --app $(cat $HOME/settings/heroku-app.txt)
+sleep 60
 export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
@@ -21,7 +24,9 @@ cp $HOME/settings/settings_heroku_functional.json ./settings.json
 cp $HOME/settings/behave.ini ./behave.ini
 export REDIS_URL='redis://localhost:6379/0'
 $HOME/settings/drop_test_db.sh
-python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --settings=settings_admin]]></param>
+python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --settings=settings_admin
+heroku ps:scale web=0 --app $(cat $HOME/settings/heroku-app.txt)
+heroku ps:scale worker=0 --app $(cat $HOME/settings/heroku-app.txt)]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
