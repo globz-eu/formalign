@@ -4,7 +4,7 @@
   <description>runs selenium acceptance tests</description>
   <settings>
     <options>
-      <option name="artifactRules" value="cover =&gt; coverage&#xA;nosetests.xml" />
+      <option name="artifactRules" value="reports =&gt; reports" />
       <option name="shouldFailBuildOnBadExitCode" value="false" />
     </options>
     <parameters />
@@ -12,14 +12,13 @@
       <runner id="RUNNER_7" name="Acceptance Tests" type="simpleRunner">
         <parameters>
           <param name="script.content"><![CDATA[#! /bin/bash
-export DISPLAY=':0'
 export WORKON_HOME=$HOME/.envs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
-cp $HOME/settings/settings.json ./settings.json
-kill -9 $(pgrep chrome)
-python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
+cp $HOME/settings/settings_acceptance.json ./settings.json
+cp $HOME/settings/behave_acceptance.ini ./behave.ini
+python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
         </parameters>
@@ -29,7 +28,7 @@ python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
       <vcs-entry-ref root-id="Formalign_Formalign" />
     </vcs-settings>
     <requirements>
-      <equals id="RQ_3" name="teamcity.agent.name" value="teamcity-agent2" />
+      <equals id="RQ_3" name="teamcity.agent.name" value="teloche" />
     </requirements>
     <build-triggers>
       <build-trigger id="TRIGGER_2" type="buildDependencyTrigger">
@@ -42,26 +41,14 @@ python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
     <build-extensions>
       <extension id="BUILD_EXT_1" type="xml-report-plugin">
         <parameters>
-          <param name="xmlReportParsing.reportDirs" value="nosetests.xml" />
+          <param name="xmlReportParsing.reportDirs" value="reports/TESTS-*.xml" />
           <param name="xmlReportParsing.reportType" value="junit" />
           <param name="xmlReportParsing.verboseOutput" value="true" />
         </parameters>
       </extension>
     </build-extensions>
     <dependencies>
-      <depend-on sourceBuildTypeId="Formalign_DeployToTest">
-        <options>
-          <option name="take-started-build-with-same-revisions" value="true" />
-          <option name="take-successful-builds-only" value="true" />
-        </options>
-      </depend-on>
       <depend-on sourceBuildTypeId="Formalign_Build">
-        <options>
-          <option name="take-started-build-with-same-revisions" value="true" />
-          <option name="take-successful-builds-only" value="true" />
-        </options>
-      </depend-on>
-      <depend-on sourceBuildTypeId="Formalign_InstallDesktopRequirements">
         <options>
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
@@ -69,6 +56,20 @@ python -m nose acceptance_tests.selenium_tests --with-xunit]]></param>
       </depend-on>
       <depend-on sourceBuildTypeId="Formalign_FunctionalLocal">
         <options>
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_DeployToTest">
+        <options>
+          <option name="run-build-on-the-same-agent" value="true" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Formalign_InstallDesktopRequirements">
+        <options>
+          <option name="run-build-on-the-same-agent" value="true" />
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
         </options>
