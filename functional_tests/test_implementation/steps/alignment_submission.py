@@ -20,9 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from behave import when, then, use_step_matcher
-import pyperclip
 import re
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from helper_funcs.helpers_test import file_to_string

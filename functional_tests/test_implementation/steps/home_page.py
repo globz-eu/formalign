@@ -20,8 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from formalign.settings import CHROME_DRIVER, FIREFOX_BINARY, SERVER_URL, TEST
+from formalign.settings import SERVER_URL, TEST
 import re
 from behave import given, when, then, use_step_matcher
 from lxml import html
