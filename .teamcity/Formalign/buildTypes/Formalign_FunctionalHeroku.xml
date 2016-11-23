@@ -58,6 +58,7 @@ python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --se
       </depend-on>
       <depend-on sourceBuildTypeId="Formalign_DeployToHeroku">
         <options>
+          <option name="run-build-on-the-same-agent" value="true" />
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
         </options>
