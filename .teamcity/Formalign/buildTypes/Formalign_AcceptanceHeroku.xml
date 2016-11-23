@@ -64,14 +64,15 @@ python manage.py behave --tags ~@skip --tags ~@pending --no-skipped --junit --se
           <option name="take-successful-builds-only" value="true" />
         </options>
       </depend-on>
-      <depend-on sourceBuildTypeId="Formalign_InstallDesktopRequirements">
+      <depend-on sourceBuildTypeId="Formalign_FunctionalHeroku">
         <options>
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
         </options>
       </depend-on>
-      <depend-on sourceBuildTypeId="Formalign_FunctionalHeroku">
+      <depend-on sourceBuildTypeId="Formalign_InstallDesktopRequirements">
         <options>
+          <option name="run-build-on-the-same-agent" value="true" />
           <option name="take-started-build-with-same-revisions" value="true" />
           <option name="take-successful-builds-only" value="true" />
         </options>
