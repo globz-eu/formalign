@@ -59,6 +59,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon formalign
 cp $HOME/settings/settings_live_server.json ./settings.json
 cp $HOME/settings/behave.ini ./behave.ini
+$HOME/settings/drop_test_db.sh
 python manage.py behave --tags ~@pending --tags ~@skip --no-skipped --junit --settings=settings_admin]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="use.custom.script" value="true" />
