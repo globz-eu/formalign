@@ -7,13 +7,10 @@
     <build-runners>
       <runner id="RUNNER_4" name="Deploy on local test server" type="ssh-exec-runner">
         <parameters>
-          <param name="jetbrains.buildServer.deployer.targetUrl" value="192.168.1.91" />
-          <param name="jetbrains.buildServer.deployer.username" value="chef_user" />
+          <param name="jetbrains.buildServer.deployer.targetUrl" value="formalign-test" />
           <param name="jetbrains.buildServer.sshexec.authMethod" value="DEFAULT_KEY" />
           <param name="jetbrains.buildServer.sshexec.command" value="sudo chef-client" />
-          <param name="secure:jetbrains.buildServer.deployer.password" value="zxx1dbfc67c704bf2a5000b38efea86eceecae32ff86f8ee6e6a27480be83c72752aa83b0e05c344335775d03cbe80d301b" />
           <param name="teamcity.step.mode" value="default" />
-          <param name="teamcitySshKey" value="teamcity server ssh key" />
         </parameters>
       </runner>
     </build-runners>
