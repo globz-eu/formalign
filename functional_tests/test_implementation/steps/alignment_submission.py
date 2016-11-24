@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from behave import when, then, use_step_matcher
 import re
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from helper_funcs.helpers_test import file_to_string
 from lxml import html
@@ -55,10 +56,8 @@ def paste_alignment(context, sequence_type, alignment_name):
         'invalid FASTA format': sequence_type + '_invalid_fasta.fasta',
     }
     alignment_string = file_to_string(alignments[alignment_name]) if alignments[alignment_name] else ''
-    # pyperclip.copy(alignment_string)
     alignment_input = context.browser.find_element_by_css_selector('textarea#id_align_input')
     alignment_input.send_keys(alignment_string)
-    # alignment_input.send_keys(Keys.CONTROL, 'v')
 
 
 @when(r'a (?P<sequence_type>.*) alignment: "(?P<alignment_name>[^"]*)" is submitted')
@@ -95,22 +94,29 @@ def check_redirection(context, page):
     :param page: expected redirection page
     """
     pages = {
-        'sequence display': 'Formalign.eu Sequence Display',
-        'alignment display': 'Formalign.eu Alignment Display',
-        'home': 'Formalign.eu Home',
-        '404': 'Formalign.eu Error 404',
+        'sequence display': {'title': 'Formalign.eu Sequence Display', 'slow': '#query_seqs_end'},
+        'alignment display': {'title': 'Formalign.eu Alignment Display', 'slow': '#seqs_end'},
+        'home': {'title': 'Formalign.eu Home', 'slow': ''},
+        '404': {'title': 'Formalign.eu Error 404', 'slow': ''},
     }
     title = ''
     if TEST == 'acceptance':
+        if pages[page]['slow']:
+            try:
+                WebDriverWait(context.browser, 10).until(
+                    ec.presence_of_element_located((By.CSS_SELECTOR, pages[page]['slow']))
+                )
+            finally:
+                pass
         try:
             WebDriverWait(context.browser, 10).until(
-                ec.title_is(pages[page])
+                ec.title_is(pages[page]['title'])
             )
         finally:
             title = context.browser.title
     elif TEST == 'functional':
         title = context.display.cssselect('title[id="head-title"]')[0].text_content()
-    assert pages[page] == title, 'Expected: %s\nGot: %s' % (pages[page], title)
+    assert pages[page]['title'] == title, 'Expected: %s\nGot: %s' % (pages[page]['title'], title)
 
 
 @then(r'there (?:are|is a) (?P<sequence_type>.*) sequences? displayed')

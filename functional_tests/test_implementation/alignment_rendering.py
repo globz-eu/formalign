@@ -34,7 +34,8 @@ def alignment_formatting(seqs_meta, tables):
             assert 'seq_id' == l[0].attrib.get('class'), 'Unexpected class: %s' % l[0].attrib.get('class')
             assert seqs_meta[i] == l[0].text_content(), 'Unexpected meta data: %s' % l[0].text_content()
             assert len(l[1:]) <= 89, 'Line length was: %s' % len(l[1:])
-            assert 'display_artifact' == l[-1].attrib.get('class')
+            assert 'display_artifact' == l[-1].attrib.get('class'), \
+                'Expected: display_artifact\nGot: %s' % l[-1].attrib.get('class')
             if len(l[1:]) >= 12:
                 for j in range(1, len(l[1:]) % 10):
                     assert 'block_sep' == l[j * 11].attrib.get('class'), \
