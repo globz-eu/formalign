@@ -30,31 +30,30 @@ Feature: Formalign home page
 
   Scenario: User checks basic form elements of Formalign home page
     Given a user visits the URL "/"
+    And active and inactive buttons
+      | active   | inactive            |
+      | DNA      | Protein             |
+      | Identity | Substitution Matrix |
+
     When the user looks at the page
     Then the server's response status code is 200
     And there is a form with a label matching "Paste in your alignment:\(FASTA, clustalw, stockholm or phylip\)"
     And there is a text area with a placeholder saying "Alignment (FASTA, clustalw, stockholm or phylip)"
-    And there are radio buttons labeled "Input sequence type:"
+    When the user looks at the radio buttons
+    Then there are radio buttons labeled "Input sequence type:"
     And there is a "DNA" input sequence type radio button
     And there is a "Protein" input sequence type radio button
     And the "DNA" button is checkable
     And the "Protein" button is checkable
-    And the "DNA" button is checked
-    And the "Protein" button is not checked
-    And there is a "Demo" button named "custom_data" with the value "demo"
-    And there is a "Submit" button named "custom_data" with the value "custom"
-    And there is a "Formalign.eu" button with "/" href
-
-  Scenario: User checks advanced form elements of Formalign home page
-    Given a user visits the URL "/"
-    When the user looks at the page
-    Then the server's response status code is 200
     And there is a "Identity" consensus type radio button
     And there is a "Substitution Matrix" consensus type radio button
     And the "Identity" button is checkable
     And the "Substitution Matrix" button is checkable
-    And the "Identity" button is checked
-    And the "Substitution Matrix" button is not checked
+    And the active radio buttons are checked
+    And the inactive radio buttons are not checked
+    And there is a "Demo" button named "custom_data" with the value "demo"
+    And there is a "Submit" button named "custom_data" with the value "custom"
+    And there is a "Formalign.eu" button with "/" href
 
   @pending
   Scenario Outline: User checks consensus choices

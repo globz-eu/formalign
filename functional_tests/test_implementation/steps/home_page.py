@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
 from formalign.settings import SERVER_URL, TEST, CHROME_DRIVER, FIREFOX_BINARY
 import re
 from behave import given, when, then, use_step_matcher
@@ -78,13 +81,31 @@ def visit_url_with_browser(context, url, browser):
     context.response = context.browser.get(context.home_url + url)
 
 
+@given(r'active and inactive buttons')
+def define_buttons_status(context):
+    """
+    get list of active and inactive buttons to be tested
+    :param context: behave context
+    """
+    context.buttons_status = context.table
+
+
 @when(r'the user looks at the page')
 def get_elements(context):
+    """
+    parses the displayed page's HTML
+    :param context: behave context
+    """
     context.display = html.parse(StringIO(context.r.text)).getroot()
 
 
 @then(r'the server\'s response status code is (?P<expected_code>\d+)')
 def check_status_code(context, expected_code):
+    """
+    tests that the server response contains the expected status code
+    :param context: behave context
+    :param expected_code: expected status code
+    """
     assert context.r.status_code == int(expected_code), 'Got %d' % context.r.status_code
 
 
@@ -117,6 +138,12 @@ def click_button(context, choice_type, button_type):
                 )
             )
             button.click()
+            try:
+                WebDriverWait(context.browser, 10).until(
+                    ec.element_to_be_selected(button)
+                )
+            finally:
+                pass
         elif button_type == 'submit':
             button = context.browser.find_element_by_id(submit_button[choice_type.lower()]['id'])
             button.click()
@@ -133,6 +160,23 @@ def click_button(context, choice_type, button_type):
                 context.home_url + context.display.cssselect('form[id="render"]')[0].attrib.get('action')
             )
         context.display = html.parse(StringIO(context.r.text)).getroot()
+
+
+@when(r'the user clicks the active radio buttons')
+@when(r'the user looks at the radio buttons')
+def define_radio_buttons(context):
+    """
+    defines active and inactive radio buttons in context
+    :param context: behave context
+    """
+    radio_buttons = {
+        'dna': {'type': 'seq', 'number': '1'},
+        'protein': {'type': 'seq', 'number': '0'},
+        'identity': {'type': 'cons', 'number': '0'},
+        'substitution matrix': {'type': 'cons', 'number': '1'}
+    }
+    context.active_radio_buttons = [radio_buttons[row['active'].lower()] for row in context.buttons_status]
+    context.inactive_radio_buttons = [radio_buttons[row['inactive'].lower()] for row in context.buttons_status]
 
 
 @then(r'the current URL is the "(?P<expected_url>[^"]*)" URL')
@@ -259,6 +303,11 @@ def check_sequence_type_radio_buttons(context, expected_radio_button_text, choic
 
 @then(r'the "(?P<button_type>[^"]*)" button is checkable')
 def check_type_buttons_are_checkable(context, button_type):
+    """
+    tests that the radio buttons are checkable
+    :param context: behave context
+    :param button_type: button to check
+    """
     radio_button = {
         'DNA': {'type': 'seq', 'number': '1'},
         'Protein': {'type': 'seq', 'number': '0'},
@@ -274,39 +323,68 @@ def check_type_buttons_are_checkable(context, button_type):
     assert button_checkable, 'Got %s' % button_checkable
 
 
-@then(r'the "(?P<button_type>[^"]*)" button is(?P<default>.*) checked')
-def check_type_buttons_are_in_the_right_state(context, button_type, default):
+@then(r'the active radio buttons are checked')
+def check_active_radio_button_is_checked(context):
     """
-    tests whether a radio button has the expected status (checked or not)
+    tests that active radio buttons are checked when clicked
     :param context: behave context
-    :param button_type: button to check
-    :param default: button state
     """
-    radio_button = {
-        'DNA': {'type': 'seq', 'number': '1'},
-        'Protein': {'type': 'seq', 'number': '0'},
-        'Identity': {'type': 'cons', 'number': '0'},
-        'Substitution Matrix': {'type': 'cons', 'number': '1'}
-    }
-    button_checked = 'not true not false'
     if TEST == 'acceptance':
-        button_checked = context.browser.find_element_by_css_selector(
-            'input[id="id_%s_type_%s"]' % (
-                radio_button[button_type]['type'],
-                radio_button[button_type]['number']
+        for radio_button in context.active_radio_buttons:
+            button = context.browser.find_element_by_css_selector(
+                'input[id="id_%s_type_%s"]' % (
+                    radio_button['type'],
+                    radio_button['number']
+                )
             )
-        ).is_selected()
+            button.click()
+            button_checked = button.is_selected()
+            assert button_checked, 'Expected: True\nGot %s for id_%s_type_%s' % (
+                button_checked,
+                radio_button['type'],
+                radio_button['number']
+            )
     elif TEST == 'functional':
-        button_checked = context.display.cssselect(
-            'input[id="id_%s_type_%s"]' % (
-                radio_button[button_type]['type'],
-                radio_button[button_type]['number']
+        for radio_button in context.active_radio_buttons:
+            button_checked = context.display.cssselect(
+                'input[id="id_%s_type_%s"]' % (
+                    radio_button['type'],
+                    radio_button['number']
+                )
+            )[0].checked
+            assert button_checked, 'Expected: True\nGot %s for id_%s_type_%s' % (
+                button_checked,
+                radio_button['type'],
+                radio_button['number']
             )
-        )[0].checked
-    if default == '':
-        assert button_checked, 'Got %s' % button_checked
-    elif default == ' not':
-        assert not button_checked, 'Got %s' % button_checked
+
+
+@then(r'the inactive radio buttons are not checked')
+def check_active_radio_button_is_checked(context):
+    """
+    tests that inactive radio buttons are not checked when active buttons are clicked
+    :param context: behave context
+    """
+    if TEST == 'acceptance':
+        for i, radio_button in enumerate(context.active_radio_buttons):
+            button = context.browser.find_element_by_css_selector(
+                'input[id="id_%s_type_%s"]' % (
+                    radio_button['type'],
+                    radio_button['number']
+                )
+            )
+            button.click()
+            button_checked = context.browser.find_element_by_css_selector(
+                'input[id="id_%s_type_%s"]' % (
+                    context.inactive_radio_buttons[i]['type'],
+                    context.inactive_radio_buttons[i]['number']
+                )
+            ).is_selected()
+            assert not button_checked, 'Expected: False\nGot %s for id_%s_type_%s' % (
+                button_checked,
+                radio_button['type'],
+                radio_button['number']
+            )
 
 
 @then(

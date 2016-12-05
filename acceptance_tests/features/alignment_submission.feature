@@ -20,6 +20,7 @@
 Feature: Protein alignment submission
   Checks the submission of a protein alignment
 
+  @current
   Scenario Outline: User submits a protein alignment
     Given a user visits the URL "/" with "<browser>"
     When the user clicks the "Protein" radio button

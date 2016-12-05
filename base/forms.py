@@ -104,7 +104,6 @@ class QueryForm(forms.Form):
     def clean(self):
         """
         Adds error to align_input field depending on seq_type field, adds alphabets to sequences and alignment
-        :return:
         """
         cleaned_data = forms.Form.clean(self)
         seq_type = cleaned_data.get('seq_type')

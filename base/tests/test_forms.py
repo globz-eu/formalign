@@ -34,8 +34,8 @@ class QueryFormTest(TestCase):
 
     def validation(self, error_text, input_file='', seq_type='protein'):
         """
-        Performs validation test for invalid forms, takes a user alignment input, asserts form.is_valid as false and
-        checks the error
+        Performs validation test for invalid forms, takes a user alignment
+        input, asserts form.is_valid as false and checks the error
         :param:
         :return:
         """
