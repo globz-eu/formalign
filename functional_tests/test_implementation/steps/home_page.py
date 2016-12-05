@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from formalign.settings import SERVER_URL, TEST, CHROME_DRIVER, FIREFOX_BINARY
 import re
@@ -360,7 +359,7 @@ def check_active_radio_button_is_checked(context):
 
 
 @then(r'the inactive radio buttons are not checked')
-def check_active_radio_button_is_checked(context):
+def check_inactive_radio_button_is_not_checked(context):
     """
     tests that inactive radio buttons are not checked when active buttons are clicked
     :param context: behave context
