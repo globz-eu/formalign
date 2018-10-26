@@ -1,24 +1,3 @@
-"""
-=====================================================================
-Formalign.eu format and display multiple sequence alignments
-Copyright (C) 2016 Stefan Dieterle
-e-mail: golgoths@yahoo.fr
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-=====================================================================
-"""
-
 import time
 from formalign.settings import CHROME_DRIVER, SERVER_URL, BROWSER_DELAY, TEST_CASE, FIREFOX_BINARY
 from selenium import webdriver
@@ -26,9 +5,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pyperclip
 from helper_funcs.helpers_test import file_to_string
-
-
-__author__ = 'Stefan Dieterle'
 
 
 class BasicUserTestCaseChrome(TEST_CASE):
