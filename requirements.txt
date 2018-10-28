@@ -55,7 +55,7 @@ python-dateutil==2.5.3
 python-mimeparse==1.5.5
 python-subunit==1.2.0
 pytz==2016.6.1
-PyYAML==3.12
+PyYAML==3.13
 redis==2.10.5
 repoze.lru==0.6
 requests==2.10.0
