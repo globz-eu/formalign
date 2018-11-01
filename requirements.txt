@@ -9,6 +9,8 @@ billiard==3.3.0.23
 biopython==1.72
 blessings==1.6
 celery==3.1.24
+certifi==2018.10.15
+chardet==3.0.4
 coverage==4.1
 cssselect==0.9.2
 dj-database-url==0.4.1
@@ -25,6 +27,7 @@ future==0.15.2
 fuzzywuzzy==0.12.0
 gherkin-official==4.0.0
 gunicorn==19.6.0
+idna==2.7
 isort==4.3.4
 Jinja2==2.8
 kombu==3.0.36
@@ -58,7 +61,7 @@ pytz==2016.6.1
 PyYAML==3.13
 redis==2.10.5
 repoze.lru==0.6
-requests==2.10.0
+requests==2.20.0
 selenium==2.53.6
 six==1.10.0
 sqlparse==0.1.19
@@ -67,5 +70,7 @@ testtools==2.2.0
 traceback2==1.4.0
 typed-ast==1.1.0
 unittest2==1.1.0
+urllib3==1.24
+uWSGI==2.0.17.1
 whitenoise==3.2.1
 wrapt==1.10.11
