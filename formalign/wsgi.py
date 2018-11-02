@@ -16,7 +16,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "formalign.settings")
 
 application = get_wsgi_application()
 
-if HEROKU:
-    from whitenoise.django import DjangoWhiteNoise
+# if HEROKU:
+from whitenoise.django import DjangoWhiteNoise
 
-    application = DjangoWhiteNoise(application)
+application = DjangoWhiteNoise(application)
