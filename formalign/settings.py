@@ -32,7 +32,10 @@ def json_setting(setting, secrets=secrets):
     try:
         return secrets[setting]
     except KeyError:
-        raise ImproperlyConfigured("Set the %s setting" % setting)
+        try:
+            return "%s" % os.environ[setting]
+        except KeyError:
+            raise ImproperlyConfigured("Set the %s setting" % setting)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
