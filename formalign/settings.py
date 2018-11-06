@@ -46,6 +46,26 @@ SECRET_KEY = json_setting('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = json_setting('DEBUG')
 
+# logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/formalign_debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Application definition
 
 INSTALLED_APPS = [
