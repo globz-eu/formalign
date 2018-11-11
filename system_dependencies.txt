@@ -1,6 +1,9 @@
 libpq-dev
-python3-numpy
-libxml2-dev
-libxslt1-dev
 zlib1g-dev
 xclip
+
+# for lxml
+libxml2-dev libxslt-dev
+
+# for numpy
+python3-numpy

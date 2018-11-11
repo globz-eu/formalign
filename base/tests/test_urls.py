@@ -4,7 +4,7 @@ from Bio.Alphabet import Gapped
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from base.models import Alignment
 from base.views import index, seq_display, align_display
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 from django.test import TestCase
 from helper_funcs.bio.helpers import parse_fasta_alignment
 from helper_funcs.helpers_test import file_to_string

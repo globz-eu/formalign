@@ -46,9 +46,9 @@ class QueryFormTest(TestCase):
         form = QueryForm()
         field = form['seq_type']
         self.assertIn('Input sequence type:', field.label_tag())
-        self.assertIn('<input id="id_seq_type_0" name="seq_type" type="radio" value="protein"', form.as_p())
+        self.assertIn('<input type="radio" name="seq_type" value="protein" required id="id_seq_type_0">', form.as_p())
         self.assertIn(
-            '<input checked="checked" id="id_seq_type_1" name="seq_type" type="radio" value="DNA"', form.as_p()
+            '<input type="radio" name="seq_type" value="DNA" required id="id_seq_type_1" checked>', form.as_p()
         )
 
     def test_form_renders_consensus_type_radio_buttons(self):
@@ -59,9 +59,9 @@ class QueryFormTest(TestCase):
         form = QueryForm()
         field = form['cons_type']
         self.assertIn('Consensus type:', field.label_tag())
-        self.assertIn('<input id="id_cons_type_1" name="cons_type" type="radio" value="subs_matrix"', form.as_p())
+        self.assertIn('<input type="radio" name="cons_type" value="subs_matrix" required id="id_cons_type_1">', form.as_p())
         self.assertIn(
-            '<input checked="checked" id="id_cons_type_0" name="cons_type" type="radio" value="identity"', form.as_p()
+            '<input type="radio" name="cons_type" value="identity" required id="id_cons_type_0" checked>', form.as_p()
         )
 
     def test_form_validation_for_blank_items(self):
