@@ -19,5 +19,5 @@ python manage.py test base/tests
 
 ### Functional tests
 ```bash
-python manage.py test functional_tests
+python manage.py behave functional_tests/features
 ```
