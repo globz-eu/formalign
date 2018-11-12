@@ -17,6 +17,7 @@ Including another URLconf
 """
 
 from django.conf.urls import url
+from django.urls import include, path
 from django.contrib import admin
 from django.conf.urls.static import static
 from formalign import settings
@@ -28,4 +29,11 @@ urlpatterns = [
     url(r'^query-sequences/(?P<align_slug>([a-zA-Z]|\d){16})', seq_display),
     url(r'^align-display/(?P<align_slug>([a-zA-Z]|\d){16})', align_display),
     url(r'^admin/', admin.site.urls),
+    
 ] + static(settings.STATIC_URL)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
