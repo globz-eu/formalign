@@ -43,16 +43,19 @@
                 </button>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">
-                <label for="submit-demo">Or try out using a demo alignment:<br>(Serine/Threonine kinase family)</label>
+        </form>
+        <form class="form-horizontal" role="form" method="post" action="/">
+            <div class="form-group">
+                <div class="col-sm-2 control-label">
+                    <label for="submit-demo">Or try out using a demo alignment:<br>(Serine/Threonine kinase family)</label>
+                </div>
+                <div class="col-sm-10">
+                    <button type="submit" id="submit-demo" class="btn btn-primary btn-large" name="custom_data" value="demo">
+                        Demo
+                    </button>
+                </div>
             </div>
-            <div class="col-sm-10">
-                <button type="submit" id="submit-demo" class="btn btn-primary btn-large" name="custom_data" value="demo">
-                    Demo
-                </button>
-            </div>
-        </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         </form>
     </div>
 {% endblock %}
