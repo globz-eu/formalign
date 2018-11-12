@@ -79,7 +79,6 @@ INSTALLED_APPS = [
     'base',
     'debug_toolbar',
     'django_nose',
-    'djcelery',
     'randomslugfield',
     'behave_django',
 ]
