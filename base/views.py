@@ -1,11 +1,16 @@
+"""
+base app views
+"""
+
 import io
 
 from Bio.Alphabet import Gapped
 from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
-from base.forms import QueryForm
-from base.models import Alignment
 from django.http import HttpResponseNotAllowed, Http404
 from django.shortcuts import render, redirect
+
+from base.forms import QueryForm
+from base.models import Alignment
 from helper_funcs.bio.helpers import consensus_add, parse_fasta_alignment
 from helper_funcs.helpers_format import split_lines, annotate
 from helper_funcs.helpers_test import file_to_string
@@ -20,7 +25,7 @@ def index(request):
     if request.method == 'GET':
         form = QueryForm()
         return render(request, 'base/index.html', {'form': form})
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if request.POST['custom_data'] == 'custom':
             form = QueryForm(request.POST)
             if form.is_valid():
@@ -28,21 +33,18 @@ def index(request):
                 save_align = Alignment.objects.create_alignment('name', align)
                 slug = save_align.slug
                 return redirect('/query-sequences/' + str(slug) + '/')
-            else:
-                return render(request, 'base/index.html', {'form': form})
-        elif request.POST['custom_data'] == 'demo':
+            return render(request, 'base/index.html', {'form': form})
+        if request.POST['custom_data'] == 'demo':
             align_input = io.StringIO(file_to_string('ser_thr_kinase_family.fasta'))
             align = parse_fasta_alignment(align_input)
-            for d in align:
-                d.seq.alphabet = Gapped(ExtendedIUPACProtein())
+            for sewuence in align:
+                sewuence.seq.alphabet = Gapped(ExtendedIUPACProtein())
             save_align = Alignment.objects.create_alignment('ser_thr_kinase_family', align)
             slug = save_align.slug
             return redirect('/query-sequences/' + str(slug) + '/')
-        else:
-            form = QueryForm()
-            return render(request, 'base/index.html', {'form': form})
-    else:
-        return HttpResponseNotAllowed(['POST', 'GET'])
+        form = QueryForm()
+        return render(request, 'base/index.html', {'form': form})
+    return HttpResponseNotAllowed(['POST', 'GET'])
 
 
 def seq_display(request, align_slug):
@@ -56,7 +58,7 @@ def seq_display(request, align_slug):
         # split sequences in chunks of 80 characters
         try:
             align_id = Alignment.objects.get(slug=align_slug).pk
-        except Alignment.DoesNotExist:
+        except Alignment.DoesNotExist:  # pylint: disable=E1101
             raise Http404('Alignment does not exist')
         alignment = consensus_add(Alignment.objects.get_alignment(align_id))
         alphabets = {
@@ -73,8 +75,7 @@ def seq_display(request, align_slug):
             {'query_seqs': query_seqs, 'seq_type': alphabet, 'align_id': align_slug}
         )
 
-    else:
-        return HttpResponseNotAllowed(['GET'])
+    return HttpResponseNotAllowed(['GET'])
 
 
 def align_display(request, align_slug):
@@ -87,7 +88,7 @@ def align_display(request, align_slug):
     if request.method == 'GET':
         try:
             align_id = Alignment.objects.get(slug=align_slug).pk
-        except Alignment.DoesNotExist:
+        except Alignment.DoesNotExist:  # pylint: disable=E1101
             raise Http404('Alignment does not exist')
 
         alignment_fetch = Alignment.objects.get_alignment(align_id)
@@ -122,11 +123,9 @@ def align_display(request, align_slug):
             'align_seqs': seqs_blocks,
         }
 
-        r = render(
+        return render(
             request, 'base/align_display.html',
             {'align': align, 'id_width': id_width * .6, 'total_width': (id_width + 80) * .5}
         )
-        return r
 
-    else:
-        return HttpResponseNotAllowed(['GET'])
+    return HttpResponseNotAllowed(['GET'])
