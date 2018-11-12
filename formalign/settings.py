@@ -128,24 +128,19 @@ WSGI_APPLICATION = 'formalign.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-HEROKU = json_setting('HEROKU')
-if HEROKU:
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES = {'default': db_from_env}
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': json_setting('DB_ENGINE'),
-            'NAME': json_setting('DB_NAME'),
-            'USER': json_setting('DB_USER'),
-            "PASSWORD": json_setting('DB_PASSWORD'),
-            'HOST': json_setting('DB_HOST'),
-            'PORT': json_setting('DB_PORT'),
-            'TEST': {
-                'NAME': json_setting('TEST_DB_NAME'),
-            }
+DATABASES = {
+    'default': {
+        'ENGINE': json_setting('DB_ENGINE'),
+        'NAME': json_setting('DB_NAME'),
+        'USER': json_setting('DB_USER'),
+        "PASSWORD": json_setting('DB_PASSWORD'),
+        'HOST': json_setting('DB_HOST'),
+        'PORT': json_setting('DB_PORT'),
+        'TEST': {
+            'NAME': json_setting('TEST_DB_NAME'),
         }
     }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -190,31 +185,6 @@ ALLOWED_HOSTS = json_setting('ALLOWED_HOSTS')
 SECURE_SSL_REDIRECT = json_setting('SECURE_SSL_REDIRECT')
 SECURE_PROXY_SSL_HEADER = json_setting('SECURE_PROXY_SSL_HEADER')
 
-# Celery configuration
-BROKER_URL = json_setting('BROKER_URL')
-CELERY_RESULT_BACKEND = json_setting('CELERY_RESULT_BACKEND')
-BROKER_TRANSPORT_OPTIONS = {
-    'fanout_prefix': True,
-    'fanout_patterns': True,
-    'visibility_timeout': 3600
-}
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# Celery beat configuration
-try:
-    CLEAN_OLDER = json_setting('CLEAN_OLDER')
-except ImproperlyConfigured:
-    CLEAN_OLDER = '7'
-
-CELERYBEAT_SCHEDULE = {
-    'remove_old_alignments': {
-        'task': 'base.tasks.clean_alignments',
-        'schedule': timedelta(hours=1),
-    },
-}
-
 # Selenium configuration
 CHROME_DRIVER = json_setting('CHROME_DRIVER')
 FIREFOX_BINARY = json_setting('FIREFOX_BINARY')
@@ -230,10 +200,3 @@ else:
     TEST_CASE = TestCase
 
 TEST = json_setting('TEST')
-
-# Heroku configuration
-if HEROKU:
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    BROKER_URL = os.environ['REDIS_URL']
-    CELERY_RESULT_BACKEND = os.environ['REDIS_URL']

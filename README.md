@@ -12,6 +12,12 @@ uwsgi --ini formalign_uwsgi.ini
 ```
 
 ## Test
+### Unit tests
 ```bash
 python manage.py test base/tests
+```
+
+### Functional tests
+```bash
+python manage.py test functional_tests
 ```
