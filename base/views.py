@@ -37,8 +37,8 @@ def index(request):
         if request.POST['custom_data'] == 'demo':
             align_input = io.StringIO(file_to_string('ser_thr_kinase_family.fasta'))
             align = parse_fasta_alignment(align_input)
-            for sewuence in align:
-                sewuence.seq.alphabet = Gapped(ExtendedIUPACProtein())
+            for sequence in align:
+                sequence.seq.alphabet = Gapped(ExtendedIUPACProtein())
             save_align = Alignment.objects.create_alignment('ser_thr_kinase_family', align)
             slug = save_align.slug
             return redirect('/query-sequences/' + str(slug) + '/')
